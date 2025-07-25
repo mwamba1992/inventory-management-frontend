@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+
+  .btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+
+  .sidebar-item {
+    @apply flex items-center p-3 rounded-lg transition-colors cursor-pointer;
+  }
+
+  .sidebar-item-active {
+    @apply bg-blue-50 text-blue-600 border-r-4 border-blue-600;
+  }
+
+  .sidebar-item-inactive {
+    @apply text-gray-600 hover:bg-gray-50;
+  }
+}

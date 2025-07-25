@@ -1,0 +1,29 @@
+{
+  "name": "pos-admin-portal",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@heroicons/vue": "^2.2.0",
+    "@tailwindcss/forms": "^0.5.10",
+    "lucide-vue-next": "^0.400.0",
+    "pinia": "^2.3.1",
+    "sweetalert2": "^11.22.2",
+    "tailwindcss": "^3.4.17",
+    "vue": "^3.3.11",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "@vue/tsconfig": "^0.7.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "vite": "^5.0.10",
+    "vite-plugin-vue-devtools": "^7.7.7"
+  }
+}
