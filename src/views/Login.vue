@@ -24,13 +24,13 @@
             <input
               id="email"
               v-model="form.email"
-              type="email"
+              type="text"
               required
               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
               placeholder="Enter your email"
               :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.email }"
             />
-            <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
+            <p class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
           </div>
 
           <!-- Password Field -->
@@ -128,6 +128,8 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline'
 import router from '@/router'
+import { SetupService as LoginService } from '@/services/LoginService'
+import { useUserStore } from '@/stores/user'
 
 // Reactive form data
 const form = reactive({
@@ -160,11 +162,6 @@ const validateForm = () => {
     return false
   }
 
-  if (!validateEmail(form.email)) {
-    errors.email = 'Please enter a valid email address'
-    return false
-  }
-
   if (!form.password) {
     errors.password = 'Password is required'
     return false
@@ -178,43 +175,47 @@ const validateForm = () => {
   return true
 }
 
+const user = useUserStore();
+
+
 // Login handler
-const handleLogin = async () => {
-  loginError.value = ''
-
-  if (!validateForm()) {
-    return
-  }
-
-  loading.value = true
-
+async function handleLogin() {
+  loading.value = true;
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    const response = await LoginService.login(form.email, form.password);
 
-    // Demo credentials check
-    if (form.email === 'admin@mwendavano.com' && form.password === 'password123') {
-      // Success - redirect to dashboard
-      console.log('Login successful:', form)
-      localStorage.setItem('authToken', 'demo-token') // Store token for demo
-      await router.push('/') // Redirect will now work
+    if (response && response.access_token) {
+      console.log('Login successful:', response);
+      let userDetails = base64UrlDecode(response.access_token.split('.')[1]);
+
+      console.log('User details:', userDetails);
+      user.setUser({
+        id: userDetails.sub,
+        name: userDetails.username,
+        permissions: userDetails.permissions.map((permission) => permission.name),
+        token: response.access_token,
+        refreshToken: response.refresh_token
+      });
+      await router.push('/');
     } else {
-      loginError.value = 'Invalid email or password. Try admin@mwendavano.com / password123'
+      console.error('Invalid credentials');
+      loginError.value = 'Invalid credentials';
+      throw new Error('Invalid credentials');
     }
   } catch (error) {
-    console.error('Login error:', error)
-    loginError.value = 'An error occurred during login. Please try again.'
+    console.error('Login failed:', error.message);
+    loginError.value = 'Login failed: ' + error.message;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-// Demo function to fill credentials
-const fillDemoCredentials = () => {
-  form.email = 'admin@mwendavano.com'
-  form.password = 'password123'
+
+// Decode Base64URL strings
+function base64UrlDecode(base64Url) {
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const decoded = atob(base64);
+  return JSON.parse(decoded);
 }
 
-// Auto-fill demo credentials after 3 seconds (for demo purposes)
-setTimeout(fillDemoCredentials, 3000)
 </script>

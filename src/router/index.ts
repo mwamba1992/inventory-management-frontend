@@ -156,17 +156,17 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+import { useUserStore } from '@/stores/user' // Adjust the import based on your store setup
+
 // Helper function to check authentication status
 // Replace this with your actual authentication logic
+
+
+
 function checkAuthStatus() {
-  // Example: Check for token in localStorage
-  return localStorage.getItem('authToken') !== null
-
-  // Or check Pinia/Vuex store
-  // return store.getters.isAuthenticated
-
-  // Or check cookies
-  // return document.cookie.includes('authToken')
+  const user = useUserStore(); // must call store here if outside setup
+  console.log('user', user);
+  return !!user.token;
 }
 
 export default router

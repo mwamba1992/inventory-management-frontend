@@ -47,7 +47,7 @@
               <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                 <UserIcon class="w-5 h-5 text-white" />
               </div>
-              <span class="hidden sm:block text-sm font-medium whitespace-nowrap">{{ currentUser.name }}</span>
+              <span class="hidden sm:block text-sm font-medium whitespace-nowrap">{{ userName}}</span>
               <ChevronDownIcon
                 class="w-4 h-4 transition-transform duration-200"
                 :class="{ 'rotate-180': profileMenuOpen }"
@@ -111,11 +111,13 @@ import {
   ArrowRightOnRectangleIcon
 } from '@heroicons/vue/24/outline'
 import router from '@/router'
+import { useUserStore } from '@/stores/user'
 
 // Reactive data
 const searchQuery = ref('')
 const profileMenuOpen = ref(false)
 const profileDropdown = ref(null)
+const userName = ref('')
 
 // User data (this would typically come from a store/API)
 const currentUser = ref({
@@ -135,7 +137,7 @@ const logout = () => {
 
   // Implement logout logic
   console.log('Logout clicked')
-  localStorage.removeItem('authToken')
+  useUserStore().clearUser()
   router.push('/login')
 }
 
@@ -148,6 +150,7 @@ const handleClickOutside = (event) => {
 
 // Lifecycle
 onMounted(() => {
+  userName.value = useUserStore().getName;
   document.addEventListener('click', handleClickOutside)
 })
 
