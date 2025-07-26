@@ -606,7 +606,7 @@ import SwalAlert from '@/components/common/SwalAlert.vue'
 const swalAlert = ref(null)
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:3000'
+const API_BASE_URL = 'http://84.247.178.93:3000'
 
 // Reactive data
 const commonData = ref([])

@@ -419,7 +419,7 @@ const totalTransactions = ref(0)
 const recentTransactions = ref([])
 
 
-const API_BASE_URL = 'http://localhost:3000'
+const API_BASE_URL = 'http://84.247.178.93:3000'
 // Transaction data
 
 // Top products data
