@@ -646,7 +646,7 @@ const updateBusiness = async (id, businessData) => {
   submitting.value = true
   try {
     const updatedBusiness = await apiCall(`/businesses/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(businessData),
     })
     const index = businesses.value.findIndex((b) => b.id === id)

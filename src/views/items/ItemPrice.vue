@@ -979,7 +979,7 @@ const updatePrice = async (id, priceData) => {
   submitting.value = true
   try {
     const updatedPrice = await apiCall(`/items/item-prices/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(priceData),
     })
     const index = itemPrices.value.findIndex((price) => price.id === id)
@@ -1017,7 +1017,7 @@ const togglePriceStatusApi = async (id, isActive) => {
   submitting.value = true
   try {
     const updatedPrice = await apiCall(`/items/item-prices/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify({ isActive }),
     })
     const index = itemPrices.value.findIndex((price) => price.id === id)

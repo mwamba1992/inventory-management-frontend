@@ -851,7 +851,7 @@ const updateUser = async (id, userData) => {
   submitting.value = true
   try {
     const updatedUser = await apiCall(`/users/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(userData),
     })
     const index = users.value.findIndex((u) => u.id === id)
@@ -889,7 +889,7 @@ const toggleUserStatusApi = async (id, enabled) => {
   submitting.value = true
   try {
     const updatedUser = await apiCall(`/users/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify({ enabled }),
     })
     const index = users.value.findIndex((u) => u.id === id)

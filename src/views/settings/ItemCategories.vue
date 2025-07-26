@@ -779,7 +779,7 @@ const updateCategory = async (id, categoryData) => {
   submitting.value = true
   try {
     const updatedCategory = await apiCall(`/item-categories/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(categoryData),
     })
     const index = categories.value.findIndex((c) => c.id === id)

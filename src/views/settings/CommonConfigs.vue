@@ -695,7 +695,7 @@ const updateItem = async (id, itemData) => {
   submitting.value = true
   try {
     const updatedItem = await apiCall(`/common/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(itemData),
     })
     const index = commonData.value.findIndex((item) => item.id === id)

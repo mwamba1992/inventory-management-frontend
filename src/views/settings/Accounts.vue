@@ -729,7 +729,7 @@ const updateAccount = async (id, accountData) => {
   submitting.value = true
   try {
     const updatedAccount = await apiCall(`/account/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(accountData),
     })
     const index = accounts.value.findIndex((a) => a.id === id)

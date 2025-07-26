@@ -861,7 +861,7 @@ const updateMapping = async (id, mappingData) => {
   submitting.value = true
   try {
     const updatedMapping = await apiCall(`/items/account-mappings/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(mappingData),
     })
     const index = accountMappings.value.findIndex((mapping) => mapping.id === id)

@@ -770,7 +770,7 @@ const updateCustomer = async (id, customerData) => {
   submitting.value = true
   try {
     const updatedCustomer = await apiCall(`/customers/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(customerData),
     })
     const index = customers.value.findIndex((customer) => customer.id === id)

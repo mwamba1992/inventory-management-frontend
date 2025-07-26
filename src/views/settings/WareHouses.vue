@@ -751,7 +751,7 @@ const updateWarehouse = async (id, warehouseData) => {
   submitting.value = true
   try {
     const updatedWarehouse = await apiCall(`/warehouses/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       body: JSON.stringify(warehouseData),
     })
     const index = warehouses.value.findIndex((w) => w.id === id)
