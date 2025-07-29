@@ -581,6 +581,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
+import { Configs } from '@/utils/Configs'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
@@ -713,7 +714,7 @@ const form = ref({
 })
 
 // API Configuration
-const API_BASE_URL = 'http://84.247.178.93:3000'
+const API_BASE_URL  = Configs.API_BASE_URL
 
 // API Functions
 const apiCall = async (url, options = {}) => {

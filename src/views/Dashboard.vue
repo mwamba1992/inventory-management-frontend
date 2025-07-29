@@ -269,7 +269,7 @@
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="font-bold text-emerald-600 text-lg">${{ formatNumber(product.totalSales) }}</p>
+                    <p class="font-bold text-emerald-600 text-lg">TZS{{ formatNumber(product.totalSales) }}</p>
                     <p class="text-xs text-gray-500">{{ product.totalQuantity }} units sold</p>
                   </div>
                 </div>
@@ -397,6 +397,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
+import { Configs } from '@/utils/Configs'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
@@ -419,7 +420,7 @@ const totalTransactions = ref(0)
 const recentTransactions = ref([])
 
 
-const API_BASE_URL = 'http://84.247.178.93:3000'
+const API_BASE_URL = Configs.API_BASE_URL
 // Transaction data
 
 // Top products data

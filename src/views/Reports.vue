@@ -55,7 +55,7 @@
               <h3>Total Revenue</h3>
               <div class="trend positive">+12.5%</div>
             </div>
-            <div class="card-value">${{ formatNumber(reportData.totalRevenue) }}</div>
+            <div class="card-value">TZS{{ formatNumber(reportData.totalRevenue) }}</div>
             <div class="card-period">Last {{ selectedDateRange }} days</div>
           </div>
 
@@ -82,7 +82,7 @@
               <h3>Avg Order Value</h3>
               <div class="trend negative">-2.1%</div>
             </div>
-            <div class="card-value">${{ formatNumber(reportData.avgOrderValue) }}</div>
+            <div class="card-value">TZS{{ formatNumber(reportData.avgOrderValue) }}</div>
             <div class="card-period">Last {{ selectedDateRange }} days</div>
           </div>
         </div>
@@ -108,7 +108,7 @@
         <div class="report-metrics">
           <div class="metric-box">
             <label>Total Sales:</label>
-            <span class="metric-value">${{ formatNumber(reportData.salesMetrics.total) }}</span>
+            <span class="metric-value">TZS{{ formatNumber(reportData.salesMetrics.total) }}</span>
           </div>
           <div class="metric-box">
             <label>Units Sold:</label>
@@ -139,7 +139,7 @@
               <td>{{ sale.customer }}</td>
               <td>{{ sale.product }}</td>
               <td>{{ sale.quantity }}</td>
-              <td>${{ formatNumber(sale.amount) }}</td>
+              <td>TZS{{ formatNumber(sale.amount) }}</td>
               <td>
                   <span :class="['status', sale.status.toLowerCase()]">
                     {{ sale.status }}
@@ -195,7 +195,7 @@
               <td>{{ item.name }}</td>
               <td>{{ item.currentStock }}</td>
               <td>{{ item.minStock }}</td>
-              <td>${{ formatNumber(item.value) }}</td>
+              <td>TZS{{ formatNumber(item.value) }}</td>
               <td>{{ item.warehouse }}</td>
               <td>
                   <span :class="['status', getStockStatus(item).toLowerCase()]">
@@ -227,7 +227,7 @@
 
           <div class="insight-card">
             <h3>Customer Lifetime Value</h3>
-            <div class="insight-value">${{ formatNumber(reportData.customerMetrics.avgLifetimeValue) }}</div>
+            <div class="insight-value">TZS{{ formatNumber(reportData.customerMetrics.avgLifetimeValue) }}</div>
             <div class="insight-period">Average</div>
           </div>
         </div>
@@ -250,7 +250,7 @@
               <td>{{ customer.name }}</td>
               <td>{{ customer.phone }}</td>
               <td>{{ customer.totalOrders }}</td>
-              <td>${{ formatNumber(customer.totalSpent) }}</td>
+              <td>TZS{{ formatNumber(customer.totalSpent) }}</td>
               <td>{{ formatDate(customer.lastOrder) }}</td>
               <td>
                   <span :class="['status', customer.status.toLowerCase()]">
@@ -270,19 +270,19 @@
         <div class="financial-summary">
           <div class="financial-card revenue">
             <h3>Total Revenue</h3>
-            <div class="amount positive">${{ formatNumber(reportData.financial.revenue) }}</div>
+            <div class="amount positive">TZS{{ formatNumber(reportData.financial.revenue) }}</div>
             <div class="change">+{{ reportData.financial.revenueGrowth }}% vs last period</div>
           </div>
 
           <div class="financial-card expenses">
             <h3>Total Expenses</h3>
-            <div class="amount negative">${{ formatNumber(reportData.financial.expenses) }}</div>
+            <div class="amount negative">TZS{{ formatNumber(reportData.financial.expenses) }}</div>
             <div class="change">+{{ reportData.financial.expenseGrowth }}% vs last period</div>
           </div>
 
           <div class="financial-card profit">
             <h3>Net Profit</h3>
-            <div class="amount positive">${{ formatNumber(reportData.financial.profit) }}</div>
+            <div class="amount positive">TZS{{ formatNumber(reportData.financial.profit) }}</div>
             <div class="change">+{{ reportData.financial.profitGrowth }}% vs last period</div>
           </div>
 
@@ -299,7 +299,7 @@
             <div v-for="expense in reportData.expenseBreakdown" :key="expense.category" class="expense-item">
               <div class="expense-info">
                 <span class="expense-category">{{ expense.category }}</span>
-                <span class="expense-amount">${{ formatNumber(expense.amount) }}</span>
+                <span class="expense-amount">TZS{{ formatNumber(expense.amount) }}</span>
               </div>
               <div class="expense-bar">
                 <div class="expense-fill" :style="{ width: expense.percentage + '%' }"></div>
@@ -314,7 +314,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
+import { Configs } from '@/utils/Configs'
 
 // Reactive data
 const loading = ref(true)
@@ -327,16 +328,11 @@ const reportData = reactive({
   activeCustomers: 320,
   avgOrderValue: 100,
   salesMetrics: {
-    total: 125000,
-    units: 2500,
-    growth: 12.5
+    total: 0,
+    units: 0,
+    growth: 0
   },
   recentSales: [
-    { id: 1, date: '2025-01-20', customer: 'John Doe', product: 'Product A', quantity: 2, amount: 1200, status: 'Completed' },
-    { id: 2, date: '2025-01-20', customer: 'Jane Smith', product: 'Product B', quantity: 1, amount: 890, status: 'Pending' },
-    { id: 3, date: '2025-01-19', customer: 'Bob Johnson', product: 'Product C', quantity: 3, amount: 1500, status: 'Completed' },
-    { id: 4, date: '2025-01-19', customer: 'Alice Brown', product: 'Product A', quantity: 1, amount: 600, status: 'Shipped' },
-    { id: 5, date: '2025-01-18', customer: 'Charlie Wilson', product: 'Product D', quantity: 2, amount: 800, status: 'Completed' }
   ],
   lowStockItems: [
     { id: 1, name: 'Product X', stock: 5, minStock: 20 },
@@ -365,10 +361,10 @@ const reportData = reactive({
     { id: 3, name: 'Bob Johnson', phone: '+1234567892', totalOrders: 22, totalSpent: 18500, lastOrder: '2025-01-15', status: 'Active' }
   ],
   financial: {
-    revenue: 125000,
-    expenses: 85000,
-    profit: 40000,
-    profitMargin: 32,
+    revenue: 0,
+    expenses: 0,
+    profit: 0,
+    profitMargin: 0,
     revenueGrowth: 12.5,
     expenseGrowth: 8.2,
     profitGrowth: 18.5,
@@ -384,6 +380,8 @@ const reportData = reactive({
 })
 
 // Methods
+
+const API_BASE_URL = Configs.API_BASE_URL
 const fetchReports = async () => {
   loading.value = true
   try {
@@ -392,12 +390,77 @@ const fetchReports = async () => {
     // const data = await response.json()
     // Object.assign(reportData, data)
 
+    const salesMetrics = await apiCall('/sales/sales-metrics', {
+      method: 'POST',
+      body: JSON.stringify({"days": selectedDateRange.value})
+    });
+
+    reportData.salesMetrics = await salesMetrics;
+
+
+
+    const sales  = await  apiCall('/sales/sales-by-days', {
+      method: 'POST',
+      body: JSON.stringify({"days": selectedDateRange.value})
+    });
+
+
+
+    console.log("sales:", sales);
+
+    reportData.recentSales = sales.map(sale => ({
+      id: sale.id,
+      date: sale.createdAt,
+      customer: sale.customer.name,
+      product: sale.item.name,
+      quantity: sale.quantity,
+      amount: sale.amountPaid,
+      status: "Completed"
+    }));
+
+
+
+    const financeReports = await apiCall('/expenses/sales-expense-breakdown', {
+      method: 'POST',
+      body: JSON.stringify({"days": selectedDateRange.value})
+    });
+
+
+    reportData.financial.revenue = financeReports.totalRevenue;
+    reportData.financial.expenses = financeReports.totalExpense;
+    reportData.financial.profit = financeReports.grossProfit;
+    reportData.financial.profitMargin = Number(financeReports.profitMargin.toFixed(2));
+
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000))
   } catch (error) {
     console.error('Error fetching reports:', error)
   } finally {
     loading.value = false
+  }
+}
+
+
+const apiCall = async (url, options = {}) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    console.error('API call failed:', err)
+    throw err
   }
 }
 

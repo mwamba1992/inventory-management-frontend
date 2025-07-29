@@ -392,7 +392,7 @@
               </td>
               <td class="p-4 text-right">
                 <span class="text-lg font-bold text-emerald-600">
-                  ${{ Number(sale.amountPaid).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                  TZS{{ Number(sale.amountPaid).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                 </span>
               </td>
               <td class="p-4">
@@ -718,7 +718,7 @@
               <div>
                 <label class="block text-sm font-medium text-gray-500 mb-1">Amount Paid</label>
                 <p class="text-2xl font-bold text-emerald-600">
-                  ${{ Number(selectedSale.amountPaid).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                  TZS{{ Number(selectedSale.amountPaid).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                 </p>
               </div>
 
@@ -820,12 +820,13 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
+import { Configs } from '@/utils/Configs'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
 
 // API Configuration
-const API_BASE_URL = 'http://84.247.178.93:3000'
+const API_BASE_URL = Configs.API_BASE_URL
 
 // Reactive data
 const sales = ref([])
