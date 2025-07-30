@@ -856,12 +856,13 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
+import { Configs } from '@/utils/Configs'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
 
 // API Configuration
-const API_BASE_URL = Configs.API_BASE_URL
+const API_BASE_URL =  Configs.API_BASE_URL
 // Reactive data
 const itemPrices = ref([])
 const availableItems = ref([])
