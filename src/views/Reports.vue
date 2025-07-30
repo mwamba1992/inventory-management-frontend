@@ -432,6 +432,22 @@ const fetchReports = async () => {
     reportData.financial.profitMargin = Number(financeReports.profitMargin.toFixed(2));
 
 
+
+    const expenseBreakDown = await  apiCall("/expenses/expense-breakdown", {
+      method: 'POST',
+      body: JSON.stringify({"days": selectedDateRange.value})
+    });
+
+
+
+    const  totalExpense = expenseBreakDown.reduce((sum, expense) => sum + expense.totalAmount, 0);
+
+    reportData.expenseBreakdown = expenseBreakDown.map(expense => ({
+      category: expense.category,
+      amount: expense.totalAmount,
+      percentage: Math.round((expense.totalAmount /  totalExpense) * 100)
+    }));
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000))
   } catch (error) {
