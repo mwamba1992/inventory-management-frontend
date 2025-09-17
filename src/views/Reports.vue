@@ -9,12 +9,31 @@
       <div class="filter-section">
         <div class="filter-group">
           <label>Date Range:</label>
-          <select v-model="selectedDateRange" @change="fetchReports">
+          <select v-model="selectedDateRange" @change="handleDateRangeChange">
             <option value="7">Last 7 days</option>
             <option value="30">Last 30 days</option>
             <option value="90">Last 3 months</option>
             <option value="365">Last year</option>
+            <option value="custom">Custom Range</option>
           </select>
+        </div>
+        <div v-if="selectedDateRange === 'custom'" class="filter-group">
+          <label>From Date:</label>
+          <input 
+            type="date" 
+            v-model="customDateFrom" 
+            @change="fetchReports"
+            class="date-input"
+          />
+        </div>
+        <div v-if="selectedDateRange === 'custom'" class="filter-group">
+          <label>To Date:</label>
+          <input 
+            type="date" 
+            v-model="customDateTo" 
+            @change="fetchReports"
+            class="date-input"
+          />
         </div>
         <div class="filter-group">
           <label>Report Type:</label>
@@ -321,6 +340,8 @@ import { Configs } from '@/utils/Configs'
 const loading = ref(true)
 const selectedDateRange = ref('30')
 const selectedReport = ref('overview')
+const customDateFrom = ref('')
+const customDateTo = ref('')
 
 const reportData = reactive({
   totalRevenue: 125000,
@@ -382,31 +403,49 @@ const reportData = reactive({
 // Methods
 
 const API_BASE_URL = Configs.API_BASE_URL
+const getDateRangePayload = () => {
+  if (selectedDateRange.value === 'custom') {
+    return {
+      startDate: customDateFrom.value,
+      endDate: customDateTo.value
+    };
+  } else {
+    return {
+      days: selectedDateRange.value
+    };
+  }
+};
+
 const fetchReports = async () => {
   loading.value = true
   try {
-    // API calls would go here
-    // const response = await fetch(`/api/reports?days=${selectedDateRange.value}`)
-    // const data = await response.json()
-    // Object.assign(reportData, data)
+    // Skip if custom range is selected but dates are not set
+    if (selectedDateRange.value === 'custom' && (!customDateFrom.value || !customDateTo.value)) {
+      loading.value = false;
+      return;
+    }
+
+    const datePayload = getDateRangePayload();
 
     const salesMetrics = await apiCall('/sales/sales-metrics', {
       method: 'POST',
-      body: JSON.stringify({"days": selectedDateRange.value})
+      body: JSON.stringify(datePayload)
     });
 
-    reportData.salesMetrics = await salesMetrics;
+    reportData.salesMetrics = salesMetrics;
+    console.log("salesMetrics:", salesMetrics);
 
 
 
     const sales  = await  apiCall('/sales/sales-by-days', {
       method: 'POST',
-      body: JSON.stringify({"days": selectedDateRange.value})
+      body: JSON.stringify(datePayload)
     });
 
 
 
     console.log("sales:", sales);
+    console.log("sales length:", sales.length);
 
     reportData.recentSales = sales.map(sale => ({
       id: sale.id,
@@ -418,11 +457,29 @@ const fetchReports = async () => {
       status: "Completed"
     }));
 
+    // Always calculate total units sold and total amount from actual sales data
+    const totalUnits = sales.reduce((total, sale) => {
+      console.log(`Sale ${sale.id}: quantity = ${sale.quantity}, amount = ${sale.amountPaid}`);
+      return total + (sale.quantity || 0);
+    }, 0);
+    
+    const totalAmount = sales.reduce((total, sale) => {
+      const amount = parseFloat(sale.amountPaid) || 0;
+      console.log(`Sale ${sale.id}: amountPaid = ${sale.amountPaid}, parsed = ${amount}`);
+      return total + amount;
+    }, 0);
+    
+    console.log("Calculated total units:", totalUnits);
+    console.log("Calculated total amount:", totalAmount);
+    
+    reportData.salesMetrics.units = totalUnits;
+    reportData.salesMetrics.total = totalAmount;
+
 
 
     const financeReports = await apiCall('/expenses/sales-expense-breakdown', {
       method: 'POST',
-      body: JSON.stringify({"days": selectedDateRange.value})
+      body: JSON.stringify(datePayload)
     });
 
 
@@ -435,7 +492,7 @@ const fetchReports = async () => {
 
     const expenseBreakDown = await  apiCall("/expenses/expense-breakdown", {
       method: 'POST',
-      body: JSON.stringify({"days": selectedDateRange.value})
+      body: JSON.stringify(datePayload)
     });
 
 
@@ -482,6 +539,18 @@ const apiCall = async (url, options = {}) => {
 
 const updateReport = () => {
   fetchReports()
+}
+
+const handleDateRangeChange = () => {
+  if (selectedDateRange.value === 'custom') {
+    // Set default dates if custom is selected
+    const today = new Date();
+    const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    customDateTo.value = today.toISOString().split('T')[0];
+    customDateFrom.value = lastWeek.toISOString().split('T')[0];
+  }
+  fetchReports();
 }
 
 const exportReport = () => {
@@ -560,12 +629,17 @@ watch(selectedDateRange, () => {
   color: #374151;
 }
 
-.filter-group select {
+.filter-group select,
+.date-input {
   padding: 8px 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: white;
   font-size: 14px;
+}
+
+.date-input {
+  min-width: 150px;
 }
 
 .export-btn {

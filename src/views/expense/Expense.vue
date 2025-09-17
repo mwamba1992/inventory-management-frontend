@@ -1,7 +1,7 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
-    <div class="max-w-7xl mx-auto">
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+    <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
       <div class="flex items-center text-sm text-gray-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
