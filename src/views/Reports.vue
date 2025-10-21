@@ -1,4 +1,5 @@
 <template>
+  <SwalAlert ref="swalAlert" />
   <div class="reports-container">
     <!-- Page Header -->
     <div class="page-header">
@@ -72,7 +73,9 @@
           <div class="summary-card">
             <div class="card-header">
               <h3>Total Revenue</h3>
-              <div class="trend positive">+12.5%</div>
+              <div :class="['trend', reportData.revenueGrowth >= 0 ? 'positive' : 'negative']">
+                {{ reportData.revenueGrowth >= 0 ? '+' : '' }}{{ reportData.revenueGrowth.toFixed(1) }}%
+              </div>
             </div>
             <div class="card-value">TZS{{ formatNumber(reportData.totalRevenue) }}</div>
             <div class="card-period">Last {{ selectedDateRange }} days</div>
@@ -81,7 +84,9 @@
           <div class="summary-card">
             <div class="card-header">
               <h3>Total Orders</h3>
-              <div class="trend positive">+8.3%</div>
+              <div :class="['trend', reportData.ordersGrowth >= 0 ? 'positive' : 'negative']">
+                {{ reportData.ordersGrowth >= 0 ? '+' : '' }}{{ reportData.ordersGrowth.toFixed(1) }}%
+              </div>
             </div>
             <div class="card-value">{{ formatNumber(reportData.totalOrders) }}</div>
             <div class="card-period">Last {{ selectedDateRange }} days</div>
@@ -90,7 +95,9 @@
           <div class="summary-card">
             <div class="card-header">
               <h3>Active Customers</h3>
-              <div class="trend positive">+15.2%</div>
+              <div :class="['trend', reportData.customersGrowth >= 0 ? 'positive' : 'negative']">
+                {{ reportData.customersGrowth >= 0 ? '+' : '' }}{{ reportData.customersGrowth.toFixed(1) }}%
+              </div>
             </div>
             <div class="card-value">{{ formatNumber(reportData.activeCustomers) }}</div>
             <div class="card-period">Last {{ selectedDateRange }} days</div>
@@ -99,7 +106,9 @@
           <div class="summary-card">
             <div class="card-header">
               <h3>Avg Order Value</h3>
-              <div class="trend negative">-2.1%</div>
+              <div :class="['trend', reportData.avgOrderGrowth >= 0 ? 'positive' : 'negative']">
+                {{ reportData.avgOrderGrowth >= 0 ? '+' : '' }}{{ reportData.avgOrderGrowth.toFixed(1) }}%
+              </div>
             </div>
             <div class="card-value">TZS{{ formatNumber(reportData.avgOrderValue) }}</div>
             <div class="card-period">Last {{ selectedDateRange }} days</div>
@@ -174,6 +183,41 @@
       <div v-if="selectedReport === 'inventory'" class="report-section">
         <h2 class="section-title">Inventory Report</h2>
 
+        <!-- Inventory Summary Cards -->
+        <div class="summary-grid" style="margin-bottom: 32px;">
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Total Items</h3>
+            </div>
+            <div class="card-value">{{ formatNumber(reportData.inventory.totalItems) }}</div>
+            <div class="card-period">In inventory</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Total Stock Value</h3>
+            </div>
+            <div class="card-value">TZS{{ formatNumber(reportData.inventory.totalStockValue) }}</div>
+            <div class="card-period">Current valuation</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Low Stock Items</h3>
+            </div>
+            <div class="card-value" style="color: #f59e0b;">{{ reportData.inventory.lowStockCount }}</div>
+            <div class="card-period">Need reorder</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Out of Stock</h3>
+            </div>
+            <div class="card-value" style="color: #ef4444;">{{ reportData.inventory.outOfStockCount }}</div>
+            <div class="card-period">Urgent attention</div>
+          </div>
+        </div>
+
         <div class="inventory-alerts">
           <div class="alert-box low-stock">
             <h3>Low Stock Items</h3>
@@ -196,12 +240,35 @@
           </div>
         </div>
 
-        <div class="data-table-container">
+        <!-- Items by Category -->
+        <div v-if="reportData.inventory.itemsByCategory.length > 0" class="data-table-container" style="margin-top: 32px;">
+          <h3>Items by Category</h3>
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th>Category</th>
+              <th>Item Count</th>
+              <th>Total Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="category in reportData.inventory.itemsByCategory" :key="category.category">
+              <td>{{ category.category }}</td>
+              <td>{{ formatNumber(category.count) }}</td>
+              <td>TZS{{ formatNumber(category.value) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="data-table-container" style="margin-top: 32px;">
           <h3>Inventory Summary</h3>
           <table class="data-table">
             <thead>
             <tr>
-              <th>Product</th>
+              <th>Product Code</th>
+              <th>Product Name</th>
+              <th>Category</th>
               <th>Current Stock</th>
               <th>Min Stock</th>
               <th>Value</th>
@@ -211,13 +278,15 @@
             </thead>
             <tbody>
             <tr v-for="item in reportData.inventoryItems" :key="item.id">
+              <td><span class="font-medium">{{ item.productCode }}</span></td>
               <td>{{ item.name }}</td>
-              <td>{{ item.currentStock }}</td>
-              <td>{{ item.minStock }}</td>
+              <td>{{ item.category || 'N/A' }}</td>
+              <td class="text-center">{{ formatNumber(item.currentStock) }}</td>
+              <td class="text-center">{{ formatNumber(item.minStock) }}</td>
               <td>TZS{{ formatNumber(item.value) }}</td>
               <td>{{ item.warehouse }}</td>
               <td>
-                  <span :class="['status', getStockStatus(item).toLowerCase()]">
+                  <span :class="['status', getStockStatus(item).toLowerCase().replace(/\s+/g, '.')]">
                     {{ getStockStatus(item) }}
                   </span>
               </td>
@@ -335,6 +404,24 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
 import { Configs } from '@/utils/Configs'
+import SwalAlert from '@/components/common/SwalAlert.vue'
+import { Chart, registerables } from 'chart.js'
+import { useUserStore } from '@/stores/user'
+
+// Register Chart.js components
+Chart.register(...registerables)
+
+// User store for authentication
+const userStore = useUserStore()
+
+// Create a ref to the SwalAlert component
+const swalAlert = ref(null)
+
+// Chart refs
+const salesChart = ref(null)
+const productsChart = ref(null)
+let salesChartInstance = null
+let productsChartInstance = null
 
 // Reactive data
 const loading = ref(true)
@@ -344,60 +431,50 @@ const customDateFrom = ref('')
 const customDateTo = ref('')
 
 const reportData = reactive({
-  totalRevenue: 125000,
-  totalOrders: 1250,
-  activeCustomers: 320,
-  avgOrderValue: 100,
+  totalRevenue: 0,
+  totalOrders: 0,
+  activeCustomers: 0,
+  avgOrderValue: 0,
+  revenueGrowth: 0,
+  ordersGrowth: 0,
+  customersGrowth: 0,
+  avgOrderGrowth: 0,
   salesMetrics: {
     total: 0,
     units: 0,
     growth: 0
   },
-  recentSales: [
-  ],
-  lowStockItems: [
-    { id: 1, name: 'Product X', stock: 5, minStock: 20 },
-    { id: 2, name: 'Product Y', stock: 8, minStock: 25 },
-    { id: 3, name: 'Product Z', stock: 12, minStock: 30 }
-  ],
-  outOfStockItems: [
-    { id: 1, name: 'Product M' },
-    { id: 2, name: 'Product N' }
-  ],
-  inventoryItems: [
-    { id: 1, name: 'Product A', currentStock: 150, minStock: 50, value: 15000, warehouse: 'Main Warehouse' },
-    { id: 2, name: 'Product B', currentStock: 25, minStock: 30, value: 8500, warehouse: 'Secondary Warehouse' },
-    { id: 3, name: 'Product C', currentStock: 200, minStock: 100, value: 25000, warehouse: 'Main Warehouse' },
-    { id: 4, name: 'Product D', currentStock: 0, minStock: 20, value: 0, warehouse: 'Main Warehouse' }
-  ],
-  customerMetrics: {
-    newCustomers: 45,
-    returningCustomers: 275,
-    returnRate: 85,
-    avgLifetimeValue: 2500
+  recentSales: [],
+  topProducts: [],
+  salesTrend: [],
+  inventory: {
+    totalItems: 0,
+    totalStockValue: 0,
+    lowStockCount: 0,
+    outOfStockCount: 0,
+    itemsByCategory: []
   },
-  topCustomers: [
-    { id: 1, name: 'John Doe', phone: '+1234567890', totalOrders: 25, totalSpent: 15000, lastOrder: '2025-01-20', status: 'Active' },
-    { id: 2, name: 'Jane Smith', phone: '+1234567891', totalOrders: 18, totalSpent: 12000, lastOrder: '2025-01-18', status: 'Active' },
-    { id: 3, name: 'Bob Johnson', phone: '+1234567892', totalOrders: 22, totalSpent: 18500, lastOrder: '2025-01-15', status: 'Active' }
-  ],
+  lowStockItems: [],
+  outOfStockItems: [],
+  inventoryItems: [],
+  customerMetrics: {
+    newCustomers: 0,
+    returningCustomers: 0,
+    returnRate: 0,
+    avgLifetimeValue: 0
+  },
+  topCustomers: [],
   financial: {
     revenue: 0,
     expenses: 0,
     profit: 0,
     profitMargin: 0,
-    revenueGrowth: 12.5,
-    expenseGrowth: 8.2,
-    profitGrowth: 18.5,
-    marginGrowth: 2.3
+    revenueGrowth: 0,
+    expenseGrowth: 0,
+    profitGrowth: 0,
+    marginGrowth: 0
   },
-  expenseBreakdown: [
-    { category: 'Inventory Purchase', amount: 45000, percentage: 53 },
-    { category: 'Staff Salaries', amount: 20000, percentage: 24 },
-    { category: 'Rent & Utilities', amount: 8000, percentage: 9 },
-    { category: 'Marketing', amount: 7000, percentage: 8 },
-    { category: 'Other Expenses', amount: 5000, percentage: 6 }
-  ]
+  expenseBreakdown: []
 })
 
 // Methods
@@ -419,109 +496,282 @@ const getDateRangePayload = () => {
 const fetchReports = async () => {
   loading.value = true
   try {
-    // Skip if custom range is selected but dates are not set
+    // Validate custom date range
     if (selectedDateRange.value === 'custom' && (!customDateFrom.value || !customDateTo.value)) {
       loading.value = false;
+      swalAlert.value?.showWarning('Invalid Date Range', 'Please select both start and end dates for custom range');
       return;
     }
 
-    const datePayload = getDateRangePayload();
+    // Build query parameters for GET request
+    let queryParams = '';
+    if (selectedDateRange.value === 'custom') {
+      queryParams = `?startDate=${customDateFrom.value}&endDate=${customDateTo.value}`;
+    } else {
+      // Map UI date range values to API dateRange format
+      const dateRangeMap = {
+        '7': 'last_7_days',
+        '30': 'last_30_days',
+        '90': 'last_90_days',
+        '365': 'this_year'
+      };
+      const dateRangeValue = dateRangeMap[selectedDateRange.value] || 'last_30_days';
+      queryParams = `?dateRange=${dateRangeValue}`;
+    }
 
-    const salesMetrics = await apiCall('/sales/sales-metrics', {
-      method: 'POST',
-      body: JSON.stringify(datePayload)
-    });
+    // Fetch comprehensive business overview data from single endpoint (GET)
+    const businessOverview = await apiCall(`/reports/business-overview${queryParams}`);
 
-    reportData.salesMetrics = salesMetrics;
-    console.log("salesMetrics:", salesMetrics);
+    // Map overview metrics (new structure with current/previous/percentageChange)
+    reportData.totalRevenue = businessOverview.totalRevenue?.current || 0;
+    reportData.totalOrders = businessOverview.totalOrders?.current || 0;
+    reportData.activeCustomers = businessOverview.activeCustomers?.current || 0;
+    reportData.avgOrderValue = businessOverview.avgOrderValue?.current || 0;
 
+    // Store growth percentages for display
+    reportData.revenueGrowth = businessOverview.totalRevenue?.percentageChange || 0;
+    reportData.ordersGrowth = businessOverview.totalOrders?.percentageChange || 0;
+    reportData.customersGrowth = businessOverview.activeCustomers?.percentageChange || 0;
+    reportData.avgOrderGrowth = businessOverview.avgOrderValue?.percentageChange || 0;
 
+    // Map sales metrics
+    reportData.salesMetrics = {
+      total: businessOverview.totalRevenue?.current || 0,
+      units: businessOverview.totalOrders?.current || 0,
+      growth: businessOverview.totalRevenue?.percentageChange || 0
+    };
 
-    const sales  = await  apiCall('/sales/sales-by-days', {
-      method: 'POST',
-      body: JSON.stringify(datePayload)
-    });
-
-
-
-    console.log("sales:", sales);
-    console.log("sales length:", sales.length);
-
-    reportData.recentSales = sales.map(sale => ({
-      id: sale.id,
-      date: sale.createdAt,
-      customer: sale.customer.name,
-      product: sale.item.name,
-      quantity: sale.quantity,
-      amount: sale.amountPaid,
-      status: "Completed"
+    // Map top products (renamed from topProducts to match API response)
+    reportData.topProducts = (businessOverview.topProducts || []).map(product => ({
+      name: product.name,
+      quantity: product.quantitySold,
+      revenue: product.revenue
     }));
 
-    // Always calculate total units sold and total amount from actual sales data
-    const totalUnits = sales.reduce((total, sale) => {
-      console.log(`Sale ${sale.id}: quantity = ${sale.quantity}, amount = ${sale.amountPaid}`);
-      return total + (sale.quantity || 0);
-    }, 0);
-    
-    const totalAmount = sales.reduce((total, sale) => {
-      const amount = parseFloat(sale.amountPaid) || 0;
-      console.log(`Sale ${sale.id}: amountPaid = ${sale.amountPaid}, parsed = ${amount}`);
-      return total + amount;
-    }, 0);
-    
-    console.log("Calculated total units:", totalUnits);
-    console.log("Calculated total amount:", totalAmount);
-    
-    reportData.salesMetrics.units = totalUnits;
-    reportData.salesMetrics.total = totalAmount;
-
-
-
-    const financeReports = await apiCall('/expenses/sales-expense-breakdown', {
-      method: 'POST',
-      body: JSON.stringify(datePayload)
-    });
-
-
-    reportData.financial.revenue = financeReports.totalRevenue;
-    reportData.financial.expenses = financeReports.totalExpense;
-    reportData.financial.profit = financeReports.grossProfit;
-    reportData.financial.profitMargin = Number(financeReports.profitMargin.toFixed(2));
-
-
-
-    const expenseBreakDown = await  apiCall("/expenses/expense-breakdown", {
-      method: 'POST',
-      body: JSON.stringify(datePayload)
-    });
-
-
-
-    const  totalExpense = expenseBreakDown.reduce((sum, expense) => sum + expense.totalAmount, 0);
-
-    reportData.expenseBreakdown = expenseBreakDown.map(expense => ({
-      category: expense.category,
-      amount: expense.totalAmount,
-      percentage: Math.round((expense.totalAmount /  totalExpense) * 100)
+    // Map sales trend
+    reportData.salesTrend = (businessOverview.salesTrend || []).map(item => ({
+      date: new Date(item.date).toLocaleDateString(),
+      amount: item.revenue
     }));
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Recent sales - if provided in response (keep empty for now as not in sample)
+    reportData.recentSales = businessOverview.recentSales || [];
+
+    // Map financial data - if provided (keep existing structure for now)
+    reportData.financial.revenue = businessOverview.totalRevenue?.current || 0;
+    reportData.financial.expenses = 0; // Not in current response
+    reportData.financial.profit = 0; // Not in current response
+    reportData.financial.profitMargin = 0; // Not in current response
+    reportData.financial.revenueGrowth = businessOverview.totalRevenue?.percentageChange || 0;
+
+    // Expense breakdown - not in current response, keep empty
+    reportData.expenseBreakdown = businessOverview.expenseBreakdown || [];
+
+    // Fetch inventory report data (GET request)
+    const inventoryReport = await apiCall('/reports/inventory');
+
+    reportData.inventory.totalItems = inventoryReport.totalItems || 0;
+    reportData.inventory.totalStockValue = inventoryReport.totalStockValue || 0;
+    reportData.inventory.lowStockCount = inventoryReport.lowStockItems || 0;
+    reportData.inventory.outOfStockCount = inventoryReport.outOfStockItems || 0;
+    reportData.inventory.itemsByCategory = inventoryReport.itemsByCategory || [];
+
+    // Map inventory items from API response
+    reportData.inventoryItems = (inventoryReport.items || []).map(item => ({
+      id: item.id,
+      name: item.productName,
+      productCode: item.productCode,
+      currentStock: item.currentStock,
+      minStock: item.minStock,
+      value: item.value,
+      warehouse: item.warehouse,
+      status: item.status,
+      category: item.category
+    }));
+
+    // Filter low stock and out of stock items
+    reportData.lowStockItems = reportData.inventoryItems.filter(item =>
+      item.status === 'Low Stock' || (item.currentStock < item.minStock && item.currentStock > 0)
+    ).map(item => ({
+      id: item.id,
+      name: item.name,
+      stock: item.currentStock,
+      minStock: item.minStock
+    }));
+
+    reportData.outOfStockItems = reportData.inventoryItems.filter(item =>
+      item.status === 'Out of Stock' || item.currentStock === 0
+    ).map(item => ({
+      id: item.id,
+      name: item.name
+    }));
+
+    // Render charts after data is loaded (only for overview)
+    if (selectedReport.value === 'overview') {
+      // Use setTimeout to ensure DOM is fully rendered
+      setTimeout(() => {
+        renderCharts();
+      }, 100);
+    }
   } catch (error) {
     console.error('Error fetching reports:', error)
+    swalAlert.value?.showError('Failed to fetch reports', error.message || 'An error occurred while loading the report data')
   } finally {
     loading.value = false
   }
 }
 
+const renderCharts = () => {
+  // Only render charts if we're on the overview report
+  if (selectedReport.value !== 'overview') {
+    return;
+  }
+
+  // Destroy existing charts
+  if (salesChartInstance) {
+    salesChartInstance.destroy();
+    salesChartInstance = null;
+  }
+  if (productsChartInstance) {
+    productsChartInstance.destroy();
+    productsChartInstance = null;
+  }
+
+  // Check if chart elements exist in the DOM
+  if (!salesChart.value || !productsChart.value) {
+    return;
+  }
+
+  // Render Sales Trend Chart
+  if (reportData.salesTrend.length > 0) {
+    try {
+      const ctx = salesChart.value.getContext('2d');
+      salesChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: reportData.salesTrend.map(item => item.date),
+          datasets: [{
+            label: 'Sales (TZS)',
+            data: reportData.salesTrend.map(item => item.amount),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'TZS ' + context.parsed.y.toLocaleString();
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'TZS ' + value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+      });
+    } catch (error) {
+      console.error('Error rendering sales trend chart:', error);
+    }
+  }
+
+  // Render Top Products Chart
+  if (reportData.topProducts.length > 0) {
+    try {
+      const ctx = productsChart.value.getContext('2d');
+      productsChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: reportData.topProducts.map(item => item.name),
+          datasets: [{
+            label: 'Revenue (TZS)',
+            data: reportData.topProducts.map(item => item.revenue),
+            backgroundColor: [
+              'rgba(59, 130, 246, 0.8)',
+              'rgba(16, 185, 129, 0.8)',
+              'rgba(245, 158, 11, 0.8)',
+              'rgba(239, 68, 68, 0.8)',
+              'rgba(139, 92, 246, 0.8)'
+            ],
+            borderColor: [
+              '#3b82f6',
+              '#10b981',
+              '#f59e0b',
+              '#ef4444',
+              '#8b5cf6'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const product = reportData.topProducts[context.dataIndex];
+                  return [
+                    'Revenue: TZS ' + context.parsed.y.toLocaleString(),
+                    'Quantity: ' + product.quantity.toLocaleString()
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return 'TZS ' + value.toLocaleString();
+                }
+              }
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error rendering top products chart:', error);
+    }
+  }
+}
 
 const apiCall = async (url, options = {}) => {
   try {
+    const token = userStore.getToken
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    }
+
+    // Add Authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
     const response = await fetch(`${API_BASE_URL}${url}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       ...options,
     })
 
@@ -567,6 +817,8 @@ const formatDate = (dateString) => {
 }
 
 const getStockStatus = (item) => {
+  // Use API-provided status if available, otherwise calculate
+  if (item.status) return item.status
   if (item.currentStock === 0) return 'Out of Stock'
   if (item.currentStock < item.minStock) return 'Low Stock'
   return 'In Stock'
@@ -578,8 +830,13 @@ onMounted(() => {
 })
 
 // Watchers
-watch(selectedDateRange, () => {
-  fetchReports()
+watch(selectedReport, () => {
+  // Re-render charts when switching to overview report
+  if (selectedReport.value === 'overview') {
+    setTimeout(() => {
+      renderCharts()
+    }, 100)
+  }
 })
 </script>
 
@@ -778,6 +1035,8 @@ watch(selectedDateRange, () => {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 20px;
+  overflow: hidden;
+  position: relative;
 }
 
 .chart-container h3 {
@@ -788,10 +1047,13 @@ watch(selectedDateRange, () => {
 }
 
 .chart {
-  width: 100%;
-  height: 300px;
+  width: 100% !important;
+  height: 300px !important;
+  max-width: 100%;
+  max-height: 300px;
   background: #f9fafb;
   border-radius: 8px;
+  display: block;
 }
 
 .report-metrics {
@@ -1118,5 +1380,15 @@ watch(selectedDateRange, () => {
   .expense-info {
     min-width: auto;
   }
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.font-medium {
+  font-weight: 500;
+  color: #374151;
 }
 </style>
