@@ -56,6 +56,7 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
+  ChatBubbleLeftRightIcon,
   ChevronDownIcon,
   CogIcon,
   CubeIcon,
@@ -115,6 +116,7 @@ const sidebarItems = [
     ],
   },
   { icon: DocumentTextIcon, label: 'Reports', key: 'reports', route: '/reports' },
+  { icon: ChatBubbleLeftRightIcon, label: 'WhatsApp Orders', key: 'whatsapp-orders', route: '/whatsapp-orders' },
   { icon: QuestionMarkCircleIcon, label: 'Help and Support', key: 'help', route: '/help' },
 ]
 

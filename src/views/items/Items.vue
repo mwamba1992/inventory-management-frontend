@@ -253,6 +253,9 @@
                 </div>
               </th>
               <th class="p-4 text-left">
+                <span class="text-sm font-semibold text-gray-900">Code</span>
+              </th>
+              <th class="p-4 text-left">
                 <span class="text-sm font-semibold text-gray-900">Description</span>
               </th>
               <th class="p-4 text-left">
@@ -271,7 +274,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200/50">
             <tr v-if="loading">
-              <td colspan="8" class="p-12 text-center">
+              <td colspan="9" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                   <span class="text-gray-500">Loading items...</span>
@@ -279,7 +282,7 @@
               </td>
             </tr>
             <tr v-else-if="paginatedItems.length === 0">
-              <td colspan="8" class="p-12 text-center text-gray-500">
+              <td colspan="9" class="p-12 text-center text-gray-500">
                 <CubeIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No items found' : 'No items yet' }}
@@ -312,16 +315,43 @@
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
-                  <div
-                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center"
-                  >
-                    <CubeIcon class="w-5 h-5 text-white" />
+                  <!-- Product Image or Icon -->
+                  <div class="relative group">
+                    <div v-if="item.imageUrl" class="w-12 h-12 rounded-xl overflow-hidden shadow-md ring-2 ring-white">
+                      <img
+                        :src="item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`"
+                        :alt="item.name"
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div
+                      v-else
+                      class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md"
+                    >
+                      <CubeIcon class="w-6 h-6 text-white" />
+                    </div>
+                    <!-- Hover Zoom Preview -->
+                    <div v-if="item.imageUrl" class="absolute left-full ml-2 top-0 hidden group-hover:block z-50 pointer-events-none">
+                      <div class="bg-white rounded-xl shadow-2xl border-2 border-gray-200 p-2">
+                        <img
+                          :src="item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`"
+                          :alt="item.name"
+                          class="w-48 h-48 object-contain rounded-lg"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <p class="text-sm font-medium text-gray-900">{{ item.name }}</p>
                     <p class="text-xs text-gray-500">Item #{{ item.id }}</p>
                   </div>
                 </div>
+              </td>
+              <td class="p-4">
+                <span v-if="item.code" class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-medium bg-indigo-100 text-indigo-800">
+                  {{ item.code }}
+                </span>
+                <span v-else class="text-xs text-gray-400">No code</span>
               </td>
               <td class="p-4">
                 <p class="text-sm text-gray-900 max-w-xs truncate" :title="item.desc">
@@ -366,6 +396,24 @@
               <td class="p-4">
                 <div class="flex items-center space-x-2">
                   <button
+                    @click="shareOnWhatsApp(item)"
+                    class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200"
+                    title="Share on WhatsApp"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                  </button>
+                  <button
+                    @click="copyWhatsAppLink(item)"
+                    class="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+                    title="Copy WhatsApp Link"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                  <button
                     @click="openEditModal(item)"
                     class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
                     title="Edit Item"
@@ -374,7 +422,7 @@
                   </button>
                   <button
                     @click="viewItemDetails(item)"
-                    class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200"
                     title="View Details"
                   >
                     <EyeIcon class="w-4 h-4" />
@@ -507,6 +555,16 @@
               </div>
 
               <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Code</label>
+                <input
+                  v-model="form.code"
+                  type="text"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-mono"
+                  placeholder="Enter item code (e.g., SKU-001)"
+                />
+              </div>
+
+              <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Category *</label>
                 <select
                   v-model="form.categoryId"
@@ -532,6 +590,84 @@
                   class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter item description (optional)"
                 ></textarea>
+              </div>
+
+              <!-- Product Image Upload -->
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image</label>
+
+                <!-- Drag and Drop Zone -->
+                <div
+                  v-if="!imagePreview"
+                  @dragover="handleDragOver"
+                  @dragleave="handleDragLeave"
+                  @drop="handleDrop"
+                  :class="[
+                    'border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 cursor-pointer',
+                    isDragging
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                  ]"
+                  @click="$refs.imageInput?.click()"
+                >
+                  <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p class="text-sm font-medium text-gray-700 mb-1">
+                    Drop your image here or click to browse
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    Supports: JPG, PNG, GIF (Max 5MB)
+                  </p>
+                  <input
+                    ref="imageInput"
+                    type="file"
+                    accept="image/*"
+                    @change="handleImageChange"
+                    class="hidden"
+                  />
+                </div>
+
+                <!-- Image Preview -->
+                <div v-else class="relative">
+                  <div class="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
+                    <img
+                      :src="imagePreview"
+                      alt="Preview"
+                      class="max-h-64 mx-auto rounded-lg shadow-md object-contain"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    @click="removeImage"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-all duration-200 shadow-lg"
+                    title="Remove image"
+                  >
+                    <XMarkIcon class="w-5 h-5" />
+                  </button>
+                  <div class="mt-3 flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-gray-200">
+                    <div class="flex items-center space-x-3">
+                      <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                      <span class="text-sm font-medium text-gray-700">Image ready to upload</span>
+                    </div>
+                    <button
+                      type="button"
+                      @click="$refs.imageInput?.click()"
+                      class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Change
+                    </button>
+                  </div>
+                  <input
+                    ref="imageInput"
+                    type="file"
+                    accept="image/*"
+                    @change="handleImageChange"
+                    class="hidden"
+                  />
+                </div>
               </div>
 
               <!-- Location & Business -->
@@ -579,23 +715,38 @@
               </div>
 
               <!-- Preview Section -->
-              <div v-if="form.name && form.categoryId" class="md:col-span-2 bg-gray-50 rounded-lg p-4">
-                <h5 class="text-sm font-semibold text-gray-700 mb-2">Item Preview</h5>
-                <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                    <CubeIcon class="w-5 h-5 text-white" />
+              <div v-if="form.name && form.categoryId" class="md:col-span-2 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+                <h5 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                  <EyeIcon class="w-4 h-4 mr-2" />
+                  Item Preview
+                </h5>
+                <div class="flex items-start space-x-4">
+                  <!-- Preview Image -->
+                  <div class="flex-shrink-0">
+                    <div v-if="imagePreview" class="w-20 h-20 rounded-xl overflow-hidden shadow-lg ring-2 ring-white">
+                      <img
+                        :src="imagePreview"
+                        :alt="form.name"
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div v-else class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <CubeIcon class="w-10 h-10 text-white" />
+                    </div>
                   </div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">{{ form.name }}</p>
-                    <p class="text-xs text-gray-500">{{ form.desc || 'No description provided' }}</p>
-                    <div class="flex items-center space-x-2 mt-1">
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <!-- Preview Info -->
+                  <div class="flex-1 min-w-0">
+                    <p class="text-base font-semibold text-gray-900 mb-1">{{ form.name }}</p>
+                    <p v-if="form.code" class="text-xs font-mono text-indigo-600 mb-2">{{ form.code }}</p>
+                    <p class="text-sm text-gray-600 mb-3">{{ form.desc || 'No description provided' }}</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                         {{ getCategoryName(form.categoryId) }}
                       </span>
                       <span class="text-xs text-gray-400">•</span>
-                      <span class="text-xs text-gray-600">{{ getWarehouseName(form.warehouseId) }}</span>
+                      <span class="text-xs text-gray-700 font-medium">{{ getWarehouseName(form.warehouseId) }}</span>
                       <span class="text-xs text-gray-400">•</span>
-                      <span class="text-xs text-gray-600">{{ getBusinessName(form.businessId) }}</span>
+                      <span class="text-xs text-gray-700 font-medium">{{ getBusinessName(form.businessId) }}</span>
                     </div>
                   </div>
                 </div>
@@ -734,11 +885,17 @@ const itemToDelete = ref(null)
 const form = ref({
   id: null,
   name: '',
+  code: '',
   desc: '',
   categoryId: '',
   warehouseId: '',
   businessId: '',
 })
+
+// Image upload states
+const imageFile = ref(null)
+const imagePreview = ref(null)
+const isDragging = ref(false)
 
 // API Functions
 const apiCall = async (url, options = {}) => {
@@ -973,10 +1130,12 @@ const exportItems = () => {
   const csvData = filteredItems.value.map(item => ({
     ID: item.id,
     Name: item.name,
+    Code: item.code || '',
     Description: item.desc || '',
     Category: item.category?.code || '',
     Warehouse: item.warehouse?.code || '',
-    Business: item.business?.name || ''
+    Business: item.business?.name || '',
+    Image: item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`) : 'No image'
   }))
 
   // Simple CSV export (in real implementation, you'd use a proper CSV library)
@@ -1068,6 +1227,7 @@ const openAddModal = () => {
   form.value = {
     id: null,
     name: '',
+    code: '',
     desc: '',
     categoryId: '',
     warehouseId: '',
@@ -1081,10 +1241,15 @@ const openEditModal = (item) => {
   form.value = {
     id: item.id,
     name: item.name,
+    code: item.code || '',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
     warehouseId: item.warehouse?.id || '',
     businessId: item.business?.id || '',
+  }
+  // Set existing image preview if item has an image
+  if (item.imageUrl) {
+    imagePreview.value = item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`
   }
   showModal.value = true
 }
@@ -1094,11 +1259,14 @@ const closeModal = () => {
   form.value = {
     id: null,
     name: '',
+    code: '',
     desc: '',
     categoryId: '',
     warehouseId: '',
     businessId: '',
   }
+  // Clean up image states
+  removeImage()
   error.value = ''
 }
 
@@ -1106,16 +1274,30 @@ const saveItem = async () => {
   try {
     const itemData = {
       name: form.value.name.trim(),
+      code: form.value.code.trim() || null,
       desc: form.value.desc.trim() || null,
       categoryId: form.value.categoryId,
       warehouseId: form.value.warehouseId,
       businessId: form.value.businessId,
     }
 
+    let savedItem
     if (isEditing.value) {
-      await updateItem(form.value.id, itemData)
+      savedItem = await updateItem(form.value.id, itemData)
     } else {
-      await createItem(itemData)
+      savedItem = await createItem(itemData)
+    }
+
+    // Upload image if selected
+    if (imageFile.value && savedItem) {
+      try {
+        await uploadImage(savedItem.id)
+        swalAlert.value?.showSuccess('Success', 'Item and image saved successfully')
+      } catch (imgErr) {
+        swalAlert.value?.showWarning('Partial Success', 'Item saved but image upload failed')
+      }
+      // Refresh items to show new image
+      await fetchItems()
     }
 
     closeModal()
@@ -1130,6 +1312,7 @@ const duplicateItem = (item) => {
   form.value = {
     id: null,
     name: `${item.name} (Copy)`,
+    code: item.code ? `${item.code}-COPY` : '',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
     warehouseId: item.warehouse?.id || '',
@@ -1188,6 +1371,114 @@ const viewItemDetails = (item) => {
   alert(
     `Item Details:\nName: ${item.name}\nID: #${item.id}\nDescription: ${item.desc || 'No description'}\nCategory: ${categoryInfo}\nWarehouse: ${warehouseInfo}\nBusiness: ${businessInfo}`
   )
+}
+
+// Image Upload Functions
+const handleImageChange = (event) => {
+  const file = event.target.files?.[0]
+  if (file) {
+    if (!file.type.startsWith('image/')) {
+      swalAlert.value?.showError('Invalid File', 'Please select an image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      swalAlert.value?.showError('File Too Large', 'Image size must be less than 5MB')
+      return
+    }
+    imageFile.value = file
+    imagePreview.value = URL.createObjectURL(file)
+  }
+}
+
+const handleDragOver = (event) => {
+  event.preventDefault()
+  isDragging.value = true
+}
+
+const handleDragLeave = (event) => {
+  event.preventDefault()
+  isDragging.value = false
+}
+
+const handleDrop = (event) => {
+  event.preventDefault()
+  isDragging.value = false
+
+  const file = event.dataTransfer.files?.[0]
+  if (file) {
+    if (!file.type.startsWith('image/')) {
+      swalAlert.value?.showError('Invalid File', 'Please select an image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      swalAlert.value?.showError('File Too Large', 'Image size must be less than 5MB')
+      return
+    }
+    imageFile.value = file
+    imagePreview.value = URL.createObjectURL(file)
+  }
+}
+
+const removeImage = () => {
+  imageFile.value = null
+  if (imagePreview.value) {
+    URL.revokeObjectURL(imagePreview.value)
+    imagePreview.value = null
+  }
+}
+
+const uploadImage = async (itemId) => {
+  if (!imageFile.value) return
+
+  const formData = new FormData()
+  formData.append('image', imageFile.value)
+
+  try {
+    await fetch(`${API_BASE_URL}/items/${itemId}/upload-image`, {
+      method: 'POST',
+      body: formData,
+    })
+  } catch (err) {
+    console.error('Failed to upload image:', err)
+    throw err
+  }
+}
+
+// WhatsApp Share Functions
+const shareOnWhatsApp = (item) => {
+  const phoneNumber = '255676107301'
+  const message = `ORDER:${item.id}`
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+
+  // Open WhatsApp in a new tab
+  window.open(whatsappUrl, '_blank')
+}
+
+const copyWhatsAppLink = async (item) => {
+  const phoneNumber = '255676107301'
+  const message = `ORDER:${item.id}`
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+
+  try {
+    await navigator.clipboard.writeText(whatsappUrl)
+    swalAlert.value?.showSuccess('Link Copied!', `WhatsApp order link for ${item.name} has been copied to clipboard`)
+  } catch (err) {
+    console.error('Failed to copy link:', err)
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea')
+    textArea.value = whatsappUrl
+    textArea.style.position = 'fixed'
+    textArea.style.left = '-999999px'
+    document.body.appendChild(textArea)
+    textArea.select()
+    try {
+      document.execCommand('copy')
+      swalAlert.value?.showSuccess('Link Copied!', `WhatsApp order link for ${item.name} has been copied to clipboard`)
+    } catch (fallbackErr) {
+      swalAlert.value?.showError('Copy Failed', 'Unable to copy link to clipboard')
+    }
+    document.body.removeChild(textArea)
+  }
 }
 
 // Other actions

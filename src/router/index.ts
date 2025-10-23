@@ -19,6 +19,7 @@ import ItemAccount from '@/views/items/ItemAccount.vue'
 import Customer from '@/views/settings/Customer.vue'
 import Expense from '@/views/expense/Expense.vue'
 import Login from '@/views/Login.vue'
+import WhatsAppOrders from '@/views/WhatsAppOrders.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -120,6 +121,11 @@ const router = createRouter({
           path: '/reports',
           name: 'Reports',
           component: Reports,
+        },
+        {
+          path: '/whatsapp-orders',
+          name: 'WhatsAppOrders',
+          component: WhatsAppOrders,
         },
         {
           path: '/settings',

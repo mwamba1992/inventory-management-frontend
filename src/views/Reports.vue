@@ -44,6 +44,7 @@
             <option value="inventory">Inventory Report</option>
             <option value="customers">Customer Report</option>
             <option value="financial">Financial Report</option>
+            <option value="whatsapp">WhatsApp Orders</option>
           </select>
         </div>
         <button @click="exportReport" class="export-btn">
@@ -300,23 +301,58 @@
       <div v-if="selectedReport === 'customers'" class="report-section">
         <h2 class="section-title">Customer Report</h2>
 
-        <div class="customer-insights">
-          <div class="insight-card">
-            <h3>New Customers</h3>
-            <div class="insight-value">{{ reportData.customerMetrics.newCustomers }}</div>
-            <div class="insight-period">This period</div>
+        <!-- Customer Summary Cards -->
+        <div class="summary-grid" style="margin-bottom: 32px;">
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Total Customers</h3>
+            </div>
+            <div class="card-value">{{ formatNumber(reportData.customerMetrics.totalCustomers || 0) }}</div>
+            <div class="card-period">All time</div>
           </div>
 
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Active Customers</h3>
+            </div>
+            <div class="card-value">{{ formatNumber(reportData.customerMetrics.activeCustomers || 0) }}</div>
+            <div class="card-period">This period</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>New Customers</h3>
+            </div>
+            <div class="card-value">{{ formatNumber(reportData.customerMetrics.newCustomers) }}</div>
+            <div class="card-period">This period</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Return Rate</h3>
+            </div>
+            <div class="card-value">{{ reportData.customerMetrics.returnRate.toFixed(1) }}%</div>
+            <div class="card-period">Returning customers</div>
+          </div>
+        </div>
+
+        <div class="customer-insights">
           <div class="insight-card">
             <h3>Returning Customers</h3>
             <div class="insight-value">{{ reportData.customerMetrics.returningCustomers }}</div>
-            <div class="insight-period">{{ reportData.customerMetrics.returnRate }}% return rate</div>
+            <div class="insight-period">{{ reportData.customerMetrics.returnRate.toFixed(1) }}% return rate</div>
           </div>
 
           <div class="insight-card">
             <h3>Customer Lifetime Value</h3>
             <div class="insight-value">TZS{{ formatNumber(reportData.customerMetrics.avgLifetimeValue) }}</div>
-            <div class="insight-period">Average</div>
+            <div class="insight-period">Average per customer</div>
+          </div>
+
+          <div class="insight-card">
+            <h3>Customer Growth</h3>
+            <div class="insight-value">{{ reportData.customerMetrics.newCustomers }}</div>
+            <div class="insight-period">New this period</div>
           </div>
         </div>
 
@@ -359,25 +395,33 @@
           <div class="financial-card revenue">
             <h3>Total Revenue</h3>
             <div class="amount positive">TZS{{ formatNumber(reportData.financial.revenue) }}</div>
-            <div class="change">+{{ reportData.financial.revenueGrowth }}% vs last period</div>
+            <div :class="['change', reportData.financial.revenueGrowth >= 0 ? 'positive' : 'negative']">
+              {{ reportData.financial.revenueGrowth >= 0 ? '+' : '' }}{{ reportData.financial.revenueGrowth.toFixed(1) }}% vs last period
+            </div>
           </div>
 
           <div class="financial-card expenses">
             <h3>Total Expenses</h3>
             <div class="amount negative">TZS{{ formatNumber(reportData.financial.expenses) }}</div>
-            <div class="change">+{{ reportData.financial.expenseGrowth }}% vs last period</div>
+            <div :class="['change', reportData.financial.expenseGrowth >= 0 ? 'negative' : 'positive']">
+              {{ reportData.financial.expenseGrowth >= 0 ? '+' : '' }}{{ reportData.financial.expenseGrowth.toFixed(1) }}% vs last period
+            </div>
           </div>
 
           <div class="financial-card profit">
             <h3>Net Profit</h3>
             <div class="amount positive">TZS{{ formatNumber(reportData.financial.profit) }}</div>
-            <div class="change">+{{ reportData.financial.profitGrowth }}% vs last period</div>
+            <div :class="['change', reportData.financial.profitGrowth >= 0 ? 'positive' : 'negative']">
+              {{ reportData.financial.profitGrowth >= 0 ? '+' : '' }}{{ reportData.financial.profitGrowth.toFixed(1) }}% vs last period
+            </div>
           </div>
 
           <div class="financial-card margin">
             <h3>Profit Margin</h3>
-            <div class="amount">{{ reportData.financial.profitMargin }}%</div>
-            <div class="change">+{{ reportData.financial.marginGrowth }}% vs last period</div>
+            <div class="amount">{{ reportData.financial.profitMargin.toFixed(1) }}%</div>
+            <div :class="['change', reportData.financial.marginGrowth >= 0 ? 'positive' : 'negative']">
+              {{ reportData.financial.marginGrowth >= 0 ? '+' : '' }}{{ reportData.financial.marginGrowth.toFixed(1) }}% vs last period
+            </div>
           </div>
         </div>
 
@@ -386,15 +430,140 @@
           <div class="expense-list">
             <div v-for="expense in reportData.expenseBreakdown" :key="expense.category" class="expense-item">
               <div class="expense-info">
-                <span class="expense-category">{{ expense.category }}</span>
+                <span class="expense-category">{{ formatCategory(expense.category) }}</span>
                 <span class="expense-amount">TZS{{ formatNumber(expense.amount) }}</span>
               </div>
               <div class="expense-bar">
                 <div class="expense-fill" :style="{ width: expense.percentage + '%' }"></div>
               </div>
-              <span class="expense-percentage">{{ expense.percentage }}%</span>
+              <span class="expense-percentage">{{ expense.percentage.toFixed(1) }}%</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp Orders Report -->
+      <div v-if="selectedReport === 'whatsapp'" class="report-section">
+        <h2 class="section-title">WhatsApp Orders</h2>
+
+        <!-- Order Statistics Cards -->
+        <div class="summary-grid" style="margin-bottom: 32px;">
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Total Orders</h3>
+            </div>
+            <div class="card-value">{{ formatNumber(reportData.whatsappOrders.totalOrders) }}</div>
+            <div class="card-period">All orders</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Pending</h3>
+            </div>
+            <div class="card-value" style="color: #f59e0b;">{{ formatNumber(reportData.whatsappOrders.pendingOrders) }}</div>
+            <div class="card-period">Awaiting confirmation</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Delivered</h3>
+            </div>
+            <div class="card-value" style="color: #10b981;">{{ formatNumber(reportData.whatsappOrders.deliveredOrders) }}</div>
+            <div class="card-period">Successfully completed</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-header">
+              <h3>Total Revenue</h3>
+            </div>
+            <div class="card-value">TZS{{ formatNumber(reportData.whatsappOrders.totalRevenue) }}</div>
+            <div class="card-period">From completed orders</div>
+          </div>
+        </div>
+
+        <!-- Status Breakdown -->
+        <div class="status-breakdown" style="margin-bottom: 32px;">
+          <h3>Orders by Status</h3>
+          <div class="status-grid">
+            <div class="status-item">
+              <span class="status-label">Pending</span>
+              <span class="status-count">{{ reportData.whatsappOrders.pendingOrders }}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Confirmed</span>
+              <span class="status-count">{{ reportData.whatsappOrders.confirmedOrders }}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Processing</span>
+              <span class="status-count">{{ reportData.whatsappOrders.processingOrders }}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Ready</span>
+              <span class="status-count">{{ reportData.whatsappOrders.readyOrders }}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Delivered</span>
+              <span class="status-count">{{ reportData.whatsappOrders.deliveredOrders }}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Cancelled</span>
+              <span class="status-count">{{ reportData.whatsappOrders.cancelledOrders }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders List -->
+        <div class="data-table-container">
+          <h3>All Orders</h3>
+          <table class="data-table">
+            <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Items</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="order in reportData.whatsappOrders.orders" :key="order.id">
+              <td><span class="font-medium">#{{ order.id }}</span></td>
+              <td>{{ order.customerName }}</td>
+              <td>{{ order.customerPhone }}</td>
+              <td>{{ order.itemCount }} item(s)</td>
+              <td>TZS{{ formatNumber(order.totalAmount) }}</td>
+              <td>
+                <select
+                  :value="order.status"
+                  @change="updateOrderStatus(order.id, $event.target.value)"
+                  class="status-select"
+                  :class="[order.status]"
+                  :disabled="order.status === 'delivered' || order.status === 'cancelled'"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="processing">Processing</option>
+                  <option value="ready">Ready</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled" disabled>Cancelled</option>
+                </select>
+              </td>
+              <td>{{ formatDate(order.createdAt) }}</td>
+              <td>
+                <button
+                  v-if="order.status !== 'delivered' && order.status !== 'cancelled'"
+                  @click="cancelOrder(order.id)"
+                  class="cancel-btn"
+                >
+                  Cancel
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -458,6 +627,8 @@ const reportData = reactive({
   outOfStockItems: [],
   inventoryItems: [],
   customerMetrics: {
+    totalCustomers: 0,
+    activeCustomers: 0,
     newCustomers: 0,
     returningCustomers: 0,
     returnRate: 0,
@@ -474,7 +645,18 @@ const reportData = reactive({
     profitGrowth: 0,
     marginGrowth: 0
   },
-  expenseBreakdown: []
+  expenseBreakdown: [],
+  whatsappOrders: {
+    totalOrders: 0,
+    pendingOrders: 0,
+    confirmedOrders: 0,
+    processingOrders: 0,
+    readyOrders: 0,
+    deliveredOrders: 0,
+    cancelledOrders: 0,
+    totalRevenue: 0,
+    orders: []
+  }
 })
 
 // Methods
@@ -503,18 +685,19 @@ const fetchReports = async () => {
       return;
     }
 
+    // Map UI date range values to API dateRange format
+    const dateRangeMap = {
+      '7': 'last_7_days',
+      '30': 'last_30_days',
+      '90': 'last_90_days',
+      '365': 'this_year'
+    };
+
     // Build query parameters for GET request
     let queryParams = '';
     if (selectedDateRange.value === 'custom') {
       queryParams = `?startDate=${customDateFrom.value}&endDate=${customDateTo.value}`;
     } else {
-      // Map UI date range values to API dateRange format
-      const dateRangeMap = {
-        '7': 'last_7_days',
-        '30': 'last_30_days',
-        '90': 'last_90_days',
-        '365': 'this_year'
-      };
       const dateRangeValue = dateRangeMap[selectedDateRange.value] || 'last_30_days';
       queryParams = `?dateRange=${dateRangeValue}`;
     }
@@ -554,18 +737,75 @@ const fetchReports = async () => {
       amount: item.revenue
     }));
 
-    // Recent sales - if provided in response (keep empty for now as not in sample)
-    reportData.recentSales = businessOverview.recentSales || [];
+    // Fetch detailed sales data for Sales Report section
+    // Build date payload for POST request
+    const salesDatePayload = selectedDateRange.value === 'custom'
+      ? { startDate: customDateFrom.value, endDate: customDateTo.value }
+      : { days: parseInt(selectedDateRange.value) };
 
-    // Map financial data - if provided (keep existing structure for now)
-    reportData.financial.revenue = businessOverview.totalRevenue?.current || 0;
-    reportData.financial.expenses = 0; // Not in current response
-    reportData.financial.profit = 0; // Not in current response
-    reportData.financial.profitMargin = 0; // Not in current response
-    reportData.financial.revenueGrowth = businessOverview.totalRevenue?.percentageChange || 0;
+    const salesData = await apiCall('/sales/sales-by-days', {
+      method: 'POST',
+      body: JSON.stringify(salesDatePayload)
+    });
 
-    // Expense breakdown - not in current response, keep empty
-    reportData.expenseBreakdown = businessOverview.expenseBreakdown || [];
+    // Map recent sales for Sales Report table
+    reportData.recentSales = (salesData || []).map(sale => ({
+      id: sale.id,
+      date: sale.createdAt,
+      customer: sale.customer?.name || 'Unknown',
+      product: sale.item?.name || 'Unknown',
+      quantity: sale.quantity,
+      amount: sale.amountPaid,
+      status: sale.status || "Completed"
+    }));
+
+    // Calculate total units sold from sales data for accurate metrics
+    const totalUnitsSold = (salesData || []).reduce((total, sale) => total + (sale.quantity || 0), 0);
+
+    // Update sales metrics with accurate units
+    reportData.salesMetrics.units = totalUnitsSold;
+
+    // Fetch financial report data
+    const financialReport = await apiCall(`/reports/financial${queryParams}`);
+
+    // Map financial data
+    reportData.financial.revenue = financialReport.totalRevenue?.current || 0;
+    reportData.financial.expenses = financialReport.totalExpenses?.current || 0;
+    reportData.financial.profit = financialReport.netProfit?.current || 0;
+    reportData.financial.profitMargin = financialReport.profitMargin?.current || 0;
+    reportData.financial.revenueGrowth = financialReport.totalRevenue?.percentageChange || 0;
+    reportData.financial.expenseGrowth = financialReport.totalExpenses?.percentageChange || 0;
+    reportData.financial.profitGrowth = financialReport.netProfit?.percentageChange || 0;
+    reportData.financial.marginGrowth = financialReport.profitMargin?.percentageChange || 0;
+
+    // Map expense breakdown
+    reportData.expenseBreakdown = (financialReport.expenseBreakdown || []).map(expense => ({
+      category: expense.category,
+      amount: expense.amount,
+      percentage: expense.percentage
+    }));
+
+    // Fetch customer report data
+    const customerReport = await apiCall(`/reports/customers${queryParams}`);
+
+    // Map customer metrics
+    reportData.customerMetrics.totalCustomers = customerReport.totalCustomers || 0;
+    reportData.customerMetrics.activeCustomers = customerReport.activeCustomers || 0;
+    reportData.customerMetrics.newCustomers = customerReport.newCustomers || 0;
+    reportData.customerMetrics.returningCustomers = customerReport.returningCustomers || 0;
+    reportData.customerMetrics.returnRate = customerReport.returnRate || 0;
+    reportData.customerMetrics.avgLifetimeValue = customerReport.customerLifetimeValue || 0;
+
+    // Map top customers
+    reportData.topCustomers = (customerReport.topCustomers || []).map(customer => ({
+      id: customer.id,
+      name: customer.name,
+      phone: customer.phone,
+      totalOrders: customer.totalOrders,
+      totalSpent: customer.totalSpent,
+      lastOrder: customer.lastOrder,
+      status: customer.status
+    }));
 
     // Fetch inventory report data (GET request)
     const inventoryReport = await apiCall('/reports/inventory');
@@ -604,6 +844,31 @@ const fetchReports = async () => {
     ).map(item => ({
       id: item.id,
       name: item.name
+    }));
+
+    // Fetch WhatsApp orders data
+    const whatsappStats = await apiCall('/whatsapp/stats/orders');
+
+    reportData.whatsappOrders.totalOrders = whatsappStats.totalOrders || 0;
+    reportData.whatsappOrders.pendingOrders = whatsappStats.pending || 0;
+    reportData.whatsappOrders.confirmedOrders = whatsappStats.confirmed || 0;
+    reportData.whatsappOrders.processingOrders = whatsappStats.processing || 0;
+    reportData.whatsappOrders.readyOrders = whatsappStats.ready || 0;
+    reportData.whatsappOrders.deliveredOrders = whatsappStats.delivered || 0;
+    reportData.whatsappOrders.cancelledOrders = whatsappStats.cancelled || 0;
+    reportData.whatsappOrders.totalRevenue = whatsappStats.totalRevenue || 0;
+
+    // Fetch all WhatsApp orders
+    const whatsappOrdersList = await apiCall('/whatsapp/orders');
+
+    reportData.whatsappOrders.orders = (whatsappOrdersList || []).map(order => ({
+      id: order.id,
+      customerName: order.customerName,
+      customerPhone: order.customerPhone,
+      itemCount: order.items?.length || 0,
+      totalAmount: order.totalAmount,
+      status: order.status,
+      createdAt: order.createdAt
     }));
 
     // Render charts after data is loaded (only for overview)
@@ -808,6 +1073,47 @@ const exportReport = () => {
   alert('Exporting report as PDF...')
 }
 
+const updateOrderStatus = async (orderId, newStatus) => {
+  try {
+    loading.value = true
+    await apiCall(`/whatsapp/orders/${orderId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: newStatus })
+    })
+
+    swalAlert.value?.showSuccess('Status Updated', `Order #${orderId} status changed to ${newStatus}`)
+
+    // Refresh orders data
+    await fetchReports()
+  } catch (error) {
+    console.error('Error updating order status:', error)
+    swalAlert.value?.showError('Update Failed', error.message || 'Failed to update order status')
+    loading.value = false
+  }
+}
+
+const cancelOrder = async (orderId) => {
+  try {
+    // Confirm cancellation
+    const confirmed = confirm(`Are you sure you want to cancel order #${orderId}? This will restore inventory stock.`)
+    if (!confirmed) return
+
+    loading.value = true
+    await apiCall(`/whatsapp/orders/${orderId}/cancel`, {
+      method: 'PUT'
+    })
+
+    swalAlert.value?.showSuccess('Order Cancelled', `Order #${orderId} has been cancelled and inventory restored`)
+
+    // Refresh orders data
+    await fetchReports()
+  } catch (error) {
+    console.error('Error cancelling order:', error)
+    swalAlert.value?.showError('Cancellation Failed', error.message || 'Failed to cancel order')
+    loading.value = false
+  }
+}
+
 const formatNumber = (num) => {
   return new Intl.NumberFormat().format(num)
 }
@@ -822,6 +1128,14 @@ const getStockStatus = (item) => {
   if (item.currentStock === 0) return 'Out of Stock'
   if (item.currentStock < item.minStock) return 'Low Stock'
   return 'In Stock'
+}
+
+const formatCategory = (category) => {
+  // Format category name: "office_supplies" -> "Office Supplies"
+  return category
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 }
 
 // Lifecycle
@@ -1390,5 +1704,120 @@ watch(selectedReport, () => {
 .font-medium {
   font-weight: 500;
   color: #374151;
+}
+
+/* WhatsApp Orders Styles */
+.status-breakdown {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.status-breakdown h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.status-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.status-count {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.status-select {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status-select.pending {
+  color: #f59e0b;
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.status-select.confirmed {
+  color: #3b82f6;
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.status-select.processing {
+  color: #8b5cf6;
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+}
+
+.status-select.ready {
+  color: #06b6d4;
+  border-color: #06b6d4;
+  background: #ecfeff;
+}
+
+.status-select.delivered {
+  color: #10b981;
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.status-select.cancelled {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.cancel-btn {
+  padding: 6px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #dc2626;
+}
+
+.cancel-btn:active {
+  background: #b91c1c;
 }
 </style>
