@@ -256,6 +256,9 @@
                 <span class="text-sm font-semibold text-gray-900">Code</span>
               </th>
               <th class="p-4 text-left">
+                <span class="text-sm font-semibold text-gray-900">Condition</span>
+              </th>
+              <th class="p-4 text-left">
                 <span class="text-sm font-semibold text-gray-900">Description</span>
               </th>
               <th class="p-4 text-left">
@@ -274,7 +277,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200/50">
             <tr v-if="loading">
-              <td colspan="9" class="p-12 text-center">
+              <td colspan="10" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                   <span class="text-gray-500">Loading items...</span>
@@ -282,7 +285,7 @@
               </td>
             </tr>
             <tr v-else-if="paginatedItems.length === 0">
-              <td colspan="9" class="p-12 text-center text-gray-500">
+              <td colspan="10" class="p-12 text-center text-gray-500">
                 <CubeIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No items found' : 'No items yet' }}
@@ -352,6 +355,18 @@
                   {{ item.code }}
                 </span>
                 <span v-else class="text-xs text-gray-400">No code</span>
+              </td>
+              <td class="p-4">
+                <span
+                  :class="[
+                    'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
+                    item.condition === 'new'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-orange-100 text-orange-800'
+                  ]"
+                >
+                  {{ item.condition === 'new' ? '✨ New' : '♻️ Used' }}
+                </span>
               </td>
               <td class="p-4">
                 <p class="text-sm text-gray-900 max-w-xs truncate" :title="item.desc">
@@ -565,6 +580,17 @@
               </div>
 
               <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Condition</label>
+                <select
+                  v-model="form.condition"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="new">New</option>
+                  <option value="used">Used</option>
+                </select>
+              </div>
+
+              <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Category *</label>
                 <select
                   v-model="form.categoryId"
@@ -740,6 +766,17 @@
                     <p v-if="form.code" class="text-xs font-mono text-indigo-600 mb-2">{{ form.code }}</p>
                     <p class="text-sm text-gray-600 mb-3">{{ form.desc || 'No description provided' }}</p>
                     <div class="flex flex-wrap items-center gap-2">
+                      <span
+                        :class="[
+                          'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
+                          form.condition === 'new'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-orange-100 text-orange-800'
+                        ]"
+                      >
+                        {{ form.condition === 'new' ? '✨ New' : '♻️ Used' }}
+                      </span>
+                      <span class="text-xs text-gray-400">•</span>
                       <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                         {{ getCategoryName(form.categoryId) }}
                       </span>
@@ -886,6 +923,7 @@ const form = ref({
   id: null,
   name: '',
   code: '',
+  condition: 'new', // Default to 'new'
   desc: '',
   categoryId: '',
   warehouseId: '',
@@ -1131,6 +1169,7 @@ const exportItems = () => {
     ID: item.id,
     Name: item.name,
     Code: item.code || '',
+    Condition: item.condition || 'new',
     Description: item.desc || '',
     Category: item.category?.code || '',
     Warehouse: item.warehouse?.code || '',
@@ -1228,6 +1267,7 @@ const openAddModal = () => {
     id: null,
     name: '',
     code: '',
+    condition: 'new',
     desc: '',
     categoryId: '',
     warehouseId: '',
@@ -1242,6 +1282,7 @@ const openEditModal = (item) => {
     id: item.id,
     name: item.name,
     code: item.code || '',
+    condition: item.condition || 'new',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
     warehouseId: item.warehouse?.id || '',
@@ -1260,6 +1301,7 @@ const closeModal = () => {
     id: null,
     name: '',
     code: '',
+    condition: 'new',
     desc: '',
     categoryId: '',
     warehouseId: '',
@@ -1275,6 +1317,7 @@ const saveItem = async () => {
     const itemData = {
       name: form.value.name.trim(),
       code: form.value.code.trim() || null,
+      condition: form.value.condition || 'new',
       desc: form.value.desc.trim() || null,
       categoryId: form.value.categoryId,
       warehouseId: form.value.warehouseId,
@@ -1313,6 +1356,7 @@ const duplicateItem = (item) => {
     id: null,
     name: `${item.name} (Copy)`,
     code: item.code ? `${item.code}-COPY` : '',
+    condition: item.condition || 'new',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
     warehouseId: item.warehouse?.id || '',
