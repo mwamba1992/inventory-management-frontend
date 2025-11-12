@@ -124,6 +124,50 @@
         </div>
       </div>
 
+      <!-- Color Distribution Overview -->
+      <div v-if="colorDistributionSummary.length > 0" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+                <SwatchIcon class="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900">Color Distribution Overview</h3>
+                <p class="text-sm text-gray-600">Total inventory by color variants</p>
+              </div>
+            </div>
+            <span class="text-sm font-medium text-gray-600">
+              {{ colorDistributionSummary.length }} color{{ colorDistributionSummary.length !== 1 ? 's' : '' }}
+            </span>
+          </div>
+
+          <!-- Color breakdown grid -->
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div
+              v-for="color in colorDistributionSummary"
+              :key="color.id"
+              class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-105"
+            >
+              <div class="flex items-center space-x-3 mb-3">
+                <div
+                  class="w-10 h-10 rounded-xl shadow-md flex-shrink-0 border-2 border-white"
+                  :style="{ backgroundColor: color.hexCode }"
+                ></div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-900 truncate">{{ color.name }}</p>
+                  <p class="text-xs text-gray-500">{{ color.hexCode }}</p>
+                </div>
+              </div>
+              <div class="text-center pt-3 border-t border-gray-200">
+                <p class="text-2xl font-bold text-indigo-600">{{ formatNumber(color.quantity) }}</p>
+                <p class="text-xs text-gray-500 mt-1">units in stock</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
         <div
@@ -367,22 +411,44 @@
                 </span>
               </td>
               <td class="p-4">
-                <div v-if="stock.distributions && stock.distributions.length > 0" class="flex items-center space-x-1">
-                  <div v-for="dist in stock.distributions.slice(0, 3)" :key="dist.id"
-                    class="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                    :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
-                    :title="`${dist.colorCategory?.name || 'No Color'}: ${dist.quantity}`"
-                  ></div>
-                  <span v-if="stock.distributions.length > 3" class="text-xs text-gray-500">
-                    +{{ stock.distributions.length - 3 }}
-                  </span>
+                <div v-if="stock.distributions && stock.distributions.length > 0" class="space-y-2">
+                  <!-- Color badges with names and quantities -->
+                  <div class="flex flex-wrap gap-2">
+                    <div
+                      v-for="dist in stock.distributions"
+                      :key="dist.id"
+                      class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                    >
+                      <div
+                        class="w-4 h-4 rounded-full border border-gray-300 flex-shrink-0"
+                        :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
+                      ></div>
+                      <span class="text-xs font-medium text-gray-700">
+                        {{ dist.colorCategory?.name || 'No Color' }}
+                      </span>
+                      <span class="text-xs font-bold text-indigo-600">
+                        {{ dist.quantity }}
+                      </span>
+                    </div>
+                  </div>
+                  <!-- Manage button -->
+                  <button
+                    @click="openColorModal(stock)"
+                    class="text-xs text-indigo-600 hover:text-indigo-800 font-medium flex items-center space-x-1"
+                  >
+                    <SwatchIcon class="w-3 h-3" />
+                    <span>Manage Colors</span>
+                  </button>
                 </div>
-                <button
-                  @click="openColorModal(stock)"
-                  class="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
-                >
-                  {{ stock.distributions?.length > 0 ? 'Manage' : '+ Add Colors' }}
-                </button>
+                <div v-else>
+                  <button
+                    @click="openColorModal(stock)"
+                    class="inline-flex items-center space-x-1 px-3 py-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-all duration-200"
+                  >
+                    <SwatchIcon class="w-3 h-3" />
+                    <span>+ Add Colors</span>
+                  </button>
+                </div>
               </td>
               <td class="p-4 text-center">
                 <span class="text-xs text-gray-500">{{ formatDate(stock.updatedAt) }}</span>
@@ -848,29 +914,52 @@
                 <SwatchIcon class="w-12 h-12 mx-auto text-gray-300 mb-2" />
                 <p class="text-sm">No color distributions yet</p>
               </div>
-              <div v-else class="space-y-2">
+              <div v-else class="space-y-3">
                 <div
                   v-for="dist in colorDistributions"
                   :key="dist.id"
-                  class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200"
+                  class="bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 overflow-hidden"
                 >
-                  <div class="flex items-center space-x-3">
-                    <div
-                      class="w-8 h-8 rounded-full border-2 border-gray-200 shadow-sm"
-                      :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
-                    ></div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">{{ dist.colorCategory?.name || 'No Specific Color' }}</p>
-                      <p class="text-xs text-gray-500">Quantity: {{ dist.quantity }}</p>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center space-x-3">
+                        <div
+                          class="w-10 h-10 rounded-xl border-2 border-gray-200 shadow-sm flex-shrink-0"
+                          :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
+                        ></div>
+                        <div>
+                          <p class="text-sm font-semibold text-gray-900">{{ dist.colorCategory?.name || 'No Specific Color' }}</p>
+                          <p class="text-xs text-gray-500">{{ dist.colorCategory?.hexCode || '#CCCCCC' }}</p>
+                        </div>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                          <p class="text-lg font-bold text-indigo-600">{{ dist.quantity }}</p>
+                          <p class="text-xs text-gray-500">
+                            {{ getTotalDistributed() > 0 ? Math.round((dist.quantity / getTotalDistributed()) * 100) : 0 }}%
+                          </p>
+                        </div>
+                        <button
+                          @click="deleteColorDistribution(dist.id)"
+                          class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          title="Delete"
+                        >
+                          <TrashIcon class="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div
+                        class="h-2 rounded-full transition-all duration-300"
+                        :style="{
+                          width: `${getTotalDistributed() > 0 ? (dist.quantity / getTotalDistributed()) * 100 : 0}%`,
+                          backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC'
+                        }"
+                      ></div>
                     </div>
                   </div>
-                  <button
-                    @click="deleteColorDistribution(dist.id)"
-                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
-                    title="Delete"
-                  >
-                    <TrashIcon class="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             </div>
@@ -1266,6 +1355,35 @@ const lowStockItems = computed(() => {
 
 const outOfStockItems = computed(() => {
   return itemStocks.value.filter(stock => stock.quantity === 0).length
+})
+
+// Color distribution summary across all inventory
+const colorDistributionSummary = computed(() => {
+  const colorMap = new Map()
+
+  itemStocks.value.forEach(stock => {
+    if (stock.distributions && stock.distributions.length > 0) {
+      stock.distributions.forEach(dist => {
+        const colorId = dist.colorCategory?.id || 'no-color'
+        const colorName = dist.colorCategory?.name || 'No Color'
+        const colorHex = dist.colorCategory?.hexCode || '#CCCCCC'
+
+        if (colorMap.has(colorId)) {
+          const existing = colorMap.get(colorId)
+          existing.quantity += dist.quantity || 0
+        } else {
+          colorMap.set(colorId, {
+            id: colorId,
+            name: colorName,
+            hexCode: colorHex,
+            quantity: dist.quantity || 0
+          })
+        }
+      })
+    }
+  })
+
+  return Array.from(colorMap.values()).sort((a, b) => b.quantity - a.quantity)
 })
 
 // Utility methods
