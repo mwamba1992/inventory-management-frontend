@@ -185,10 +185,7 @@ async function handleLogin() {
     const response = await LoginService.login(form.email, form.password);
 
     if (response && response.access_token) {
-      console.log('Login successful:', response);
       let userDetails = base64UrlDecode(response.access_token.split('.')[1]);
-
-      console.log('User details:', userDetails);
       user.setUser({
         id: userDetails.sub,
         name: userDetails.username,
@@ -198,12 +195,10 @@ async function handleLogin() {
       });
       await router.push('/');
     } else {
-      console.error('Invalid credentials');
       loginError.value = 'Invalid credentials';
       throw new Error('Invalid credentials');
     }
   } catch (error) {
-    console.error('Login failed:', error.message);
     loginError.value = 'Login failed: ' + error.message;
   } finally {
     loading.value = false;

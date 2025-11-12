@@ -312,13 +312,16 @@
                 </div>
               </th>
               <th class="p-4 text-left">
+                <span class="text-sm font-semibold text-gray-900">Status</span>
+              </th>
+              <th class="p-4 text-left">
                 <span class="text-sm font-semibold text-gray-900">Actions</span>
               </th>
             </tr>
             </thead>
             <tbody class="divide-y divide-gray-200/50">
             <tr v-if="loading">
-              <td colspan="10" class="p-12 text-center">
+              <td colspan="11" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                   <span class="text-gray-500">Loading sales...</span>
@@ -326,7 +329,7 @@
               </td>
             </tr>
             <tr v-else-if="paginatedSales.length === 0">
-              <td colspan="10" class="p-12 text-center text-gray-500">
+              <td colspan="11" class="p-12 text-center text-gray-500">
                 <ShoppingCartIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No sales found' : 'No sales yet' }}
@@ -405,6 +408,22 @@
               <td class="p-4 text-center">
                 <div class="text-sm text-gray-900">{{ formatDate(sale.createdAt) }}</div>
                 <div class="text-xs text-gray-500">{{ formatTimeAgo(sale.createdAt) }}</div>
+              </td>
+              <td class="p-4">
+                <select
+                  :value="sale.status || 'delivered'"
+                  @change="updateSaleStatus(sale.id, $event.target.value)"
+                  class="status-select text-xs font-medium rounded-lg px-3 py-2 border transition-all duration-200"
+                  :class="getStatusClass(sale.status || 'delivered')"
+                  :disabled="sale.status === 'delivered' || sale.status === 'cancelled'"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="processing">Processing</option>
+                  <option value="ready">Ready</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled" disabled>Cancelled</option>
+                </select>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
@@ -1418,6 +1437,38 @@ const bulkDelete = async () => {
   }
 }
 
+// Status Management
+const updateSaleStatus = async (saleId, newStatus) => {
+  try {
+    loading.value = true
+    await apiCall(`/sales/${saleId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: newStatus })
+    })
+
+    swalAlert.value?.showSuccess('Status Updated', `Sale #${saleId} status changed to ${newStatus}`)
+
+    // Refresh sales to get updated data
+    await fetchSales()
+  } catch (error) {
+    console.error('Error updating sale status:', error)
+    swalAlert.value?.showError('Update Failed', error.message || 'Failed to update sale status')
+    loading.value = false
+  }
+}
+
+const getStatusClass = (status) => {
+  const statusClasses = {
+    'pending': 'bg-yellow-50 text-yellow-700 border-yellow-300',
+    'confirmed': 'bg-blue-50 text-blue-700 border-blue-300',
+    'processing': 'bg-purple-50 text-purple-700 border-purple-300',
+    'ready': 'bg-cyan-50 text-cyan-700 border-cyan-300',
+    'delivered': 'bg-green-50 text-green-700 border-green-300',
+    'cancelled': 'bg-red-50 text-red-700 border-red-300'
+  }
+  return statusClasses[status] || 'bg-gray-50 text-gray-700 border-gray-300'
+}
+
 // Other actions
 const refreshSales = async () => {
   await fetchSales()
@@ -1428,3 +1479,21 @@ onMounted(async () => {
   await Promise.all([fetchSales(), fetchCustomers(), fetchItems(), fetchWarehouses()])
 })
 </script>
+
+<style scoped>
+.status-select {
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status-select:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>

@@ -100,6 +100,7 @@ const sidebarItems = [
     subItems: [
       { label: 'Common', key: 'common', route: '/settings/common' },
       { label: 'Item Suppliers', key: 'item-suppliers', route: '/settings/suppliers' },
+      { label: 'Color Categories', key: 'color-categories', route: '/settings/color-categories' },
       { label: 'Warehouses', key: 'warehouses', route: '/settings/warehouses' },
       { label: 'Businesses', key: 'businesses', route: '/settings/businesses' },
       { label: 'Accounts', key: 'accounts', route: '/settings/accounts' },

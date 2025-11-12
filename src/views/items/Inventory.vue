@@ -276,6 +276,9 @@
               <th class="p-4 text-center">
                 <span class="text-sm font-semibold text-gray-900">Stock Level</span>
               </th>
+              <th class="p-4 text-left">
+                <span class="text-sm font-semibold text-gray-900">Color Distribution</span>
+              </th>
               <th class="p-4 text-center">
                 <span class="text-sm font-semibold text-gray-900">Last Updated</span>
               </th>
@@ -286,7 +289,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200/50">
             <tr v-if="loading">
-              <td colspan="9" class="p-12 text-center">
+              <td colspan="10" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                   <span class="text-gray-500">Loading inventory...</span>
@@ -294,7 +297,7 @@
               </td>
             </tr>
             <tr v-else-if="paginatedStocks.length === 0">
-              <td colspan="9" class="p-12 text-center text-gray-500">
+              <td colspan="10" class="p-12 text-center text-gray-500">
                 <ArchiveBoxIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No stock records found' : 'No inventory yet' }}
@@ -363,6 +366,24 @@
                   {{ getStockLevelText(stock.quantity, stock.reorderPoint) }}
                 </span>
               </td>
+              <td class="p-4">
+                <div v-if="stock.distributions && stock.distributions.length > 0" class="flex items-center space-x-1">
+                  <div v-for="dist in stock.distributions.slice(0, 3)" :key="dist.id"
+                    class="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                    :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
+                    :title="`${dist.colorCategory?.name || 'No Color'}: ${dist.quantity}`"
+                  ></div>
+                  <span v-if="stock.distributions.length > 3" class="text-xs text-gray-500">
+                    +{{ stock.distributions.length - 3 }}
+                  </span>
+                </div>
+                <button
+                  @click="openColorModal(stock)"
+                  class="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                >
+                  {{ stock.distributions?.length > 0 ? 'Manage' : '+ Add Colors' }}
+                </button>
+              </td>
               <td class="p-4 text-center">
                 <span class="text-xs text-gray-500">{{ formatDate(stock.updatedAt) }}</span>
               </td>
@@ -381,6 +402,13 @@
                     title="Adjust Quantity"
                   >
                     <AdjustmentsVerticalIcon class="w-4 h-4" />
+                  </button>
+                  <button
+                    @click="openColorModal(stock)"
+                    class="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+                    title="Manage Color Distribution"
+                  >
+                    <SwatchIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="viewStockHistory(stock)"
@@ -728,6 +756,136 @@
           </div>
         </div>
       </div>
+
+      <!-- Color Distribution Modal -->
+      <div
+        v-if="showColorModal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      >
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <div>
+              <h3 class="text-xl font-bold text-gray-900">Manage Color Distribution</h3>
+              <p class="text-sm text-gray-600 mt-1">
+                {{ currentStockForColors?.item?.name }} - {{ currentStockForColors?.warehouse?.name }}
+              </p>
+            </div>
+            <button
+              @click="closeColorModal"
+              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            >
+              <XMarkIcon class="w-6 h-6" />
+            </button>
+          </div>
+
+          <div class="p-6">
+            <!-- Stock Summary -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 mb-6">
+              <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p class="text-xs text-gray-600 mb-1">Total Stock</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ currentStockForColors?.quantity || 0 }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-600 mb-1">Distributed</p>
+                  <p class="text-2xl font-bold text-blue-600">{{ getTotalDistributed() }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-600 mb-1">Remaining</p>
+                  <p class="text-2xl font-bold" :class="(currentStockForColors?.quantity || 0) - getTotalDistributed() < 0 ? 'text-red-600' : 'text-green-600'">
+                    {{ (currentStockForColors?.quantity || 0) - getTotalDistributed() }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Color Form -->
+            <div class="bg-gray-50 rounded-xl p-4 mb-6">
+              <h4 class="text-sm font-semibold text-gray-900 mb-3">Add Color Distribution</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                  <select
+                    v-model="colorForm.colorCategoryId"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">No Specific Color</option>
+                    <option
+                      v-for="color in availableColors"
+                      :key="color.id"
+                      :value="color.id"
+                    >
+                      {{ color.name }}
+                    </option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                  <div class="flex space-x-2">
+                    <input
+                      v-model.number="colorForm.quantity"
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <button
+                      @click="addColorDistribution"
+                      :disabled="!colorForm.quantity"
+                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Color Distributions List -->
+            <div>
+              <h4 class="text-sm font-semibold text-gray-900 mb-3">Current Distributions</h4>
+              <div v-if="colorDistributions.length === 0" class="text-center py-8 text-gray-500">
+                <SwatchIcon class="w-12 h-12 mx-auto text-gray-300 mb-2" />
+                <p class="text-sm">No color distributions yet</p>
+              </div>
+              <div v-else class="space-y-2">
+                <div
+                  v-for="dist in colorDistributions"
+                  :key="dist.id"
+                  class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200"
+                >
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 rounded-full border-2 border-gray-200 shadow-sm"
+                      :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
+                    ></div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">{{ dist.colorCategory?.name || 'No Specific Color' }}</p>
+                      <p class="text-xs text-gray-500">Quantity: {{ dist.quantity }}</p>
+                    </div>
+                  </div>
+                  <button
+                    @click="deleteColorDistribution(dist.id)"
+                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                    title="Delete"
+                  >
+                    <TrashIcon class="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end p-6 border-t border-gray-200">
+            <button
+              @click="closeColorModal"
+              class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -754,10 +912,13 @@ import {
   DocumentArrowDownIcon,
   AdjustmentsHorizontalIcon,
   AdjustmentsVerticalIcon,
+  SwatchIcon,
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
 import { Configs } from '@/utils/Configs'
+import ColorCategoryService from '@/services/colorCategoryService'
+import StockDistributionService from '@/services/stockDistributionService'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
@@ -805,6 +966,17 @@ const form = ref({
   warehouseId: '',
   quantity: null,
   reorderPoint: 10,
+})
+
+// Color distribution states
+const availableColors = ref([])
+const showColorModal = ref(false)
+const currentStockForColors = ref(null)
+const colorDistributions = ref([])
+const colorForm = ref({
+  id: null,
+  colorCategoryId: '',
+  quantity: 0,
 })
 
 // API Functions
@@ -868,6 +1040,16 @@ const fetchWarehouses = async () => {
   }
 }
 
+const fetchColors = async () => {
+  try {
+    const data = await ColorCategoryService.getAll()
+    availableColors.value = data
+  } catch (err) {
+    console.error('Failed to fetch color categories:', err)
+    availableColors.value = []
+  }
+}
+
 const createStock = async (stockData) => {
   submitting.value = true
   try {
@@ -922,6 +1104,89 @@ const deleteStockApi = async (id) => {
   } finally {
     submitting.value = false
   }
+}
+
+// Color Distribution Functions
+const fetchStockDistributions = async (itemStockId) => {
+  try {
+    const distributions = await StockDistributionService.getByItemStock(itemStockId)
+    colorDistributions.value = distributions
+  } catch (err) {
+    console.error('Failed to fetch distributions:', err)
+    colorDistributions.value = []
+  }
+}
+
+const openColorModal = async (stock) => {
+  currentStockForColors.value = stock
+  await fetchStockDistributions(stock.id)
+  showColorModal.value = true
+}
+
+const closeColorModal = () => {
+  showColorModal.value = false
+  currentStockForColors.value = null
+  colorDistributions.value = []
+  colorForm.value = {
+    id: null,
+    colorCategoryId: '',
+    quantity: 0,
+  }
+}
+
+const addColorDistribution = async () => {
+  if (!currentStockForColors.value || !colorForm.value.quantity) return
+
+  try {
+    const data = {
+      itemStockId: currentStockForColors.value.id,
+      colorCategoryId: colorForm.value.colorCategoryId || null,
+      quantity: colorForm.value.quantity,
+    }
+
+    await StockDistributionService.create(data)
+    await fetchStockDistributions(currentStockForColors.value.id)
+    await fetchItemStocks() // Refresh main data
+
+    colorForm.value = {
+      id: null,
+      colorCategoryId: '',
+      quantity: 0,
+    }
+
+    swalAlert.value?.showSuccess('Color distribution added successfully')
+  } catch (err) {
+    swalAlert.value?.showError('Failed to add distribution', err.message)
+  }
+}
+
+const deleteColorDistribution = async (distributionId) => {
+  if (!confirm('Delete this color distribution?')) return
+
+  try {
+    await StockDistributionService.delete(distributionId)
+    await fetchStockDistributions(currentStockForColors.value.id)
+    await fetchItemStocks() // Refresh main data
+    swalAlert.value?.showSuccess('Distribution deleted successfully')
+  } catch (err) {
+    swalAlert.value?.showError('Failed to delete distribution', err.message)
+  }
+}
+
+const getTotalDistributed = () => {
+  return colorDistributions.value.reduce((sum, dist) => sum + (dist.quantity || 0), 0)
+}
+
+const getColorName = (colorId) => {
+  if (!colorId) return 'No Color'
+  const color = availableColors.value.find(c => c.id === colorId)
+  return color ? color.name : 'Unknown'
+}
+
+const getColorHex = (colorId) => {
+  if (!colorId) return '#CCCCCC'
+  const color = availableColors.value.find(c => c.id === colorId)
+  return color?.hexCode || '#CCCCCC'
 }
 
 // Computed properties
@@ -1344,6 +1609,6 @@ const refreshStocks = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([fetchItemStocks(), fetchItems(), fetchWarehouses()])
+  await Promise.all([fetchItemStocks(), fetchItems(), fetchWarehouses(), fetchColors()])
 })
 </script>

@@ -11,7 +11,6 @@ export  const SetupService = {
      * @returns {Promise<Object>} The response data from the login request.
      */
     async login(username, password) {
-       console.log('Logging in with username:', username);
         return axios.post(LOGIN_URL, { username, password }).then((res) => res.data);
     }
 }

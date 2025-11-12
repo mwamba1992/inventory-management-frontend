@@ -45,6 +45,7 @@
             <option value="customers">Customer Report</option>
             <option value="financial">Financial Report</option>
             <option value="whatsapp">WhatsApp Orders</option>
+            <option value="balance-sheet">Balance Sheet</option>
           </select>
         </div>
         <button @click="exportReport" class="export-btn">
@@ -566,6 +567,26 @@
           </table>
         </div>
       </div>
+
+      <!-- Balance Sheet Report -->
+      <div v-if="selectedReport === 'balance-sheet'" class="report-section">
+        <h2 class="section-title">Balance Sheet</h2>
+        <div class="balance-sheet-redirect">
+          <div class="redirect-card">
+            <svg class="redirect-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3>View Full Balance Sheet</h3>
+            <p>The Balance Sheet report is available on a dedicated page with advanced features including date selection, PDF export, and detailed financial position analysis.</p>
+            <button @click="goToBalanceSheet" class="view-report-btn">
+              View Balance Sheet Report
+              <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -576,12 +597,16 @@ import { Configs } from '@/utils/Configs'
 import SwalAlert from '@/components/common/SwalAlert.vue'
 import { Chart, registerables } from 'chart.js'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 // Register Chart.js components
 Chart.register(...registerables)
 
 // User store for authentication
 const userStore = useUserStore()
+
+// Router for navigation
+const router = useRouter()
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
@@ -1136,6 +1161,10 @@ const formatCategory = (category) => {
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
+}
+
+const goToBalanceSheet = () => {
+  router.push('/reports/balance-sheet')
 }
 
 // Lifecycle
@@ -1819,5 +1848,80 @@ watch(selectedReport, () => {
 
 .cancel-btn:active {
   background: #b91c1c;
+}
+
+/* Balance Sheet Redirect Styles */
+.balance-sheet-redirect {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
+}
+
+.redirect-card {
+  max-width: 600px;
+  text-align: center;
+  padding: 48px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.redirect-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  opacity: 0.9;
+}
+
+.redirect-card h3 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: white;
+}
+
+.redirect-card p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+  opacity: 0.95;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.view-report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.view-report-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.view-report-btn:active {
+  transform: translateY(0);
+}
+
+.arrow-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.view-report-btn:hover .arrow-icon {
+  transform: translateX(4px);
 }
 </style>

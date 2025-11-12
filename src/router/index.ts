@@ -20,6 +20,8 @@ import Customer from '@/views/settings/Customer.vue'
 import Expense from '@/views/expense/Expense.vue'
 import Login from '@/views/Login.vue'
 import WhatsAppOrders from '@/views/WhatsAppOrders.vue'
+import BalanceSheet from '@/views/reports/BalanceSheet.vue'
+import ColorCategories from '@/views/settings/ColorCategories.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -71,6 +73,11 @@ const router = createRouter({
           path: '/settings/item-categories',
           name: 'Settings-item-categories',
           component: ItemCategories,
+        },
+        {
+          path: '/settings/color-categories',
+          name: 'Settings-color-categories',
+          component: ColorCategories,
         },
         {
           path: '/settings/common',
@@ -126,6 +133,11 @@ const router = createRouter({
           path: '/whatsapp-orders',
           name: 'WhatsAppOrders',
           component: WhatsAppOrders,
+        },
+        {
+          path: '/reports/balance-sheet',
+          name: 'BalanceSheet',
+          component: BalanceSheet,
         },
         {
           path: '/settings',
