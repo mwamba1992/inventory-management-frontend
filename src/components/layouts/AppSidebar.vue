@@ -1,19 +1,25 @@
 <template>
-  <aside class="bg-white shadow-lg w-64 min-h-screen">
-    <div class="p-4">
+  <aside class="bg-white shadow-soft w-64 min-h-screen border-r border-neutral-100">
+    <div class="p-6">
+      <!-- Brand Logo/Header -->
+      <div class="mb-8 pb-6 border-b border-neutral-100">
+        <h1 class="text-xl font-bold text-neutral-900">Global Authentic TZ</h1>
+        <p class="text-xs text-neutral-500 mt-1">Inventory Portal</p>
+      </div>
+
       <nav class="space-y-1">
         <div v-for="item in sidebarItems" :key="item.key" class="mb-1">
           <!-- Menu with sub-items -->
           <div v-if="item.subItems">
             <div
-              class="sidebar-item cursor-pointer"
+              class="sidebar-item"
               :class="isMenuActive(item.key) ? 'sidebar-item-active' : 'sidebar-item-inactive'"
               @click="toggleSubMenu(item.key)"
             >
-              <component :is="item.icon" class="w-5 h-5 mr-3" />
-              <span>{{ item.label }}</span>
+              <component :is="item.icon" class="w-5 h-5 mr-3 flex-shrink-0" />
+              <span class="flex-1">{{ item.label }}</span>
               <ChevronDownIcon
-                class="w-4 h-4 ml-auto transition-transform"
+                class="w-4 h-4 transition-transform duration-200"
                 :class="{ 'rotate-180': expandedMenus[item.key] }"
               />
             </div>
@@ -24,14 +30,14 @@
                 v-for="subItem in item.subItems"
                 :key="subItem.key"
                 :to="subItem.route"
-                class="block w-full text-left p-2 text-sm rounded transition-colors"
+                class="block w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-200"
                 :class="
                   isSubItemActive(subItem.route)
-                    ? 'bg-blue-100 text-blue-700 font-medium'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    ? 'bg-brand-100 text-brand-700 font-medium'
+                    : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
                 "
               >
-                <span class="mr-2">→</span>{{ subItem.label }}
+                <span class="mr-2 text-neutral-400">→</span>{{ subItem.label }}
               </router-link>
             </div>
           </div>
@@ -43,7 +49,7 @@
             class="sidebar-item"
             :class="isActive(item.route) ? 'sidebar-item-active' : 'sidebar-item-inactive'"
           >
-            <component :is="item.icon" class="w-5 h-5 mr-3" />
+            <component :is="item.icon" class="w-5 h-5 mr-3 flex-shrink-0" />
             <span>{{ item.label }}</span>
           </router-link>
         </div>
@@ -101,6 +107,7 @@ const sidebarItems = [
       { label: 'Common', key: 'common', route: '/settings/common' },
       { label: 'Item Suppliers', key: 'item-suppliers', route: '/settings/suppliers' },
       { label: 'Color Categories', key: 'color-categories', route: '/settings/color-categories' },
+      { label: 'Brands', key: 'brands', route: '/settings/brands' },
       { label: 'Warehouses', key: 'warehouses', route: '/settings/warehouses' },
       { label: 'Businesses', key: 'businesses', route: '/settings/businesses' },
       { label: 'Accounts', key: 'accounts', route: '/settings/accounts' },
@@ -154,15 +161,15 @@ watch(
 
 <style scoped>
 .sidebar-item {
-  @apply flex items-center p-3 rounded-lg transition-colors;
+  @apply flex items-center px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer font-medium text-sm;
 }
 
 .sidebar-item-active {
-  @apply bg-blue-50 text-blue-600 border-r-4 border-blue-600;
+  @apply bg-brand-50 text-brand-700 border-l-4 border-brand-600 pl-3;
 }
 
 .sidebar-item-inactive {
-  @apply text-gray-600 hover:bg-gray-50;
+  @apply text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900;
 }
 
 .rotate-180 {

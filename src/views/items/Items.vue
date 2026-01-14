@@ -1,47 +1,45 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen bg-neutral-50 p-6">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>Inventory</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Items</span>
+        <span class="text-neutral-900 font-medium">Items</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="card mb-6">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
-            <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
-            >
+            <h1 class="text-3xl font-bold text-neutral-900">
               Items Management
             </h1>
-            <p class="text-gray-600 mt-2">Manage inventory items, categories and warehouse locations</p>
+            <p class="text-neutral-600 mt-2">Manage inventory items, categories and warehouse locations</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshItems"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="btn-secondary flex items-center text-sm disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="exportItems"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="btn-secondary flex items-center text-sm"
             >
               <DocumentArrowDownIcon class="w-4 h-4 mr-2" />
               Export
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="btn-primary flex items-center text-sm"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add Item
@@ -51,15 +49,15 @@
       </div>
 
       <!-- Filter Tabs -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="card mb-6">
         <div class="p-6">
           <div class="flex flex-wrap gap-3 mb-4">
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Category:</label>
+              <label class="text-sm font-medium text-neutral-700">Category:</label>
               <select
                 v-model="selectedCategory"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Categories</option>
                 <option
@@ -73,11 +71,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Warehouse:</label>
+              <label class="text-sm font-medium text-neutral-700">Warehouse:</label>
               <select
                 v-model="selectedWarehouse"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Warehouses</option>
                 <option
@@ -91,11 +89,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Business:</label>
+              <label class="text-sm font-medium text-neutral-700">Business:</label>
               <select
                 v-model="selectedBusiness"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Businesses</option>
                 <option
@@ -111,7 +109,7 @@
             <button
               @click="clearFilters"
               v-if="selectedCategory || selectedWarehouse || selectedBusiness"
-              class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
               Clear Filters
@@ -121,28 +119,24 @@
       </div>
 
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
-        >
-          <div class="flex items-center justify-between">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="card">
+          <div class="flex items-center justify-between p-6">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Items</p>
-              <p class="text-2xl font-bold text-gray-900">{{ items.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Items</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ items.length }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <CubeIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <CubeIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
         </div>
 
-        <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
-        >
-          <div class="flex items-center justify-between">
+        <div class="card">
+          <div class="flex items-center justify-between p-6">
             <div>
-              <p class="text-sm font-medium text-gray-600">Categories</p>
-              <p class="text-2xl font-bold text-gray-900">{{ availableCategories.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Categories</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ availableCategories.length }}</p>
             </div>
             <div class="p-3 bg-green-100 rounded-xl">
               <TagIcon class="w-6 h-6 text-green-600" />
@@ -150,13 +144,11 @@
           </div>
         </div>
 
-        <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
-        >
-          <div class="flex items-center justify-between">
+        <div class="card">
+          <div class="flex items-center justify-between p-6">
             <div>
-              <p class="text-sm font-medium text-gray-600">Warehouses</p>
-              <p class="text-2xl font-bold text-gray-900">{{ availableWarehouses.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Warehouses</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ availableWarehouses.length }}</p>
             </div>
             <div class="p-3 bg-purple-100 rounded-xl">
               <BuildingStorefrontIcon class="w-6 h-6 text-purple-600" />
@@ -164,13 +156,11 @@
           </div>
         </div>
 
-        <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
-        >
-          <div class="flex items-center justify-between">
+        <div class="card">
+          <div class="flex items-center justify-between p-6">
             <div>
-              <p class="text-sm font-medium text-gray-600">Businesses</p>
-              <p class="text-2xl font-bold text-gray-900">{{ availableBusinesses.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Businesses</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ availableBusinesses.length }}</p>
             </div>
             <div class="p-3 bg-orange-100 rounded-xl">
               <BuildingOfficeIcon class="w-6 h-6 text-orange-600" />
@@ -180,8 +170,8 @@
       </div>
 
       <!-- Main Items Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
-        <div class="p-6 border-b border-gray-200/50">
+      <div class="card">
+        <div class="p-6 border-b border-neutral-100">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -189,32 +179,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search items..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -224,69 +214,69 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100 transition-colors duration-200"
                 @click="sortBy('name')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Item</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Item</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Code</span>
+                <span class="text-sm font-semibold text-neutral-900">Code</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Condition</span>
+                <span class="text-sm font-semibold text-neutral-900">Condition</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Description</span>
+                <span class="text-sm font-semibold text-neutral-900">Description</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Category</span>
+                <span class="text-sm font-semibold text-neutral-900">Category</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Warehouse</span>
+                <span class="text-sm font-semibold text-neutral-900">Warehouse</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Business</span>
+                <span class="text-sm font-semibold text-neutral-900">Business</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-100">
             <tr v-if="loading">
               <td colspan="10" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading items...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading items...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedItems.length === 0">
-              <td colspan="10" class="p-12 text-center text-gray-500">
-                <CubeIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="10" class="p-12 text-center text-neutral-500">
+                <CubeIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No items found' : 'No items yet' }}
                 </p>
@@ -303,24 +293,24 @@
               v-else
               v-for="item in paginatedItems"
               :key="item.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(item.id)"
                   @change="handleSelectItem(item.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ item.id }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ item.id }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
                   <!-- Product Image or Icon -->
                   <div class="relative group">
-                    <div v-if="item.imageUrl" class="w-12 h-12 rounded-xl overflow-hidden shadow-md ring-2 ring-white">
+                    <div v-if="item.imageUrl" class="w-12 h-12 rounded-xl overflow-hidden shadow-soft ring-2 ring-white">
                       <img
                         :src="item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`"
                         :alt="item.name"
@@ -329,13 +319,13 @@
                     </div>
                     <div
                       v-else
-                      class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md"
+                      class="w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl flex items-center justify-center shadow-soft"
                     >
                       <CubeIcon class="w-6 h-6 text-white" />
                     </div>
                     <!-- Hover Zoom Preview -->
                     <div v-if="item.imageUrl" class="absolute left-full ml-2 top-0 hidden group-hover:block z-50 pointer-events-none">
-                      <div class="bg-white rounded-xl shadow-2xl border-2 border-gray-200 p-2">
+                      <div class="bg-white rounded-xl shadow-soft-lg border-2 border-neutral-200 p-2">
                         <img
                           :src="item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`"
                           :alt="item.name"
@@ -345,16 +335,16 @@
                     </div>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ item.name }}</p>
-                    <p class="text-xs text-gray-500">Item #{{ item.id }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ item.name }}</p>
+                    <p class="text-xs text-neutral-500">Item #{{ item.id }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
-                <span v-if="item.code" class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-medium bg-indigo-100 text-indigo-800">
+                <span v-if="item.code" class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-medium bg-brand-100 text-brand-800">
                   {{ item.code }}
                 </span>
-                <span v-else class="text-xs text-gray-400">No code</span>
+                <span v-else class="text-xs text-neutral-400">No code</span>
               </td>
               <td class="p-4">
                 <span
@@ -369,50 +359,50 @@
                 </span>
               </td>
               <td class="p-4">
-                <p class="text-sm text-gray-900 max-w-xs truncate" :title="item.desc">
+                <p class="text-sm text-neutral-900 max-w-xs truncate" :title="item.desc">
                   {{ item.desc || 'No description' }}
                 </p>
               </td>
               <td class="p-4">
                 <div v-if="item.category">
                   <span
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800"
                   >
                     {{ item.category.code }}
                   </span>
-                  <p class="text-xs text-gray-500 mt-1">{{ item.category.description }}</p>
+                  <p class="text-xs text-neutral-500 mt-1">{{ item.category.description }}</p>
                 </div>
-                <span v-else class="text-xs text-gray-400">No category</span>
+                <span v-else class="text-xs text-neutral-400">No category</span>
               </td>
               <td class="p-4">
                 <div v-if="item.warehouse">
                   <div class="flex items-center space-x-2">
                     <BuildingStorefrontIcon class="w-4 h-4 text-purple-600" />
                     <div>
-                      <p class="text-sm font-medium text-gray-900">{{ item.warehouse.code }}</p>
-                      <p class="text-xs text-gray-500">{{ item.warehouse.description }}</p>
+                      <p class="text-sm font-medium text-neutral-900">{{ item.warehouse.code }}</p>
+                      <p class="text-xs text-neutral-500">{{ item.warehouse.description }}</p>
                     </div>
                   </div>
                 </div>
-                <span v-else class="text-xs text-gray-400">No warehouse</span>
+                <span v-else class="text-xs text-neutral-400">No warehouse</span>
               </td>
               <td class="p-4">
                 <div v-if="item.business">
                   <div class="flex items-center space-x-2">
                     <BuildingOfficeIcon class="w-4 h-4 text-orange-600" />
                     <div>
-                      <p class="text-sm font-medium text-gray-900">{{ item.business.name }}</p>
-                      <p class="text-xs text-gray-500">Business</p>
+                      <p class="text-sm font-medium text-neutral-900">{{ item.business.name }}</p>
+                      <p class="text-xs text-neutral-500">Business</p>
                     </div>
                   </div>
                 </div>
-                <span v-else class="text-xs text-gray-400">No business</span>
+                <span v-else class="text-xs text-neutral-400">No business</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
                   <button
                     @click="shareOnWhatsApp(item)"
-                    class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-xl transition-all duration-200"
                     title="Share on WhatsApp"
                   >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -421,7 +411,7 @@
                   </button>
                   <button
                     @click="copyWhatsAppLink(item)"
-                    class="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-xl transition-all duration-200"
                     title="Copy WhatsApp Link"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -430,28 +420,28 @@
                   </button>
                   <button
                     @click="openEditModal(item)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-xl transition-all duration-200"
                     title="Edit Item"
                   >
                     <PencilIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="viewItemDetails(item)"
-                    class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50 rounded-xl transition-all duration-200"
                     title="View Details"
                   >
                     <EyeIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="duplicateItem(item)"
-                    class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-xl transition-all duration-200"
                     title="Duplicate Item"
                   >
                     <DocumentDuplicateIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="deleteItem(item)"
-                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all duration-200"
                     title="Delete Item"
                   >
                     <TrashIcon class="w-4 h-4" />
@@ -465,11 +455,11 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-100"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredItems.length }} entries
-            <span v-if="hasActiveFilters || searchTerm" class="text-blue-600">
+            <span v-if="hasActiveFilters || searchTerm" class="text-brand-600">
               (filtered from {{ items.length }} total)
             </span>
           </div>
@@ -478,7 +468,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -488,11 +478,11 @@
                 v-for="page in getPageNumbers()"
                 :key="page"
                 @click="goToPage(page)"
-                class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
+                class="px-3 py-2 border rounded-xl text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -502,7 +492,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -512,10 +502,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} item{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -535,14 +525,14 @@
         v-if="showModal"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-100">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit Item' : 'Create New Item' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -552,38 +542,38 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Item Information -->
               <div class="md:col-span-2">
-                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <h4 class="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                   <CubeIcon class="w-5 h-5 mr-2" />
                   Item Information
                 </h4>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Item Name *</label>
+                <label class="input-label">Item Name *</label>
                 <input
                   v-model="form.name"
                   type="text"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="input-field"
                   placeholder="Enter item name"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Code</label>
+                <label class="input-label">Code</label>
                 <input
                   v-model="form.code"
                   type="text"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-mono"
+                  class="input-field font-mono"
                   placeholder="Enter item code (e.g., SKU-001)"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Condition</label>
+                <label class="input-label">Condition</label>
                 <select
                   v-model="form.condition"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="input-field"
                 >
                   <option value="new">New</option>
                   <option value="used">Used</option>
@@ -591,11 +581,11 @@
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Category *</label>
+                <label class="input-label">Category *</label>
                 <select
                   v-model="form.categoryId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="input-field"
                 >
                   <option value="">Select Category</option>
                   <option
@@ -608,19 +598,36 @@
                 </select>
               </div>
 
+              <div>
+                <label class="input-label">Brand</label>
+                <select
+                  v-model="form.brandId"
+                  class="input-field"
+                >
+                  <option value="">Select Brand (Optional)</option>
+                  <option
+                    v-for="brand in availableBrands"
+                    :key="brand.id"
+                    :value="brand.id"
+                  >
+                    {{ brand.name }}
+                  </option>
+                </select>
+              </div>
+
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                <label class="input-label">Description</label>
                 <textarea
                   v-model="form.desc"
                   rows="3"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="input-field"
                   placeholder="Enter item description (optional)"
                 ></textarea>
               </div>
 
               <!-- Product Image Upload -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image</label>
+                <label class="input-label">Product Image</label>
 
                 <!-- Drag and Drop Zone -->
                 <div
@@ -631,18 +638,18 @@
                   :class="[
                     'border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 cursor-pointer',
                     isDragging
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                      ? 'border-brand-500 bg-brand-50'
+                      : 'border-neutral-300 hover:border-brand-400 hover:bg-neutral-50'
                   ]"
                   @click="$refs.imageInput?.click()"
                 >
-                  <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-12 h-12 mx-auto mb-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p class="text-sm font-medium text-gray-700 mb-1">
+                  <p class="text-sm font-medium text-neutral-700 mb-1">
                     Drop your image here or click to browse
                   </p>
-                  <p class="text-xs text-gray-500">
+                  <p class="text-xs text-neutral-500">
                     Supports: JPG, PNG, GIF (Max 5MB)
                   </p>
                   <input
@@ -656,32 +663,32 @@
 
                 <!-- Image Preview -->
                 <div v-else class="relative">
-                  <div class="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
+                  <div class="border-2 border-neutral-200 rounded-xl p-4 bg-neutral-50">
                     <img
                       :src="imagePreview"
                       alt="Preview"
-                      class="max-h-64 mx-auto rounded-lg shadow-md object-contain"
+                      class="max-h-64 mx-auto rounded-lg shadow-soft object-contain"
                     />
                   </div>
                   <button
                     type="button"
                     @click="removeImage"
-                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-all duration-200 shadow-lg"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-all duration-200 shadow-soft"
                     title="Remove image"
                   >
                     <XMarkIcon class="w-5 h-5" />
                   </button>
-                  <div class="mt-3 flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-gray-200">
+                  <div class="mt-3 flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-neutral-200">
                     <div class="flex items-center space-x-3">
                       <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                       </svg>
-                      <span class="text-sm font-medium text-gray-700">Image ready to upload</span>
+                      <span class="text-sm font-medium text-neutral-700">Image ready to upload</span>
                     </div>
                     <button
                       type="button"
                       @click="$refs.imageInput?.click()"
-                      class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                      class="text-sm text-brand-600 hover:text-brand-700 font-medium"
                     >
                       Change
                     </button>
@@ -698,18 +705,18 @@
 
               <!-- Location & Business -->
               <div class="md:col-span-2">
-                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <h4 class="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                   <MapPinIcon class="w-5 h-5 mr-2" />
                   Location & Business
                 </h4>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Warehouse *</label>
+                <label class="input-label">Warehouse *</label>
                 <select
                   v-model="form.warehouseId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="input-field"
                 >
                   <option value="">Select Warehouse</option>
                   <option
@@ -723,11 +730,11 @@
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Business *</label>
+                <label class="input-label">Business *</label>
                 <select
                   v-model="form.businessId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="input-field"
                 >
                   <option value="">Select Business</option>
                   <option
@@ -741,30 +748,30 @@
               </div>
 
               <!-- Preview Section -->
-              <div v-if="form.name && form.categoryId" class="md:col-span-2 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-200 shadow-sm">
-                <h5 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+              <div v-if="form.name && form.categoryId" class="md:col-span-2 bg-gradient-to-br from-neutral-50 to-brand-50 rounded-xl p-6 border border-neutral-200 shadow-soft">
+                <h5 class="text-sm font-semibold text-neutral-700 mb-4 flex items-center">
                   <EyeIcon class="w-4 h-4 mr-2" />
                   Item Preview
                 </h5>
                 <div class="flex items-start space-x-4">
                   <!-- Preview Image -->
                   <div class="flex-shrink-0">
-                    <div v-if="imagePreview" class="w-20 h-20 rounded-xl overflow-hidden shadow-lg ring-2 ring-white">
+                    <div v-if="imagePreview" class="w-20 h-20 rounded-xl overflow-hidden shadow-soft ring-2 ring-white">
                       <img
                         :src="imagePreview"
                         :alt="form.name"
                         class="w-full h-full object-cover"
                       />
                     </div>
-                    <div v-else class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <div v-else class="w-20 h-20 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl flex items-center justify-center shadow-soft">
                       <CubeIcon class="w-10 h-10 text-white" />
                     </div>
                   </div>
                   <!-- Preview Info -->
                   <div class="flex-1 min-w-0">
-                    <p class="text-base font-semibold text-gray-900 mb-1">{{ form.name }}</p>
-                    <p v-if="form.code" class="text-xs font-mono text-indigo-600 mb-2">{{ form.code }}</p>
-                    <p class="text-sm text-gray-600 mb-3">{{ form.desc || 'No description provided' }}</p>
+                    <p class="text-base font-semibold text-neutral-900 mb-1">{{ form.name }}</p>
+                    <p v-if="form.code" class="text-xs font-mono text-brand-600 mb-2">{{ form.code }}</p>
+                    <p class="text-sm text-neutral-600 mb-3">{{ form.desc || 'No description provided' }}</p>
                     <div class="flex flex-wrap items-center gap-2">
                       <span
                         :class="[
@@ -776,32 +783,36 @@
                       >
                         {{ form.condition === 'new' ? '✨ New' : '♻️ Used' }}
                       </span>
-                      <span class="text-xs text-gray-400">•</span>
-                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span class="text-xs text-neutral-400">•</span>
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800">
                         {{ getCategoryName(form.categoryId) }}
                       </span>
-                      <span class="text-xs text-gray-400">•</span>
-                      <span class="text-xs text-gray-700 font-medium">{{ getWarehouseName(form.warehouseId) }}</span>
-                      <span class="text-xs text-gray-400">•</span>
-                      <span class="text-xs text-gray-700 font-medium">{{ getBusinessName(form.businessId) }}</span>
+                      <span v-if="form.brandId" class="text-xs text-neutral-400">•</span>
+                      <span v-if="form.brandId" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800">
+                        {{ getBrandName(form.brandId) }}
+                      </span>
+                      <span class="text-xs text-neutral-400">•</span>
+                      <span class="text-xs text-neutral-700 font-medium">{{ getWarehouseName(form.warehouseId) }}</span>
+                      <span class="text-xs text-neutral-400">•</span>
+                      <span class="text-xs text-neutral-700 font-medium">{{ getBusinessName(form.businessId) }}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-100">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="btn-primary disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -821,13 +832,13 @@
         v-if="showDeleteModal"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete Item</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete Item</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete item "{{ itemToDelete?.name }}"?
               <span class="text-red-600 font-medium">
                 This action cannot be undone and may affect related inventory records.
@@ -836,14 +847,14 @@
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="btn-secondary"
               >
                 Cancel
               </button>
               <button
                 @click="confirmDelete"
                 :disabled="submitting"
-                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium disabled:opacity-50"
+                class="btn-danger disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -894,6 +905,7 @@ const API_BASE_URL = Configs.API_BASE_URL
 // Reactive data
 const items = ref([])
 const availableCategories = ref([])
+const availableBrands = ref([])
 const availableWarehouses = ref([])
 const availableBusinesses = ref([])
 const searchTerm = ref('')
@@ -926,6 +938,7 @@ const form = ref({
   condition: 'new', // Default to 'new'
   desc: '',
   categoryId: '',
+  brandId: '',
   warehouseId: '',
   businessId: '',
 })
@@ -985,6 +998,16 @@ const fetchCategories = async () => {
       { id: 3, code: 'OFFICE', description: 'Office Supplies' },
       { id: 4, code: 'EQUIPMENT', description: 'Equipment & Machinery' }
     ]
+  }
+}
+
+const fetchBrands = async () => {
+  try {
+    const data = await apiCall('/brands')
+    availableBrands.value = data
+  } catch (err) {
+    console.error('Failed to fetch brands:', err)
+    availableBrands.value = []
   }
 }
 
@@ -1145,6 +1168,12 @@ const getCategoryName = (categoryId) => {
   return category ? category.code : ''
 }
 
+const getBrandName = (brandId) => {
+  if (!brandId) return ''
+  const brand = availableBrands.value.find(br => br.id.toString() === brandId.toString())
+  return brand ? brand.name : ''
+}
+
 const getWarehouseName = (warehouseId) => {
   if (!warehouseId) return ''
   const warehouse = availableWarehouses.value.find(wh => wh.id.toString() === warehouseId.toString())
@@ -1270,6 +1299,7 @@ const openAddModal = () => {
     condition: 'new',
     desc: '',
     categoryId: '',
+    brandId: '',
     warehouseId: '',
     businessId: '',
   }
@@ -1285,6 +1315,7 @@ const openEditModal = (item) => {
     condition: item.condition || 'new',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
+    brandId: item.brand?.id || '',
     warehouseId: item.warehouse?.id || '',
     businessId: item.business?.id || '',
   }
@@ -1304,6 +1335,7 @@ const closeModal = () => {
     condition: 'new',
     desc: '',
     categoryId: '',
+    brandId: '',
     warehouseId: '',
     businessId: '',
   }
@@ -1320,6 +1352,7 @@ const saveItem = async () => {
       condition: form.value.condition || 'new',
       desc: form.value.desc.trim() || null,
       categoryId: form.value.categoryId,
+      brandId: form.value.brandId || null,
       warehouseId: form.value.warehouseId,
       businessId: form.value.businessId,
     }
@@ -1359,6 +1392,7 @@ const duplicateItem = (item) => {
     condition: item.condition || 'new',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
+    brandId: item.brand?.id || '',
     warehouseId: item.warehouse?.id || '',
     businessId: item.business?.id || '',
   }
@@ -1532,6 +1566,6 @@ const refreshItems = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([fetchItems(), fetchCategories(), fetchWarehouses(), fetchBusinesses()])
+  await Promise.all([fetchItems(), fetchCategories(), fetchBrands(), fetchWarehouses(), fetchBusinesses()])
 })
 </script>

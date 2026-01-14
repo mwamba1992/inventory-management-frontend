@@ -1,15 +1,15 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+  <div class="min-h-screen bg-neutral-50">
     <!-- Header -->
-    <div class="bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-lg">
+    <div class="card border-b border-neutral-100 shadow-soft mb-0 rounded-none">
       <div class="px-6 py-4">
         <div class="flex justify-between items-center">
           <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h1 class="text-3xl font-bold text-neutral-900">
               Business Intelligence Dashboard
             </h1>
-            <p class="text-sm text-gray-600 mt-1">{{ currentDateTime }}</p>
+            <p class="text-sm text-neutral-600 mt-1">{{ currentDateTime }}</p>
           </div>
           <div class="flex items-center space-x-6">
             <div class="flex items-center text-sm">
@@ -18,13 +18,13 @@
                 <span class="text-green-700 font-medium">System Online</span>
               </div>
             </div>
-            <div class="text-sm text-gray-600">
+            <div class="text-sm text-neutral-600">
               <span class="font-medium">{{ totalTransactions.toLocaleString() }}</span> transactions loaded
             </div>
             <button
               @click="refreshDashboard"
               :disabled="isRefreshing"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
+              class="btn-primary disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': isRefreshing }" />
               Refresh
@@ -38,11 +38,11 @@
       <!-- Key Performance Indicators -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Revenue -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300">
+        <div class="card p-6">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p class="text-3xl font-bold text-gray-900 mt-1">
+              <p class="text-sm font-medium text-neutral-600">Total Revenue</p>
+              <p class="text-3xl font-bold text-neutral-900 mt-1">
                 TZS{{ formatCurrency(totalRevenue) }}
               </p>
               <div class="flex items-center mt-3">
@@ -50,7 +50,7 @@
                   <TrendingUpIcon class="w-4 h-4 text-green-600 mr-1" />
                   <span class="text-green-600 text-sm font-semibold">+{{ revenueGrowth }}%</span>
                 </div>
-                <span class="text-gray-500 text-sm ml-2">vs last month</span>
+                <span class="text-neutral-500 text-sm ml-2">vs last month</span>
               </div>
             </div>
             <div class="p-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
@@ -58,13 +58,13 @@
             </div>
           </div>
           <div class="mt-4">
-            <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="w-full bg-neutral-200 rounded-full h-2">
               <div
                 class="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full transition-all duration-500"
                 :style="`width: ${Math.min(revenueGrowth * 5, 100)}%`"
               ></div>
             </div>
-            <p class="text-xs text-gray-500 mt-2 flex items-center">
+            <p class="text-xs text-neutral-500 mt-2 flex items-center">
               <ClockIcon class="w-3 h-3 mr-1" />
               Updated {{ lastUpdated }} ago
             </p>
@@ -444,9 +444,9 @@ const salesTrends = ref([
 
 // Inventory status data
 const inventoryStatus = ref([
-  { name: 'In Stock', count: 2847, percentage: 72, color: 'bg-emerald-500' },
-  { name: 'Low Stock', count: 456, percentage: 18, color: 'bg-orange-500' },
-  { name: 'Out of Stock', count: 123, percentage: 10, color: 'bg-red-500' }
+  { name: 'In Stock', count: 0, percentage: 0, color: 'bg-emerald-500' },
+  { name: 'Low Stock', count: 0, percentage: 0, color: 'bg-orange-500' },
+  { name: 'Out of Stock', count: 0, percentage: 0, color: 'bg-red-500' }
 ])
 
 // Computed properties
@@ -583,14 +583,20 @@ const getSystemStatusText = (status) => {
 const refreshDashboard = async () => {
   isRefreshing.value = true
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    // Refresh all dashboard data
+    await Promise.all([
+      fetchTotalTransactions(),
+      fetchTopProducts(),
+      fetchSalesTrends(),
+      fetchLowStockCount(),
+      fetchTotalStockValue(),
+      fetchTotalProducts(),
+      fetchTotalRevenue(),
+      fetchRecentSales(),
+      fetchInventoryStats()
+    ])
 
-    // Update some random data
-    totalRevenue.value += Math.floor(Math.random() * 10000)
-    totalProducts.value += Math.floor(Math.random() * 50)
     lastUpdated.value = 'Just now'
-
     swalAlert.value?.showSuccess('Dashboard refreshed successfully')
   } catch (error) {
     swalAlert.value?.showError('Failed to refresh dashboard', error.message)
@@ -686,6 +692,54 @@ async function fetchTotalTransactions() {
   }
 }
 
+async function fetchInventoryStats() {
+  try {
+    const itemStocks = await apiCall('/items/item-stocks')
+
+    // Calculate statistics based on reorder points
+    let inStockCount = 0
+    let lowStockCount = 0
+    let outOfStockCount = 0
+
+    itemStocks.forEach(stock => {
+      const reorderPoint = stock.reorderPoint || 10
+      if (stock.quantity === 0) {
+        outOfStockCount++
+      } else if (stock.quantity <= reorderPoint) {
+        lowStockCount++
+      } else {
+        inStockCount++
+      }
+    })
+
+    const total = itemStocks.length || 1 // Avoid division by zero
+
+    // Update inventory status with real data
+    inventoryStatus.value = [
+      {
+        name: 'In Stock',
+        count: inStockCount,
+        percentage: Math.round((inStockCount / total) * 100),
+        color: 'bg-emerald-500'
+      },
+      {
+        name: 'Low Stock',
+        count: lowStockCount,
+        percentage: Math.round((lowStockCount / total) * 100),
+        color: 'bg-orange-500'
+      },
+      {
+        name: 'Out of Stock',
+        count: outOfStockCount,
+        percentage: Math.round((outOfStockCount / total) * 100),
+        color: 'bg-red-500'
+      }
+    ]
+  } catch (error) {
+    console.error('Failed to fetch inventory statistics:', error)
+  }
+}
+
 onMounted(() => {
   fetchTotalTransactions()
   fetchTopProducts()
@@ -695,6 +749,7 @@ onMounted(() => {
   fetchTotalProducts()
   fetchTotalRevenue()
   fetchRecentSales()
+  fetchInventoryStats()
   updateDateTime()
   refreshInterval = setInterval(() => {
     updateDateTime()
