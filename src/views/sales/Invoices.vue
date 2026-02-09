@@ -1,53 +1,55 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-neutral-50">
     <!-- Header -->
-    <div class="bg-white shadow-sm border-b">
+    <div class="bg-white/80 backdrop-blur-sm shadow-soft border-b border-neutral-100">
       <div class="px-6 py-4">
         <div class="flex justify-between items-center">
           <div>
-            <div class="flex items-center text-sm text-gray-500 mb-2">
+            <div class="flex items-center text-sm text-neutral-400 mb-2">
               <HomeIcon class="w-4 h-4 mr-2" />
               <span>Home</span>
-              <span class="mx-2">/</span>
-              <span class="text-gray-700 font-medium">Invoices</span>
+              <ChevronRightIcon class="w-4 h-4 mx-2" />
+              <span>Sales</span>
+              <ChevronRightIcon class="w-4 h-4 mx-2" />
+              <span class="text-neutral-700 font-medium">Invoices</span>
             </div>
-            <h1 class="text-2xl font-bold text-gray-900">Invoices</h1>
+            <h1 class="text-3xl font-bold text-neutral-900">Invoices</h1>
           </div>
           <div class="flex items-center space-x-3">
             <div class="flex items-center">
-              <span class="text-sm text-gray-600 mr-2">Ref:</span>
+              <span class="text-sm text-neutral-500 mr-2">Ref:</span>
               <input
                 v-model="refSearch"
                 type="text"
-                class="px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent w-32"
+                class="input-field !py-2 !px-3 !rounded-xl w-32 text-sm"
               />
             </div>
             <button
               @click="searchInvoices"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center text-sm"
+              class="btn-primary flex items-center text-sm"
             >
               <MagnifyingGlassIcon class="w-4 h-4 mr-2" />
               Search
             </button>
             <button
               @click="exportCSV"
-              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center text-sm"
+              class="btn-success flex items-center text-sm"
             >
               <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
               Export CSV
             </button>
             <button
               @click="openAddModal"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center text-sm"
+              class="btn-primary flex items-center text-sm"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add
             </button>
             <button
               @click="refreshInvoices"
-              class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded flex items-center text-sm"
+              class="btn-secondary flex items-center text-sm !px-3"
             >
-              <ArrowPathIcon class="w-4 h-4" />
+              <ArrowPathIcon class="w-4 h-4" :class="{ 'animate-spin': loading }" />
             </button>
           </div>
         </div>
@@ -55,37 +57,37 @@
     </div>
 
     <div class="p-6">
-      <!-- Blue Banner -->
-      <div class="bg-blue-600 text-white p-4 rounded-lg mb-6">
-        <p class="text-blue-100">View & search invoices</p>
+      <!-- Gradient Banner -->
+      <div class="bg-gradient-to-r from-brand-600 to-brand-700 text-white p-5 rounded-2xl mb-6 shadow-soft">
+        <p class="text-brand-100 text-sm">View & search invoices</p>
       </div>
 
       <!-- Main Content -->
-      <div class="bg-white rounded-lg shadow-sm border">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
         <!-- Controls -->
-        <div class="px-6 py-4 border-b border-gray-200">
+        <div class="px-6 py-4 border-b border-neutral-100">
           <div class="flex justify-between items-center">
             <div class="flex items-center space-x-4">
               <div class="flex items-center">
-                <span class="text-sm text-gray-600 mr-2">Show</span>
+                <span class="text-sm text-neutral-500 mr-2">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="border border-neutral-200 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm text-gray-600 ml-2">entries</span>
+                <span class="text-sm text-neutral-500 ml-2">entries</span>
               </div>
 
               <div class="flex items-center">
-                <span class="text-sm text-gray-600 mr-2">Range:</span>
+                <span class="text-sm text-neutral-500 mr-2">Range:</span>
                 <select
                   v-model="dateRange"
-                  class="border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option value="all">All Time</option>
                   <option value="today">Today</option>
@@ -97,14 +99,14 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <span class="text-sm text-gray-600">Search:</span>
+              <span class="text-sm text-neutral-500">Search:</span>
               <div class="relative">
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search invoices..."
-                  class="px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
+                  class="input-field !py-2 !px-3 !rounded-xl w-64 text-sm"
                 />
               </div>
             </div>
@@ -114,128 +116,128 @@
         <!-- Table -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50">
+            <thead class="bg-neutral-50/80">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th class="table-header">
                 <input
                   type="checkbox"
-                  class="rounded"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('id')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('id')">
                 <div class="flex items-center justify-between">
                   <span>ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('ref')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('ref')">
                 <div class="flex items-center justify-between">
                   <span>Ref</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('customer')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('customer')">
                 <div class="flex items-center justify-between">
                   <span>Customer</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('date')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('date')">
                 <div class="flex items-center justify-between">
                   <span>Date</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('total')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('total')">
                 <div class="flex items-center justify-between">
                   <span>Total</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('balance')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('balance')">
                 <div class="flex items-center justify-between">
                   <span>Balance</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" @click="sortBy('status')">
+              <th class="table-header cursor-pointer hover:bg-neutral-100 transition-colors" @click="sortBy('status')">
                 <div class="flex items-center justify-between">
                   <span>Status</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th class="table-header">Actions</th>
             </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-if="loading" class="hover:bg-gray-50">
-              <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+            <tbody class="bg-white divide-y divide-neutral-100">
+            <tr v-if="loading">
+              <td colspan="9" class="px-6 py-12 text-center text-neutral-500">
                 <div class="flex items-center justify-center">
-                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  <span class="ml-2">Loading invoices...</span>
+                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600"></div>
+                  <span class="ml-3">Loading invoices...</span>
                 </div>
               </td>
             </tr>
-            <tr v-else-if="paginatedInvoices.length === 0" class="hover:bg-gray-50">
-              <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+            <tr v-else-if="paginatedInvoices.length === 0">
+              <td colspan="9" class="px-6 py-12 text-center text-neutral-500">
                 <div class="text-center">
-                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="mx-auto h-12 w-12 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
-                  <h3 class="mt-2 text-sm font-medium text-gray-900">No invoices found</h3>
-                  <p class="mt-1 text-sm text-gray-500">
+                  <h3 class="mt-2 text-sm font-medium text-neutral-900">No invoices found</h3>
+                  <p class="mt-1 text-sm text-neutral-500">
                     {{ searchTerm ? 'No invoices match your search criteria.' : 'Get started by creating a new invoice.' }}
                   </p>
                 </div>
               </td>
             </tr>
-            <tr v-else v-for="invoice in paginatedInvoices" :key="invoice.id" class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap">
+            <tr v-else v-for="invoice in paginatedInvoices" :key="invoice.id" class="table-row">
+              <td class="table-cell whitespace-nowrap">
                 <input
                   type="checkbox"
-                  class="rounded"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(invoice.id)"
                   @change="handleSelectItem(invoice.id, $event.target.checked)"
                 />
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ invoice.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <button @click="viewInvoiceDetails(invoice)" class="text-blue-600 hover:text-blue-800 font-medium">
+              <td class="table-cell whitespace-nowrap text-neutral-900">{{ invoice.id }}</td>
+              <td class="table-cell whitespace-nowrap">
+                <button @click="viewInvoiceDetails(invoice)" class="text-brand-600 hover:text-brand-800 font-medium transition-colors">
                   {{ invoice.ref }}
                 </button>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ invoice.customer }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${{ invoice.total.toFixed(2) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" :class="invoice.balance > 0 ? 'text-red-600' : 'text-green-600'">
+              <td class="table-cell whitespace-nowrap text-neutral-900">{{ invoice.customer }}</td>
+              <td class="table-cell whitespace-nowrap text-neutral-500">{{ formatDate(invoice.date) }}</td>
+              <td class="table-cell whitespace-nowrap text-neutral-900 font-medium">${{ invoice.total.toFixed(2) }}</td>
+              <td class="table-cell whitespace-nowrap font-medium" :class="invoice.balance > 0 ? 'text-red-600' : 'text-emerald-600'">
                 ${{ invoice.balance.toFixed(2) }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="table-cell whitespace-nowrap">
                 <span :class="getStatusBadge(invoice.status)">
                   {{ invoice.status }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex items-center space-x-2">
+              <td class="table-cell whitespace-nowrap">
+                <div class="flex items-center space-x-1">
                   <button
                     @click="viewInvoiceDetails(invoice)"
-                    class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
+                    class="text-brand-600 hover:text-brand-800 p-1.5 rounded-lg hover:bg-brand-50 transition-all"
                     title="View Details"
                   >
                     <EyeIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="editInvoice(invoice)"
-                    class="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
+                    class="text-emerald-600 hover:text-emerald-800 p-1.5 rounded-lg hover:bg-emerald-50 transition-all"
                     title="Edit"
                   >
                     <PencilIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="deleteInvoice(invoice)"
-                    class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
+                    class="text-red-600 hover:text-red-800 p-1.5 rounded-lg hover:bg-red-50 transition-all"
                     title="Delete"
                   >
                     <TrashIcon class="w-4 h-4" />
@@ -248,8 +250,8 @@
         </div>
 
         <!-- Pagination -->
-        <div class="bg-white px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-          <div class="text-sm text-gray-700">
+        <div class="px-6 py-4 border-t border-neutral-100 flex items-center justify-between">
+          <div class="text-sm text-neutral-500">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredInvoices.length }} entries
           </div>
 
@@ -257,7 +259,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
+              class="btn-secondary !py-2 !px-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
@@ -268,9 +270,9 @@
                 :key="page"
                 @click="goToPage(page)"
                 :class="currentPage === page
-                  ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
-                  : 'bg-white text-gray-500 border-gray-300 hover:bg-gray-50'"
-                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md transition-colors"
+                  ? 'bg-brand-600 text-white border-brand-600 hover:bg-brand-700 shadow-soft'
+                  : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50'"
+                class="inline-flex items-center px-4 py-2 border text-sm font-medium rounded-xl transition-all duration-200"
               >
                 {{ page }}
               </button>
@@ -279,7 +281,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
+              class="btn-secondary !py-2 !px-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
@@ -289,11 +291,11 @@
     </div>
 
     <!-- Invoice Details Modal -->
-    <div v-if="showDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Transaction Details</h3>
-          <button @click="closeDetailsModal" class="text-gray-400 hover:text-gray-600">
+    <div v-if="showDetailsModal" class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-soft-lg border border-white/20 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center p-6 border-b border-neutral-100">
+          <h3 class="text-xl font-bold text-neutral-900">Transaction Details</h3>
+          <button @click="closeDetailsModal" class="text-neutral-400 hover:text-neutral-600 p-1 rounded-lg hover:bg-neutral-100 transition-all">
             <XMarkIcon class="w-6 h-6" />
           </button>
         </div>
@@ -302,77 +304,77 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Left Column -->
             <div class="space-y-6">
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-900 mb-3">Transaction Details</h4>
-                <div class="space-y-2">
+              <div class="bg-neutral-50/80 p-5 rounded-2xl border border-neutral-100">
+                <h4 class="font-semibold text-neutral-900 mb-4">Transaction Details</h4>
+                <div class="space-y-3">
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Status:</span>
+                    <span class="text-neutral-500">Status:</span>
                     <span :class="getStatusBadge(selectedInvoice.status)">{{ selectedInvoice.status }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">ID:</span>
-                    <span class="font-medium">{{ selectedInvoice.id }}</span>
+                    <span class="text-neutral-500">ID:</span>
+                    <span class="font-medium text-neutral-900">{{ selectedInvoice.id }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Ref:</span>
-                    <span class="font-medium">{{ selectedInvoice.ref }}</span>
+                    <span class="text-neutral-500">Ref:</span>
+                    <span class="font-medium text-neutral-900">{{ selectedInvoice.ref }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Trans DT:</span>
-                    <span>{{ selectedInvoice.transactionDate }}</span>
+                    <span class="text-neutral-500">Trans DT:</span>
+                    <span class="text-neutral-700">{{ selectedInvoice.transactionDate }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Process DT:</span>
-                    <span>{{ selectedInvoice.processDate }}</span>
+                    <span class="text-neutral-500">Process DT:</span>
+                    <span class="text-neutral-700">{{ selectedInvoice.processDate }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">User:</span>
-                    <span>{{ selectedInvoice.user }}</span>
+                    <span class="text-neutral-500">User:</span>
+                    <span class="text-neutral-700">{{ selectedInvoice.user }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Device:</span>
-                    <span>{{ selectedInvoice.device }}</span>
+                    <span class="text-neutral-500">Device:</span>
+                    <span class="text-neutral-700">{{ selectedInvoice.device }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Location:</span>
-                    <span>{{ selectedInvoice.location }}</span>
+                    <span class="text-neutral-500">Location:</span>
+                    <span class="text-neutral-700">{{ selectedInvoice.location }}</span>
                   </div>
                 </div>
               </div>
 
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-900 mb-3">Invoice Details</h4>
-                <div class="space-y-2">
+              <div class="bg-neutral-50/80 p-5 rounded-2xl border border-neutral-100">
+                <h4 class="font-semibold text-neutral-900 mb-4">Invoice Details</h4>
+                <div class="space-y-3">
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Invoice Date:</span>
-                    <span>{{ formatDate(selectedInvoice.invoiceDate) }}</span>
+                    <span class="text-neutral-500">Invoice Date:</span>
+                    <span class="text-neutral-700">{{ formatDate(selectedInvoice.invoiceDate) }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Due Date:</span>
-                    <span>{{ formatDate(selectedInvoice.dueDate) }}</span>
+                    <span class="text-neutral-500">Due Date:</span>
+                    <span class="text-neutral-700">{{ formatDate(selectedInvoice.dueDate) }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Close Date:</span>
-                    <span>{{ formatDate(selectedInvoice.closeDate) }}</span>
+                    <span class="text-neutral-500">Close Date:</span>
+                    <span class="text-neutral-700">{{ formatDate(selectedInvoice.closeDate) }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Discount:</span>
-                    <span>{{ selectedInvoice.discount }}%</span>
+                    <span class="text-neutral-500">Discount:</span>
+                    <span class="text-neutral-700">{{ selectedInvoice.discount }}%</span>
                   </div>
                 </div>
               </div>
 
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-900 mb-3">Notes</h4>
+              <div class="bg-neutral-50/80 p-5 rounded-2xl border border-neutral-100">
+                <h4 class="font-semibold text-neutral-900 mb-4">Notes</h4>
                 <textarea
                   v-model="selectedInvoice.notes"
                   rows="3"
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="input-field text-sm"
                   placeholder="Add notes..."
                 ></textarea>
                 <button
                   @click="saveNotes"
-                  class="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
+                  class="mt-3 btn-success text-sm"
                 >
                   Save
                 </button>
@@ -381,31 +383,31 @@
 
             <!-- Right Column -->
             <div class="space-y-6">
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-900 mb-3">Customer Details</h4>
+              <div class="bg-neutral-50/80 p-5 rounded-2xl border border-neutral-100">
+                <h4 class="font-semibold text-neutral-900 mb-4">Customer Details</h4>
                 <div class="space-y-2">
-                  <div class="font-medium text-gray-900">{{ selectedInvoice.customerDetails.name }}</div>
-                  <div class="text-gray-600">{{ selectedInvoice.customerDetails.address }}</div>
-                  <div class="text-gray-600">{{ selectedInvoice.customerDetails.city }}</div>
-                  <div class="text-gray-600">P: {{ selectedInvoice.customerDetails.phone }}</div>
-                  <div class="text-gray-600">M: {{ selectedInvoice.customerDetails.mobile }}</div>
-                  <div class="text-gray-600">E: {{ selectedInvoice.customerDetails.email }}</div>
-                  <button class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
+                  <div class="font-medium text-neutral-900">{{ selectedInvoice.customerDetails.name }}</div>
+                  <div class="text-neutral-500">{{ selectedInvoice.customerDetails.address }}</div>
+                  <div class="text-neutral-500">{{ selectedInvoice.customerDetails.city }}</div>
+                  <div class="text-neutral-500">P: {{ selectedInvoice.customerDetails.phone }}</div>
+                  <div class="text-neutral-500">M: {{ selectedInvoice.customerDetails.mobile }}</div>
+                  <div class="text-neutral-500">E: {{ selectedInvoice.customerDetails.email }}</div>
+                  <button class="mt-3 btn-primary text-sm">
                     Details
                   </button>
                 </div>
               </div>
 
-              <div class="bg-gray-50 p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-900 mb-3">Sale Totals</h4>
-                <div class="space-y-2">
+              <div class="bg-neutral-50/80 p-5 rounded-2xl border border-neutral-100">
+                <h4 class="font-semibold text-neutral-900 mb-4">Sale Totals</h4>
+                <div class="space-y-3">
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Subtotal:</span>
-                    <span class="font-medium">${{ selectedInvoice.subtotal.toFixed(2) }}</span>
+                    <span class="text-neutral-500">Subtotal:</span>
+                    <span class="font-medium text-neutral-900">${{ selectedInvoice.subtotal.toFixed(2) }}</span>
                   </div>
-                  <div class="flex justify-between font-semibold text-lg border-t pt-2">
-                    <span>Total:</span>
-                    <span>${{ selectedInvoice.total.toFixed(2) }}</span>
+                  <div class="flex justify-between font-semibold text-lg border-t border-neutral-200 pt-3">
+                    <span class="text-neutral-900">Total:</span>
+                    <span class="text-brand-700">${{ selectedInvoice.total.toFixed(2) }}</span>
                   </div>
                 </div>
               </div>
@@ -414,16 +416,16 @@
 
           <!-- Tabs -->
           <div class="mt-6">
-            <div class="border-b border-gray-200">
+            <div class="border-b border-neutral-200">
               <nav class="-mb-px flex space-x-8">
                 <button
                   v-for="tab in tabs"
                   :key="tab.id"
                   @click="activeTab = tab.id"
                   :class="activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                  class="py-2 px-1 border-b-2 font-medium text-sm flex items-center"
+                    ? 'border-brand-500 text-brand-600'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+                  class="py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-all duration-200"
                 >
                   <component :is="tab.icon" class="w-4 h-4 mr-2" />
                   {{ tab.name }}
@@ -432,16 +434,16 @@
             </div>
 
             <div class="mt-4">
-              <div v-if="activeTab === 'details'" class="text-gray-600">
+              <div v-if="activeTab === 'details'" class="text-neutral-600 p-4">
                 Transaction details content...
               </div>
-              <div v-else-if="activeTab === 'items'" class="text-gray-600">
+              <div v-else-if="activeTab === 'items'" class="text-neutral-600 p-4">
                 Invoice items list...
               </div>
-              <div v-else-if="activeTab === 'payments'" class="text-gray-600">
+              <div v-else-if="activeTab === 'payments'" class="text-neutral-600 p-4">
                 Payment history...
               </div>
-              <div v-else-if="activeTab === 'options'" class="text-gray-600">
+              <div v-else-if="activeTab === 'options'" class="text-neutral-600 p-4">
                 Additional options...
               </div>
             </div>
@@ -451,74 +453,74 @@
     </div>
 
     <!-- Add/Edit Invoice Modal -->
-    <div v-if="showAddModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">
+    <div v-if="showAddModal" class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-soft-lg border border-white/20 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center p-6 border-b border-neutral-100">
+          <h3 class="text-xl font-bold text-neutral-900">
             {{ isEditing ? 'Edit Invoice' : 'Create New Invoice' }}
           </h3>
-          <button @click="closeAddModal" class="text-gray-400 hover:text-gray-600">
+          <button @click="closeAddModal" class="text-neutral-400 hover:text-neutral-600 p-1 rounded-lg hover:bg-neutral-100 transition-all">
             <XMarkIcon class="w-6 h-6" />
           </button>
         </div>
 
         <form @submit.prevent="saveInvoice" class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Customer *</label>
+              <label class="input-label">Customer *</label>
               <input
                 v-model="invoiceForm.customer"
                 type="text"
                 required
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Reference</label>
+              <label class="input-label">Reference</label>
               <input
                 v-model="invoiceForm.ref"
                 type="text"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Invoice Date *</label>
+              <label class="input-label">Invoice Date *</label>
               <input
                 v-model="invoiceForm.invoiceDate"
                 type="date"
                 required
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+              <label class="input-label">Due Date</label>
               <input
                 v-model="invoiceForm.dueDate"
                 type="date"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Total Amount *</label>
+              <label class="input-label">Total Amount *</label>
               <input
                 v-model.number="invoiceForm.total"
                 type="number"
                 step="0.01"
                 min="0"
                 required
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label class="input-label">Status</label>
               <select
                 v-model="invoiceForm.status"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               >
                 <option value="Open">Open</option>
                 <option value="Closed">Closed</option>
@@ -528,26 +530,26 @@
             </div>
 
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+              <label class="input-label">Notes</label>
               <textarea
                 v-model="invoiceForm.notes"
                 rows="3"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field"
               ></textarea>
             </div>
           </div>
 
-          <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+          <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-neutral-100">
             <button
               type="button"
               @click="closeAddModal"
-              class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              class="btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              class="btn-primary"
             >
               {{ isEditing ? 'Update Invoice' : 'Create Invoice' }}
             </button>
@@ -562,6 +564,7 @@
 import { ref, computed, onMounted } from 'vue'
 import {
   HomeIcon,
+  ChevronRightIcon,
   MagnifyingGlassIcon,
   ArrowDownTrayIcon,
   PlusIcon,
@@ -817,12 +820,12 @@ const formatDate = (dateString) => {
 
 const getStatusBadge = (status) => {
   const badges = {
-    'Open': 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800',
-    'Closed': 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800',
-    'Overdue': 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800',
-    'Cancelled': 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'
+    'Open': 'badge badge-primary',
+    'Closed': 'badge badge-success',
+    'Overdue': 'badge bg-red-100 text-red-800',
+    'Cancelled': 'badge bg-neutral-100 text-neutral-800'
   }
-  return badges[status] || 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'
+  return badges[status] || 'badge bg-neutral-100 text-neutral-800'
 }
 
 const sortBy = (field) => {
@@ -938,19 +941,17 @@ const closeAddModal = () => {
 
 const saveInvoice = () => {
   if (isEditing.value) {
-    // Update existing invoice
     const index = invoices.value.findIndex(invoice => invoice.id === invoiceForm.value.id)
     if (index !== -1) {
       invoices.value[index] = {
         ...invoices.value[index],
         ...invoiceForm.value,
         date: invoiceForm.value.invoiceDate,
-        balance: invoiceForm.value.total, // Assuming new invoices start with full balance
+        balance: invoiceForm.value.total,
         subtotal: invoiceForm.value.total
       }
     }
   } else {
-    // Add new invoice
     const newId = Math.max(...invoices.value.map(invoice => invoice.id)) + 1
     const newRef = Math.floor(Math.random() * 9000) + 1000
     invoices.value.push({
@@ -999,10 +1000,8 @@ const saveNotes = () => {
   }
 }
 
-// Other actions
 const searchInvoices = () => {
   currentPage.value = 1
-  // Additional search logic can be added here
 }
 
 const exportCSV = () => {
@@ -1030,13 +1029,11 @@ const exportCSV = () => {
 
 const refreshInvoices = () => {
   loading.value = true
-  // Simulate API call
   setTimeout(() => {
     loading.value = false
   }, 1000)
 }
 
-// Lifecycle
 onMounted(() => {
   // Initial data load if needed
 })

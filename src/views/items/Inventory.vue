@@ -1,54 +1,54 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen min-h-screen bg-neutral-50 p-6">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>Inventory</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Stock Management</span>
+        <span class="text-neutral-700 font-medium">Stock Management</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              class="text-3xl font-bold text-neutral-900"
             >
               Inventory Stock Management
             </h1>
-            <p class="text-gray-600 mt-2">Monitor and manage item quantities across warehouses</p>
+            <p class="text-neutral-600 mt-2">Monitor and manage item quantities across warehouses</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshStocks"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="openBulkAdjustmentModal"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <AdjustmentsHorizontalIcon class="w-4 h-4 mr-2" />
               Bulk Adjust
             </button>
             <button
               @click="exportStocks"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <DocumentArrowDownIcon class="w-4 h-4 mr-2" />
               Export
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add Stock Entry
@@ -58,15 +58,15 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="p-6">
           <div class="flex flex-wrap gap-3 mb-4">
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Warehouse:</label>
+              <label class="text-sm font-medium text-neutral-700">Warehouse:</label>
               <select
                 v-model="selectedWarehouse"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[200px]"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
               >
                 <option value="">All Warehouses</option>
                 <option
@@ -80,11 +80,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Item:</label>
+              <label class="text-sm font-medium text-neutral-700">Item:</label>
               <select
                 v-model="selectedItem"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[200px]"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
               >
                 <option value="">All Items</option>
                 <option
@@ -98,11 +98,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Stock Level:</label>
+              <label class="text-sm font-medium text-neutral-700">Stock Level:</label>
               <select
                 v-model="selectedStockLevel"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Levels</option>
                 <option value="out-of-stock">Out of Stock</option>
@@ -115,7 +115,7 @@
             <button
               @click="clearFilters"
               v-if="selectedWarehouse || selectedItem || selectedStockLevel"
-              class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
               Clear Filters
@@ -125,19 +125,19 @@
       </div>
 
       <!-- Color Distribution Overview -->
-      <div v-if="colorDistributionSummary.length > 0" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div v-if="colorDistributionSummary.length > 0" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="p-6">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-3">
-              <div class="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+              <div class="p-2 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl">
                 <SwatchIcon class="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 class="text-lg font-bold text-gray-900">Color Distribution Overview</h3>
-                <p class="text-sm text-gray-600">Total inventory by color variants</p>
+                <h3 class="text-lg font-bold text-neutral-900">Color Distribution Overview</h3>
+                <p class="text-sm text-neutral-600">Total inventory by color variants</p>
               </div>
             </div>
-            <span class="text-sm font-medium text-gray-600">
+            <span class="text-sm font-medium text-neutral-600">
               {{ colorDistributionSummary.length }} color{{ colorDistributionSummary.length !== 1 ? 's' : '' }}
             </span>
           </div>
@@ -147,7 +147,7 @@
             <div
               v-for="color in colorDistributionSummary"
               :key="color.id"
-              class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-105"
+              class="bg-gradient-to-br from-neutral-50 to-white rounded-xl p-4 border border-neutral-200 hover:shadow-md transition-all duration-300 hover:scale-105"
             >
               <div class="flex items-center space-x-3 mb-3">
                 <div
@@ -155,13 +155,13 @@
                   :style="{ backgroundColor: color.hexCode }"
                 ></div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold text-gray-900 truncate">{{ color.name }}</p>
-                  <p class="text-xs text-gray-500">{{ color.hexCode }}</p>
+                  <p class="text-sm font-semibold text-neutral-900 truncate">{{ color.name }}</p>
+                  <p class="text-xs text-neutral-500">{{ color.hexCode }}</p>
                 </div>
               </div>
-              <div class="text-center pt-3 border-t border-gray-200">
-                <p class="text-2xl font-bold text-indigo-600">{{ formatNumber(color.quantity) }}</p>
-                <p class="text-xs text-gray-500 mt-1">units in stock</p>
+              <div class="text-center pt-3 border-t border-neutral-200">
+                <p class="text-2xl font-bold text-brand-600">{{ formatNumber(color.quantity) }}</p>
+                <p class="text-xs text-neutral-500 mt-1">units in stock</p>
               </div>
             </div>
           </div>
@@ -171,26 +171,26 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Items</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalItems }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Items</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalItems }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <CubeIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <CubeIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Quantity</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalQuantity }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Quantity</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalQuantity }}</p>
             </div>
             <div class="p-3 bg-green-100 rounded-xl">
               <ArchiveBoxIcon class="w-6 h-6 text-green-600" />
@@ -199,12 +199,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Low Stock Items</p>
-              <p class="text-2xl font-bold text-gray-900">{{ lowStockItems }}</p>
+              <p class="text-sm font-medium text-neutral-600">Low Stock Items</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ lowStockItems }}</p>
             </div>
             <div class="p-3 bg-orange-100 rounded-xl">
               <ExclamationTriangleIcon class="w-6 h-6 text-orange-600" />
@@ -213,12 +213,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Out of Stock</p>
-              <p class="text-2xl font-bold text-gray-900">{{ outOfStockItems }}</p>
+              <p class="text-sm font-medium text-neutral-600">Out of Stock</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ outOfStockItems }}</p>
             </div>
             <div class="p-3 bg-red-100 rounded-xl">
               <NoSymbolIcon class="w-6 h-6 text-red-600" />
@@ -227,12 +227,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Warehouses</p>
-              <p class="text-2xl font-bold text-gray-900">{{ availableWarehouses.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Warehouses</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ availableWarehouses.length }}</p>
             </div>
             <div class="p-3 bg-purple-100 rounded-xl">
               <BuildingStorefrontIcon class="w-6 h-6 text-purple-600" />
@@ -242,8 +242,8 @@
       </div>
 
       <!-- Main Stocks Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
-        <div class="p-6 border-b border-gray-200/50">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
+        <div class="p-6 border-b border-neutral-100">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -251,32 +251,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search inventory..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -286,63 +286,63 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Item</span>
+                <span class="text-sm font-semibold text-neutral-900">Item</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Warehouse</span>
+                <span class="text-sm font-semibold text-neutral-900">Warehouse</span>
               </th>
               <th class="p-4 text-right">
-                <span class="text-sm font-semibold text-gray-900">Current Stock</span>
+                <span class="text-sm font-semibold text-neutral-900">Current Stock</span>
               </th>
               <th class="p-4 text-right">
-                <span class="text-sm font-semibold text-gray-900">Reorder Point</span>
+                <span class="text-sm font-semibold text-neutral-900">Reorder Point</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Stock Level</span>
+                <span class="text-sm font-semibold text-neutral-900">Stock Level</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Color Distribution</span>
+                <span class="text-sm font-semibold text-neutral-900">Color Distribution</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Last Updated</span>
+                <span class="text-sm font-semibold text-neutral-900">Last Updated</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-200/50">
             <tr v-if="loading">
               <td colspan="10" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading inventory...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading inventory...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedStocks.length === 0">
-              <td colspan="10" class="p-12 text-center text-gray-500">
-                <ArchiveBoxIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="10" class="p-12 text-center text-neutral-500">
+                <ArchiveBoxIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No stock records found' : 'No inventory yet' }}
                 </p>
@@ -359,36 +359,36 @@
               v-else
               v-for="stock in paginatedStocks"
               :key="stock.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(stock.id)"
                   @change="handleSelectItem(stock.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ stock.id }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ stock.id }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
                   <div
-                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center"
+                    class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl flex items-center justify-center"
                   >
                     <CubeIcon class="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ stock.item?.name || 'Unknown Item' }}</p>
-                    <p class="text-xs text-gray-500">Item #{{ stock.item?.id }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ stock.item?.name || 'Unknown Item' }}</p>
+                    <p class="text-xs text-neutral-500">Item #{{ stock.item?.id }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
-                  <BuildingStorefrontIcon class="w-4 h-4 text-gray-400" />
-                  <span class="text-sm font-medium text-gray-900">{{ stock.warehouse?.name || 'Unknown Warehouse' }}</span>
+                  <BuildingStorefrontIcon class="w-4 h-4 text-neutral-400" />
+                  <span class="text-sm font-medium text-neutral-900">{{ stock.warehouse?.name || 'Unknown Warehouse' }}</span>
                 </div>
               </td>
               <td class="p-4 text-right">
@@ -400,7 +400,7 @@
                 </span>
               </td>
               <td class="p-4 text-right">
-                <span class="text-sm font-medium text-gray-600">{{ formatNumber(stock.reorderPoint || 10) }}</span>
+                <span class="text-sm font-medium text-neutral-600">{{ formatNumber(stock.reorderPoint || 10) }}</span>
               </td>
               <td class="p-4 text-center">
                 <span
@@ -417,16 +417,16 @@
                     <div
                       v-for="dist in stock.distributions"
                       :key="dist.id"
-                      class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                      class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-neutral-200 bg-white shadow-sm hover:shadow-md transition-all duration-200"
                     >
                       <div
-                        class="w-4 h-4 rounded-full border border-gray-300 flex-shrink-0"
+                        class="w-4 h-4 rounded-full border border-neutral-300 flex-shrink-0"
                         :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
                       ></div>
-                      <span class="text-xs font-medium text-gray-700">
+                      <span class="text-xs font-medium text-neutral-700">
                         {{ dist.colorCategory?.name || 'No Color' }}
                       </span>
-                      <span class="text-xs font-bold text-indigo-600">
+                      <span class="text-xs font-bold text-brand-600">
                         {{ dist.quantity }}
                       </span>
                     </div>
@@ -434,7 +434,7 @@
                   <!-- Manage button -->
                   <button
                     @click="openColorModal(stock)"
-                    class="text-xs text-indigo-600 hover:text-indigo-800 font-medium flex items-center space-x-1"
+                    class="text-xs text-brand-600 hover:text-brand-800 font-medium flex items-center space-x-1"
                   >
                     <SwatchIcon class="w-3 h-3" />
                     <span>Manage Colors</span>
@@ -443,7 +443,7 @@
                 <div v-else>
                   <button
                     @click="openColorModal(stock)"
-                    class="inline-flex items-center space-x-1 px-3 py-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-all duration-200"
+                    class="inline-flex items-center space-x-1 px-3 py-1 text-xs text-brand-600 hover:text-brand-800 font-medium border border-brand-200 rounded-xl hover:bg-brand-50 transition-all duration-200"
                   >
                     <SwatchIcon class="w-3 h-3" />
                     <span>+ Add Colors</span>
@@ -451,48 +451,48 @@
                 </div>
               </td>
               <td class="p-4 text-center">
-                <span class="text-xs text-gray-500">{{ formatDate(stock.updatedAt) }}</span>
+                <span class="text-xs text-neutral-500">{{ formatDate(stock.updatedAt) }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
                   <button
                     @click="openEditModal(stock)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-xl transition-all duration-200"
                     title="Edit Stock"
                   >
                     <PencilIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="openAdjustmentModal(stock)"
-                    class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-xl transition-all duration-200"
                     title="Adjust Quantity"
                   >
                     <AdjustmentsVerticalIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="openColorModal(stock)"
-                    class="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-xl transition-all duration-200"
                     title="Manage Color Distribution"
                   >
                     <SwatchIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="viewStockHistory(stock)"
-                    class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-xl transition-all duration-200"
                     title="View Stock History"
                   >
                     <ClockIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="duplicateStock(stock)"
-                    class="p-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-xl transition-all duration-200"
                     title="Duplicate for Another Warehouse"
                   >
                     <DocumentDuplicateIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="deleteStock(stock)"
-                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all duration-200"
                     title="Delete Stock Entry"
                   >
                     <TrashIcon class="w-4 h-4" />
@@ -506,11 +506,11 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-100"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredStocks.length }} entries
-            <span v-if="hasActiveFilters || searchTerm" class="text-blue-600">
+            <span v-if="hasActiveFilters || searchTerm" class="text-brand-600">
               (filtered from {{ itemStocks.length }} total)
             </span>
           </div>
@@ -519,7 +519,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -529,11 +529,11 @@
                 v-for="page in getPageNumbers()"
                 :key="page"
                 @click="goToPage(page)"
-                class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
+                class="px-3 py-2 border rounded-xl text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -543,7 +543,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -553,10 +553,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} stock record{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -586,16 +586,16 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit Stock Entry' : 'Create New Stock Entry' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -605,11 +605,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Item Selection -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Item *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Item *</label>
                 <select
                   v-model="form.itemId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Item</option>
                   <option
@@ -624,11 +624,11 @@
 
               <!-- Warehouse Selection -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Warehouse *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Warehouse *</label>
                 <select
                   v-model="form.warehouseId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Warehouse</option>
                   <option
@@ -643,45 +643,45 @@
 
               <!-- Quantity -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Quantity *</label>
                 <input
                   v-model.number="form.quantity"
                   type="number"
                   min="0"
                   step="1"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="0"
                 />
               </div>
 
               <!-- Reorder Point -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Reorder Point</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Reorder Point</label>
                 <input
                   v-model.number="form.reorderPoint"
                   type="number"
                   min="0"
                   step="1"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="10"
                 />
-                <p class="text-xs text-gray-500 mt-1">Alert when stock falls below this level</p>
+                <p class="text-xs text-neutral-500 mt-1">Alert when stock falls below this level</p>
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-200">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-600 text-white rounded-xl hover:from-brand-700 hover:to-brand-700 transition-all duration-200 font-medium shadow-soft hover:shadow-xl disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -699,14 +699,14 @@
       <!-- Stock Adjustment Modal -->
       <div
         v-if="showAdjustmentModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">Stock Adjustment</h3>
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-lg">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">Stock Adjustment</h3>
             <button
               @click="showAdjustmentModal = false"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -714,17 +714,17 @@
 
           <div class="p-6">
             <div class="mb-4">
-              <p class="text-sm text-gray-600">Item: <span class="font-medium">{{ adjustmentStock?.item?.name }}</span></p>
-              <p class="text-sm text-gray-600">Warehouse: <span class="font-medium">{{ adjustmentStock?.warehouse?.name }}</span></p>
-              <p class="text-sm text-gray-600">Current Stock: <span class="font-bold text-blue-600">{{ adjustmentStock?.quantity }}</span></p>
+              <p class="text-sm text-neutral-600">Item: <span class="font-medium">{{ adjustmentStock?.item?.name }}</span></p>
+              <p class="text-sm text-neutral-600">Warehouse: <span class="font-medium">{{ adjustmentStock?.warehouse?.name }}</span></p>
+              <p class="text-sm text-neutral-600">Current Stock: <span class="font-bold text-brand-600">{{ adjustmentStock?.quantity }}</span></p>
             </div>
 
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Adjustment Type</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Adjustment Type</label>
                 <select
                   v-model="adjustmentType"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="add">Add Stock (+)</option>
                   <option value="subtract">Remove Stock (-)</option>
@@ -733,7 +733,7 @@
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">
                   {{ adjustmentType === 'set' ? 'New Quantity' : 'Adjustment Quantity' }}
                 </label>
                 <input
@@ -741,23 +741,23 @@
                   type="number"
                   min="0"
                   step="1"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="0"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Reason (Optional)</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Reason (Optional)</label>
                 <textarea
                   v-model="adjustmentReason"
                   rows="3"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter reason for adjustment..."
                 ></textarea>
               </div>
 
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p class="text-sm text-blue-800">
+              <div class="bg-brand-50 border border-brand-200 rounded-xl p-4">
+                <p class="text-sm text-brand-800">
                   <strong>Result:</strong>
                   {{ getAdjustmentResult() }}
                 </p>
@@ -767,14 +767,14 @@
             <div class="flex justify-end space-x-4 mt-6">
               <button
                 @click="showAdjustmentModal = false"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 @click="confirmAdjustment"
                 :disabled="!adjustmentQuantity || submitting"
-                class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-medium disabled:opacity-50"
+                class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 font-medium disabled:opacity-50"
               >
                 Apply Adjustment
               </button>
@@ -786,15 +786,15 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete Stock Entry</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete Stock Entry</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete the stock entry for "{{ stockToDelete?.item?.name }}" in "{{ stockToDelete?.warehouse?.name }}"?
               <span class="text-red-600 font-medium">
                 This action cannot be undone.
@@ -803,14 +803,14 @@
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-4 py-2 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 @click="confirmDelete"
                 :disabled="submitting"
-                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium disabled:opacity-50"
+                class="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 font-medium disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -826,19 +826,19 @@
       <!-- Color Distribution Modal -->
       <div
         v-if="showColorModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
             <div>
-              <h3 class="text-xl font-bold text-gray-900">Manage Color Distribution</h3>
-              <p class="text-sm text-gray-600 mt-1">
+              <h3 class="text-xl font-bold text-neutral-900">Manage Color Distribution</h3>
+              <p class="text-sm text-neutral-600 mt-1">
                 {{ currentStockForColors?.item?.name }} - {{ currentStockForColors?.warehouse?.name }}
               </p>
             </div>
             <button
               @click="closeColorModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -846,18 +846,18 @@
 
           <div class="p-6">
             <!-- Stock Summary -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 mb-6">
+            <div class="bg-gradient-to-br from-neutral-50 to-brand-50 rounded-xl p-4 mb-6">
               <div class="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p class="text-xs text-gray-600 mb-1">Total Stock</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ currentStockForColors?.quantity || 0 }}</p>
+                  <p class="text-xs text-neutral-600 mb-1">Total Stock</p>
+                  <p class="text-2xl font-bold text-neutral-900">{{ currentStockForColors?.quantity || 0 }}</p>
                 </div>
                 <div>
-                  <p class="text-xs text-gray-600 mb-1">Distributed</p>
-                  <p class="text-2xl font-bold text-blue-600">{{ getTotalDistributed() }}</p>
+                  <p class="text-xs text-neutral-600 mb-1">Distributed</p>
+                  <p class="text-2xl font-bold text-brand-600">{{ getTotalDistributed() }}</p>
                 </div>
                 <div>
-                  <p class="text-xs text-gray-600 mb-1">Remaining</p>
+                  <p class="text-xs text-neutral-600 mb-1">Remaining</p>
                   <p class="text-2xl font-bold" :class="(currentStockForColors?.quantity || 0) - getTotalDistributed() < 0 ? 'text-red-600' : 'text-green-600'">
                     {{ (currentStockForColors?.quantity || 0) - getTotalDistributed() }}
                   </p>
@@ -866,14 +866,14 @@
             </div>
 
             <!-- Add Color Form -->
-            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-              <h4 class="text-sm font-semibold text-gray-900 mb-3">Add Color Distribution</h4>
+            <div class="bg-neutral-50 rounded-xl p-4 mb-6">
+              <h4 class="text-sm font-semibold text-neutral-900 mb-3">Add Color Distribution</h4>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                  <label class="block text-sm font-medium text-neutral-700 mb-2">Color</label>
                   <select
                     v-model="colorForm.colorCategoryId"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full border border-neutral-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   >
                     <option value="">No Specific Color</option>
                     <option
@@ -886,19 +886,19 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                  <label class="block text-sm font-medium text-neutral-700 mb-2">Quantity</label>
                   <div class="flex space-x-2">
                     <input
                       v-model.number="colorForm.quantity"
                       type="number"
                       min="0"
                       placeholder="0"
-                      class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      class="flex-1 border border-neutral-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                     />
                     <button
                       @click="addColorDistribution"
                       :disabled="!colorForm.quantity"
-                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="px-4 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Add
                     </button>
@@ -909,39 +909,39 @@
 
             <!-- Color Distributions List -->
             <div>
-              <h4 class="text-sm font-semibold text-gray-900 mb-3">Current Distributions</h4>
-              <div v-if="colorDistributions.length === 0" class="text-center py-8 text-gray-500">
-                <SwatchIcon class="w-12 h-12 mx-auto text-gray-300 mb-2" />
+              <h4 class="text-sm font-semibold text-neutral-900 mb-3">Current Distributions</h4>
+              <div v-if="colorDistributions.length === 0" class="text-center py-8 text-neutral-500">
+                <SwatchIcon class="w-12 h-12 mx-auto text-neutral-300 mb-2" />
                 <p class="text-sm">No color distributions yet</p>
               </div>
               <div v-else class="space-y-3">
                 <div
                   v-for="dist in colorDistributions"
                   :key="dist.id"
-                  class="bg-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 overflow-hidden"
+                  class="bg-white rounded-xl border border-neutral-200 hover:border-brand-300 hover:shadow-md transition-all duration-200 overflow-hidden"
                 >
                   <div class="p-4">
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center space-x-3">
                         <div
-                          class="w-10 h-10 rounded-xl border-2 border-gray-200 shadow-sm flex-shrink-0"
+                          class="w-10 h-10 rounded-xl border-2 border-neutral-200 shadow-sm flex-shrink-0"
                           :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCCCCC' }"
                         ></div>
                         <div>
-                          <p class="text-sm font-semibold text-gray-900">{{ dist.colorCategory?.name || 'No Specific Color' }}</p>
-                          <p class="text-xs text-gray-500">{{ dist.colorCategory?.hexCode || '#CCCCCC' }}</p>
+                          <p class="text-sm font-semibold text-neutral-900">{{ dist.colorCategory?.name || 'No Specific Color' }}</p>
+                          <p class="text-xs text-neutral-500">{{ dist.colorCategory?.hexCode || '#CCCCCC' }}</p>
                         </div>
                       </div>
                       <div class="flex items-center space-x-4">
                         <div class="text-right">
-                          <p class="text-lg font-bold text-indigo-600">{{ dist.quantity }}</p>
-                          <p class="text-xs text-gray-500">
+                          <p class="text-lg font-bold text-brand-600">{{ dist.quantity }}</p>
+                          <p class="text-xs text-neutral-500">
                             {{ getTotalDistributed() > 0 ? Math.round((dist.quantity / getTotalDistributed()) * 100) : 0 }}%
                           </p>
                         </div>
                         <button
                           @click="deleteColorDistribution(dist.id)"
-                          class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all duration-200"
                           title="Delete"
                         >
                           <TrashIcon class="w-4 h-4" />
@@ -950,7 +950,7 @@
                     </div>
 
                     <!-- Progress bar -->
-                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div class="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
                       <div
                         class="h-2 rounded-full transition-all duration-300"
                         :style="{
@@ -965,10 +965,10 @@
             </div>
           </div>
 
-          <div class="flex justify-end p-6 border-t border-gray-200">
+          <div class="flex justify-end p-6 border-t border-neutral-200">
             <button
               @click="closeColorModal"
-              class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200"
+              class="px-6 py-3 bg-neutral-600 text-white rounded-xl hover:bg-neutral-700 transition-all duration-200"
             >
               Close
             </button>
@@ -1401,13 +1401,13 @@ const getQuantityColor = (quantity, reorderPoint = 10) => {
   if (quantity === 0) return 'text-red-600'
   if (quantity <= reorderPoint) return 'text-orange-600'
   if (quantity > reorderPoint * 3) return 'text-green-600'
-  return 'text-gray-900'
+  return 'text-neutral-900'
 }
 
 const getStockLevelColor = (quantity, reorderPoint = 10) => {
   if (quantity === 0) return 'bg-red-100 text-red-800'
   if (quantity <= reorderPoint) return 'bg-orange-100 text-orange-800'
-  if (quantity > reorderPoint * 3) return 'bg-blue-100 text-blue-800'
+  if (quantity > reorderPoint * 3) return 'bg-brand-100 text-brand-800'
   return 'bg-green-100 text-green-800'
 }
 

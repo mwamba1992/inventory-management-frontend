@@ -523,7 +523,7 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
         <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
           <div class="flex justify-between items-center p-6 border-b border-neutral-100">
@@ -611,6 +611,23 @@
                     :value="brand.id"
                   >
                     {{ brand.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="input-label">Supplier</label>
+                <select
+                  v-model="form.supplierId"
+                  class="input-field"
+                >
+                  <option value="">Select Supplier (Optional)</option>
+                  <option
+                    v-for="supplier in availableSuppliers"
+                    :key="supplier.id"
+                    :value="supplier.id"
+                  >
+                    {{ supplier.supplierName }}
                   </option>
                 </select>
               </div>
@@ -791,6 +808,10 @@
                       <span v-if="form.brandId" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800">
                         {{ getBrandName(form.brandId) }}
                       </span>
+                      <span v-if="form.supplierId" class="text-xs text-neutral-400">•</span>
+                      <span v-if="form.supplierId" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        {{ getSupplierName(form.supplierId) }}
+                      </span>
                       <span class="text-xs text-neutral-400">•</span>
                       <span class="text-xs text-neutral-700 font-medium">{{ getWarehouseName(form.warehouseId) }}</span>
                       <span class="text-xs text-neutral-400">•</span>
@@ -830,7 +851,7 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
         <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
@@ -908,6 +929,7 @@ const availableCategories = ref([])
 const availableBrands = ref([])
 const availableWarehouses = ref([])
 const availableBusinesses = ref([])
+const availableSuppliers = ref([])
 const searchTerm = ref('')
 const entriesPerPage = ref(10)
 const currentPage = ref(1)
@@ -939,6 +961,7 @@ const form = ref({
   desc: '',
   categoryId: '',
   brandId: '',
+  supplierId: '',
   warehouseId: '',
   businessId: '',
 })
@@ -1038,6 +1061,16 @@ const fetchBusinesses = async () => {
       { id: 2, name: 'Secondary Division' },
       { id: 3, name: 'Subsidiary Company' }
     ]
+  }
+}
+
+const fetchSuppliers = async () => {
+  try {
+    const data = await apiCall('/item-suppliers')
+    availableSuppliers.value = data
+  } catch (err) {
+    console.error('Failed to fetch suppliers:', err)
+    availableSuppliers.value = []
   }
 }
 
@@ -1186,6 +1219,12 @@ const getBusinessName = (businessId) => {
   return business ? business.name : ''
 }
 
+const getSupplierName = (supplierId) => {
+  if (!supplierId) return ''
+  const supplier = availableSuppliers.value.find(sup => sup.id.toString() === supplierId.toString())
+  return supplier ? supplier.supplierName : ''
+}
+
 const clearFilters = () => {
   selectedCategory.value = ''
   selectedWarehouse.value = ''
@@ -1300,6 +1339,7 @@ const openAddModal = () => {
     desc: '',
     categoryId: '',
     brandId: '',
+    supplierId: '',
     warehouseId: '',
     businessId: '',
   }
@@ -1316,6 +1356,7 @@ const openEditModal = (item) => {
     desc: item.desc || '',
     categoryId: item.category?.id || '',
     brandId: item.brand?.id || '',
+    supplierId: item.supplier?.id || '',
     warehouseId: item.warehouse?.id || '',
     businessId: item.business?.id || '',
   }
@@ -1336,6 +1377,7 @@ const closeModal = () => {
     desc: '',
     categoryId: '',
     brandId: '',
+    supplierId: '',
     warehouseId: '',
     businessId: '',
   }
@@ -1353,6 +1395,7 @@ const saveItem = async () => {
       desc: form.value.desc.trim() || null,
       categoryId: form.value.categoryId,
       brandId: form.value.brandId || null,
+      supplierId: form.value.supplierId || null,
       warehouseId: form.value.warehouseId,
       businessId: form.value.businessId,
     }
@@ -1393,6 +1436,7 @@ const duplicateItem = (item) => {
     desc: item.desc || '',
     categoryId: item.category?.id || '',
     brandId: item.brand?.id || '',
+    supplierId: item.supplier?.id || '',
     warehouseId: item.warehouse?.id || '',
     businessId: item.business?.id || '',
   }
@@ -1566,6 +1610,6 @@ const refreshItems = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([fetchItems(), fetchCategories(), fetchBrands(), fetchWarehouses(), fetchBusinesses()])
+  await Promise.all([fetchItems(), fetchCategories(), fetchBrands(), fetchWarehouses(), fetchBusinesses(), fetchSuppliers()])
 })
 </script>

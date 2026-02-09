@@ -1,40 +1,40 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen bg-neutral-50 p-4">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>System</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Users</span>
+        <span class="text-neutral-700 font-medium">Users</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              class="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent"
             >
               User Management
             </h1>
-            <p class="text-gray-600 mt-2">Manage system users, roles and permissions</p>
+            <p class="text-neutral-600 mt-2">Manage system users, roles and permissions</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshUsers"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="bg-gradient-to-r from-brand-600 to-brand-600 hover:from-brand-700 hover:to-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add User
@@ -46,26 +46,26 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Users</p>
-              <p class="text-2xl font-bold text-gray-900">{{ users.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Users</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ users.length }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <UsersIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <UsersIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Active Users</p>
-              <p class="text-2xl font-bold text-gray-900">{{ activeUsers }}</p>
+              <p class="text-sm font-medium text-neutral-600">Active Users</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ activeUsers }}</p>
             </div>
             <div class="p-3 bg-green-100 rounded-xl">
               <CheckCircleIcon class="w-6 h-6 text-green-600" />
@@ -74,12 +74,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Logged In</p>
-              <p class="text-2xl font-bold text-gray-900">{{ loggedInUsers }}</p>
+              <p class="text-sm font-medium text-neutral-600">Logged In</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ loggedInUsers }}</p>
             </div>
             <div class="p-3 bg-purple-100 rounded-xl">
               <UserIcon class="w-6 h-6 text-purple-600" />
@@ -88,12 +88,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">New Accounts</p>
-              <p class="text-2xl font-bold text-gray-900">{{ newAccounts }}</p>
+              <p class="text-sm font-medium text-neutral-600">New Accounts</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ newAccounts }}</p>
             </div>
             <div class="p-3 bg-orange-100 rounded-xl">
               <UserPlusIcon class="w-6 h-6 text-orange-600" />
@@ -103,9 +103,9 @@
       </div>
 
       <!-- Main Users Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
 
-        <div class="p-6 border-b border-gray-200/50">
+        <div class="p-6 border-b border-neutral-200/50">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -113,32 +113,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search users..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -148,60 +148,60 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50/50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('username')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">User</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">User</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Contact Info</span>
+                <span class="text-sm font-semibold text-neutral-900">Contact Info</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Roles</span>
+                <span class="text-sm font-semibold text-neutral-900">Roles</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Status</span>
+                <span class="text-sm font-semibold text-neutral-900">Status</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-200/50">
             <tr v-if="loading">
               <td colspan="7" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading users...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading users...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedUsers.length === 0">
-              <td colspan="7" class="p-12 text-center text-gray-500">
-                <UsersIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="7" class="p-12 text-center text-neutral-500">
+                <UsersIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ searchTerm ? 'No users found' : 'No users yet' }}
                 </p>
@@ -218,23 +218,23 @@
               v-else
               v-for="user in paginatedUsers"
               :key="user.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50/50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(user.id)"
                   @change="handleSelectItem(user.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ user.id }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ user.id }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
                   <div
-                    class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center relative"
+                    class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-brand-600 rounded-xl flex items-center justify-center relative"
                   >
                       <span class="text-white text-sm font-semibold">{{
                           user.name.charAt(0).toUpperCase()
@@ -246,9 +246,9 @@
                     ></div>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-                    <p class="text-xs text-gray-500">@{{ user.username }}</p>
-                    <p v-if="user.checkNumber" class="text-xs text-blue-600">
+                    <p class="text-sm font-medium text-neutral-900">{{ user.name }}</p>
+                    <p class="text-xs text-neutral-500">@{{ user.username }}</p>
+                    <p v-if="user.checkNumber" class="text-xs text-brand-600">
                       Check #{{ user.checkNumber }}
                     </p>
                   </div>
@@ -256,16 +256,16 @@
               </td>
               <td class="p-4">
                 <div class="space-y-1">
-                  <p class="text-xs text-gray-600 flex items-center">
-                    <EnvelopeIcon class="w-3 h-3 mr-1 text-gray-400" />
+                  <p class="text-xs text-neutral-600 flex items-center">
+                    <EnvelopeIcon class="w-3 h-3 mr-1 text-neutral-400" />
                     {{ user.email }}
                   </p>
-                  <p v-if="user.mobileNumber" class="text-xs text-gray-600 flex items-center">
-                    <PhoneIcon class="w-3 h-3 mr-1 text-gray-400" />
+                  <p v-if="user.mobileNumber" class="text-xs text-neutral-600 flex items-center">
+                    <PhoneIcon class="w-3 h-3 mr-1 text-neutral-400" />
                     {{ user.mobileNumber }}
                   </p>
-                  <p v-if="user.address" class="text-xs text-gray-600 flex items-center">
-                    <MapPinIcon class="w-3 h-3 mr-1 text-gray-400" />
+                  <p v-if="user.address" class="text-xs text-neutral-600 flex items-center">
+                    <MapPinIcon class="w-3 h-3 mr-1 text-neutral-400" />
                     <span class="max-w-xs truncate">{{ user.address }}</span>
                   </p>
                 </div>
@@ -275,11 +275,11 @@
                     <span
                       v-for="role in user.rolesList || []"
                       :key="role.id"
-                      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800"
                     >
                       {{ role.name }}
                     </span>
-                  <span v-if="!user.rolesList || user.rolesList.length === 0" class="text-xs text-gray-400">
+                  <span v-if="!user.rolesList || user.rolesList.length === 0" class="text-xs text-neutral-400">
                       No roles assigned
                     </span>
                 </div>
@@ -313,7 +313,7 @@
                 <div class="flex items-center space-x-2">
                   <button
                     @click="openEditModal(user)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-all duration-200"
                     title="Edit User"
                   >
                     <PencilIcon class="w-4 h-4" />
@@ -349,9 +349,9 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-200/50"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} entries
           </div>
 
@@ -359,7 +359,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -372,8 +372,8 @@
                 class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -383,7 +383,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -393,10 +393,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50/50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} user{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -414,16 +414,16 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit User' : 'Create New User' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -433,113 +433,113 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Basic Information -->
               <div class="md:col-span-2">
-                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <h4 class="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                   <UserIcon class="w-5 h-5 mr-2" />
                   Basic Information
                 </h4>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Full Name *</label>
                 <input
                   v-model="form.name"
                   type="text"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter full name"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Username *</label>
                 <input
                   v-model="form.username"
                   type="text"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter username"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Email *</label>
                 <div class="relative">
                   <EnvelopeIcon
-                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                   />
                   <input
                     v-model="form.email"
                     type="email"
                     required
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="user@example.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Mobile Number</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Mobile Number</label>
                 <div class="relative">
                   <PhoneIcon
-                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                   />
                   <input
                     v-model="form.mobileNumber"
                     type="tel"
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Address *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Address *</label>
                 <div class="relative">
                   <MapPinIcon
-                    class="w-5 h-5 absolute left-3 top-3 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-3 text-neutral-400"
                   />
                   <textarea
                     v-model="form.address"
                     rows="2"
                     required
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter full address"
                   ></textarea>
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Check Number</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Check Number</label>
                 <input
                   v-model="form.checkNumber"
                   type="text"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Employee check number"
                 />
               </div>
 
               <div v-if="!isEditing">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Password *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Password *</label>
                 <input
                   v-model="form.password"
                   type="password"
                   :required="!isEditing"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter password"
                 />
               </div>
 
               <!-- Role Assignment -->
               <div class="md:col-span-2">
-                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <h4 class="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                   <ShieldCheckIcon class="w-5 h-5 mr-2" />
                   Role Assignment
                 </h4>
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Roles</label>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-gray-300 rounded-lg bg-gray-50">
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Roles</label>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-neutral-300 rounded-lg bg-neutral-50">
                   <div
                     v-for="role in availableRoles"
                     :key="role.id"
@@ -550,11 +550,11 @@
                       v-model="form.selectedRoles"
                       :value="role.id"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                     />
                     <label
                       :for="`role-${role.id}`"
-                      class="ml-2 text-sm text-gray-700 cursor-pointer"
+                      class="ml-2 text-sm text-neutral-700 cursor-pointer"
                     >
                       {{ role.name }}
                     </label>
@@ -564,7 +564,7 @@
 
               <!-- Account Settings -->
               <div class="md:col-span-2">
-                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <h4 class="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                   <CogIcon class="w-5 h-5 mr-2" />
                   Account Settings
                 </h4>
@@ -577,9 +577,9 @@
                       id="enabled"
                       v-model="form.enabled"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                     />
-                    <label for="enabled" class="ml-2 text-sm text-gray-700">
+                    <label for="enabled" class="ml-2 text-sm text-neutral-700">
                       Enabled
                     </label>
                   </div>
@@ -589,9 +589,9 @@
                       id="newAccount"
                       v-model="form.newAccount"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                     />
-                    <label for="newAccount" class="ml-2 text-sm text-gray-700">
+                    <label for="newAccount" class="ml-2 text-sm text-neutral-700">
                       New Account
                     </label>
                   </div>
@@ -601,9 +601,9 @@
                       id="accountNonExpired"
                       v-model="form.accountNonExpired"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                     />
-                    <label for="accountNonExpired" class="ml-2 text-sm text-gray-700">
+                    <label for="accountNonExpired" class="ml-2 text-sm text-neutral-700">
                       Non-Expired
                     </label>
                   </div>
@@ -613,9 +613,9 @@
                       id="accountNonLocked"
                       v-model="form.accountNonLocked"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                     />
-                    <label for="accountNonLocked" class="ml-2 text-sm text-gray-700">
+                    <label for="accountNonLocked" class="ml-2 text-sm text-neutral-700">
                       Non-Locked
                     </label>
                   </div>
@@ -625,9 +625,9 @@
                       id="credentialsNonExpired"
                       v-model="form.credentialsNonExpired"
                       type="checkbox"
-                      class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                     />
-                    <label for="credentialsNonExpired" class="ml-2 text-sm text-gray-700">
+                    <label for="credentialsNonExpired" class="ml-2 text-sm text-neutral-700">
                       Credentials Valid
                     </label>
                   </div>
@@ -635,18 +635,18 @@
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-200">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-600 text-white rounded-lg hover:from-brand-700 hover:to-brand-700 transition-all duration-200 font-medium shadow-soft hover:shadow-xl disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -664,21 +664,21 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete User</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete User</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete user "{{ userToDelete?.name }}" (@{{ userToDelete?.username }})? This action cannot be undone.
             </p>
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>

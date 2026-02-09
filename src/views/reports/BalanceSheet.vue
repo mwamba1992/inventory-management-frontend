@@ -1,22 +1,22 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <div class="min-h-screen bg-neutral-50 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6 mb-6">
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">Balance Sheet</h1>
-            <p class="text-gray-600 mt-1">Statement of Financial Position</p>
+            <h1 class="text-3xl font-bold text-neutral-900">Balance Sheet</h1>
+            <p class="text-neutral-600 mt-1">Statement of Financial Position</p>
           </div>
           <div class="flex items-center space-x-4">
             <input
               v-model="asOfDate"
               type="date"
-              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             />
             <button
               @click="fetchBalanceSheet"
-              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              class="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors font-medium"
             >
               Load Report
             </button>
@@ -34,105 +34,105 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="bg-white rounded-lg shadow-sm p-12 text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p class="text-gray-600 mt-4">Loading balance sheet...</p>
+      <div v-if="loading" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-12 text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto"></div>
+        <p class="text-neutral-600 mt-4">Loading balance sheet...</p>
       </div>
 
       <!-- Balance Sheet Content -->
-      <div v-else-if="balanceSheet" class="bg-white rounded-lg shadow-sm p-8">
+      <div v-else-if="balanceSheet" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-8">
         <!-- Report Header -->
         <div class="text-center mb-8 border-b pb-6">
-          <h2 class="text-2xl font-bold text-gray-900">ShopStore</h2>
-          <h3 class="text-xl font-semibold text-gray-700 mt-2">Balance Sheet</h3>
-          <p class="text-gray-600 mt-1">As of {{ formatDate(balanceSheet.asOfDate) }}</p>
+          <h2 class="text-2xl font-bold text-neutral-900">ShopStore</h2>
+          <h3 class="text-xl font-semibold text-neutral-700 mt-2">Balance Sheet</h3>
+          <p class="text-neutral-600 mt-1">As of {{ formatDate(balanceSheet.asOfDate) }}</p>
         </div>
 
         <div class="space-y-8">
           <!-- ASSETS SECTION -->
           <div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-300">ASSETS</h3>
+            <h3 class="text-xl font-bold text-neutral-900 mb-4 pb-2 border-b-2 border-neutral-300">ASSETS</h3>
 
             <!-- Current Assets -->
             <div class="ml-4">
-              <h4 class="text-lg font-semibold text-gray-800 mb-3">Current Assets</h4>
+              <h4 class="text-lg font-semibold text-neutral-800 mb-3">Current Assets</h4>
               <div class="ml-4 space-y-2">
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-700">Cash and Cash Equivalents</span>
+                  <span class="text-neutral-700">Cash and Cash Equivalents</span>
                   <span class="font-mono">TZS {{ formatCurrency(balanceSheet.assets.currentAssets.cash) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-700">Inventory</span>
+                  <span class="text-neutral-700">Inventory</span>
                   <span class="font-mono">TZS {{ formatCurrency(balanceSheet.assets.currentAssets.inventory) }}</span>
                 </div>
                 <div class="flex justify-between items-center font-semibold border-t pt-2 mt-2">
-                  <span class="text-gray-900">Total Current Assets</span>
+                  <span class="text-neutral-900">Total Current Assets</span>
                   <span class="font-mono">TZS {{ formatCurrency(balanceSheet.assets.currentAssets.total) }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Total Assets -->
-            <div class="mt-6 pt-4 border-t-2 border-gray-400">
+            <div class="mt-6 pt-4 border-t-2 border-neutral-400">
               <div class="flex justify-between items-center font-bold text-lg">
-                <span class="text-gray-900">TOTAL ASSETS</span>
-                <span class="font-mono text-blue-600">TZS {{ formatCurrency(balanceSheet.assets.totalAssets) }}</span>
+                <span class="text-neutral-900">TOTAL ASSETS</span>
+                <span class="font-mono text-brand-600">TZS {{ formatCurrency(balanceSheet.assets.totalAssets) }}</span>
               </div>
             </div>
           </div>
 
           <!-- LIABILITIES SECTION -->
           <div class="pt-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-300">LIABILITIES</h3>
+            <h3 class="text-xl font-bold text-neutral-900 mb-4 pb-2 border-b-2 border-neutral-300">LIABILITIES</h3>
 
             <!-- Current Liabilities -->
             <div class="ml-4">
-              <h4 class="text-lg font-semibold text-gray-800 mb-3">Current Liabilities</h4>
+              <h4 class="text-lg font-semibold text-neutral-800 mb-3">Current Liabilities</h4>
               <div class="ml-4 space-y-2">
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-700">Accounts Payable</span>
+                  <span class="text-neutral-700">Accounts Payable</span>
                   <span class="font-mono">TZS {{ formatCurrency(balanceSheet.liabilities.currentLiabilities.accountsPayable) }}</span>
                 </div>
                 <div class="flex justify-between items-center font-semibold border-t pt-2 mt-2">
-                  <span class="text-gray-900">Total Current Liabilities</span>
+                  <span class="text-neutral-900">Total Current Liabilities</span>
                   <span class="font-mono">TZS {{ formatCurrency(balanceSheet.liabilities.currentLiabilities.total) }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Total Liabilities -->
-            <div class="mt-6 pt-4 border-t-2 border-gray-400">
+            <div class="mt-6 pt-4 border-t-2 border-neutral-400">
               <div class="flex justify-between items-center font-bold text-lg">
-                <span class="text-gray-900">TOTAL LIABILITIES</span>
-                <span class="font-mono text-blue-600">TZS {{ formatCurrency(balanceSheet.liabilities.totalLiabilities) }}</span>
+                <span class="text-neutral-900">TOTAL LIABILITIES</span>
+                <span class="font-mono text-brand-600">TZS {{ formatCurrency(balanceSheet.liabilities.totalLiabilities) }}</span>
               </div>
             </div>
           </div>
 
           <!-- EQUITY SECTION -->
           <div class="pt-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-300">EQUITY</h3>
+            <h3 class="text-xl font-bold text-neutral-900 mb-4 pb-2 border-b-2 border-neutral-300">EQUITY</h3>
 
             <div class="ml-4 space-y-2">
               <div class="flex justify-between items-center">
-                <span class="text-gray-700">Owner's Equity</span>
+                <span class="text-neutral-700">Owner's Equity</span>
                 <span class="font-mono">TZS {{ formatCurrency(balanceSheet.equity.ownersEquity) }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-gray-700">Retained Earnings</span>
+                <span class="text-neutral-700">Retained Earnings</span>
                 <span class="font-mono">TZS {{ formatCurrency(balanceSheet.equity.retainedEarnings) }}</span>
               </div>
               <div class="flex justify-between items-center font-semibold border-t pt-2 mt-2">
-                <span class="text-gray-900">Total Equity</span>
+                <span class="text-neutral-900">Total Equity</span>
                 <span class="font-mono">TZS {{ formatCurrency(balanceSheet.equity.totalEquity) }}</span>
               </div>
             </div>
           </div>
 
           <!-- TOTAL LIABILITIES AND EQUITY -->
-          <div class="pt-6 border-t-4 border-gray-900">
+          <div class="pt-6 border-t-4 border-neutral-900">
             <div class="flex justify-between items-center font-bold text-xl">
-              <span class="text-gray-900">TOTAL LIABILITIES AND EQUITY</span>
+              <span class="text-neutral-900">TOTAL LIABILITIES AND EQUITY</span>
               <span class="font-mono text-green-600">TZS {{ formatCurrency(balanceSheet.totalLiabilitiesAndEquity) }}</span>
             </div>
           </div>
@@ -158,14 +158,14 @@
         </div>
 
         <!-- Footer Note -->
-        <div class="mt-8 pt-6 border-t text-center text-sm text-gray-500">
+        <div class="mt-8 pt-6 border-t text-center text-sm text-neutral-500">
           <p>This is a computer-generated report. No signature is required.</p>
           <p class="mt-1">Generated on {{ new Date().toLocaleString() }}</p>
         </div>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6">
+      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-2xl p-6">
         <div class="flex items-center space-x-3">
           <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -269,7 +269,8 @@ onMounted(() => {
 
 <style scoped>
 @media print {
-  .bg-gray-50 {
+  .bg-neutral-50,
+  .bg-white\/80 {
     background: white;
   }
   button {

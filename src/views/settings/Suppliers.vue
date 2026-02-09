@@ -1,40 +1,40 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen bg-neutral-50 p-4">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>Inventory</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Item Suppliers</span>
+        <span class="text-neutral-700 font-medium">Item Suppliers</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              class="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent"
             >
               Item Suppliers
             </h1>
-            <p class="text-gray-600 mt-2">Manage your supplier network and contact information</p>
+            <p class="text-neutral-600 mt-2">Manage your supplier network and contact information</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshSuppliers"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="bg-gradient-to-r from-brand-600 to-brand-600 hover:from-brand-700 hover:to-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add Supplier
@@ -46,26 +46,26 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Suppliers</p>
-              <p class="text-2xl font-bold text-gray-900">{{ suppliers.length }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Suppliers</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ suppliers.length }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <TruckIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <TruckIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">With Email</p>
-              <p class="text-2xl font-bold text-gray-900">{{ suppliersWithEmail }}</p>
+              <p class="text-sm font-medium text-neutral-600">With Email</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ suppliersWithEmail }}</p>
             </div>
             <div class="p-3 bg-green-100 rounded-xl">
               <EnvelopeIcon class="w-6 h-6 text-green-600" />
@@ -74,12 +74,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">With Phone</p>
-              <p class="text-2xl font-bold text-gray-900">{{ suppliersWithPhone }}</p>
+              <p class="text-sm font-medium text-neutral-600">With Phone</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ suppliersWithPhone }}</p>
             </div>
             <div class="p-3 bg-purple-100 rounded-xl">
               <PhoneIcon class="w-6 h-6 text-purple-600" />
@@ -88,12 +88,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Unique Locations</p>
-              <p class="text-2xl font-bold text-gray-900">{{ uniqueLocations }}</p>
+              <p class="text-sm font-medium text-neutral-600">Unique Locations</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ uniqueLocations }}</p>
             </div>
             <div class="p-3 bg-orange-100 rounded-xl">
               <MapPinIcon class="w-6 h-6 text-orange-600" />
@@ -103,7 +103,7 @@
       </div>
 
       <!-- Main Suppliers Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
         <!-- Error Display -->
         <div v-if="error" class="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
           <p class="text-red-700 text-sm">{{ error }}</p>
@@ -113,7 +113,7 @@
         </div>
 
         <!-- Controls Section -->
-        <div class="p-6 border-b border-gray-200/50">
+        <div class="p-6 border-b border-neutral-200/50">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -121,32 +121,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search suppliers..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -156,66 +156,66 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50/50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('supplierName')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Supplier Name</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Supplier Name</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('location')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Location</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Location</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Contact Info</span>
+                <span class="text-sm font-semibold text-neutral-900">Contact Info</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Notes</span>
+                <span class="text-sm font-semibold text-neutral-900">Notes</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-200/50">
             <tr v-if="loading">
               <td colspan="7" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading suppliers...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading suppliers...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedSuppliers.length === 0">
-              <td colspan="7" class="p-12 text-center text-gray-500">
-                <TruckIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="7" class="p-12 text-center text-neutral-500">
+                <TruckIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ searchTerm ? 'No suppliers found' : 'No suppliers yet' }}
                 </p>
@@ -232,18 +232,18 @@
               v-else
               v-for="supplier in paginatedSuppliers"
               :key="supplier.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50/50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(supplier.id)"
                   @change="handleSelectItem(supplier.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ supplier.id }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ supplier.id }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
@@ -255,42 +255,42 @@
                         }}</span>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ supplier.supplierName }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ supplier.supplierName }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
-                <div class="flex items-center text-sm text-gray-900">
-                  <MapPinIcon class="w-4 h-4 mr-2 text-gray-400" />
+                <div class="flex items-center text-sm text-neutral-900">
+                  <MapPinIcon class="w-4 h-4 mr-2 text-neutral-400" />
                   {{ supplier.location }}
                 </div>
               </td>
               <td class="p-4">
                 <div class="space-y-1">
-                  <p v-if="supplier.contactEmail" class="text-xs text-gray-600 flex items-center">
-                    <EnvelopeIcon class="w-3 h-3 mr-1 text-gray-400" />
+                  <p v-if="supplier.contactEmail" class="text-xs text-neutral-600 flex items-center">
+                    <EnvelopeIcon class="w-3 h-3 mr-1 text-neutral-400" />
                     {{ supplier.contactEmail }}
                   </p>
-                  <p v-if="supplier.contactPhone" class="text-xs text-gray-600 flex items-center">
-                    <PhoneIcon class="w-3 h-3 mr-1 text-gray-400" />
+                  <p v-if="supplier.contactPhone" class="text-xs text-neutral-600 flex items-center">
+                    <PhoneIcon class="w-3 h-3 mr-1 text-neutral-400" />
                     {{ supplier.contactPhone }}
                   </p>
-                  <p v-if="!supplier.contactEmail && !supplier.contactPhone" class="text-xs text-gray-400">
+                  <p v-if="!supplier.contactEmail && !supplier.contactPhone" class="text-xs text-neutral-400">
                     No contact info
                   </p>
                 </div>
               </td>
               <td class="p-4">
-                <p v-if="supplier.notes" class="text-xs text-gray-600 max-w-xs truncate">
+                <p v-if="supplier.notes" class="text-xs text-neutral-600 max-w-xs truncate">
                   {{ supplier.notes }}
                 </p>
-                <p v-else class="text-xs text-gray-400">No notes</p>
+                <p v-else class="text-xs text-neutral-400">No notes</p>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
                   <button
                     @click="openEditModal(supplier)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-all duration-200"
                     title="Edit Supplier"
                   >
                     <PencilIcon class="w-4 h-4" />
@@ -318,9 +318,9 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-200/50"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredSuppliers.length }} entries
           </div>
 
@@ -328,7 +328,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -341,8 +341,8 @@
                 class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -352,7 +352,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -362,10 +362,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50/50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} supplier{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -383,16 +383,16 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit Supplier' : 'Create New Supplier' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -401,85 +401,85 @@
           <form @submit.prevent="saveSupplier" class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Supplier Name *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Supplier Name *</label>
                 <input
                   v-model="form.supplierName"
                   type="text"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter supplier name"
                 />
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Location *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Location *</label>
                 <div class="relative">
                   <MapPinIcon
-                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                   />
                   <input
                     v-model="form.location"
                     type="text"
                     required
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter location (city, country)"
                   />
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Email</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Contact Email</label>
                 <div class="relative">
                   <EnvelopeIcon
-                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                   />
                   <input
                     v-model="form.contactEmail"
                     type="email"
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="contact@supplier.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Phone</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Contact Phone</label>
                 <div class="relative">
                   <PhoneIcon
-                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                   />
                   <input
                     v-model="form.contactPhone"
                     type="tel"
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Notes</label>
                 <textarea
                   v-model="form.notes"
                   rows="4"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Additional notes about this supplier..."
                 ></textarea>
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-200">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-600 text-white rounded-lg hover:from-brand-700 hover:to-brand-700 transition-all duration-200 font-medium shadow-soft hover:shadow-xl disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -497,22 +497,22 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete Supplier</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete Supplier</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete "{{ supplierToDelete?.supplierName }}"? This action cannot be
               undone.
             </p>
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>

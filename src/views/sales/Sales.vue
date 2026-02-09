@@ -1,54 +1,54 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen bg-neutral-50 p-4">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>Sales</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Sales Management</span>
+        <span class="text-neutral-700 font-medium">Sales Management</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              class="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent"
             >
               Sales Management
             </h1>
-            <p class="text-gray-600 mt-2">Track and manage all your sales transactions</p>
+            <p class="text-neutral-600 mt-2">Track and manage all your sales transactions</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshSales"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="exportData"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
               Export
             </button>
             <button
               @click="openBulkActionsModal"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <AdjustmentsHorizontalIcon class="w-4 h-4 mr-2" />
               Bulk Actions
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="bg-gradient-to-r from-brand-600 to-brand-600 hover:from-brand-700 hover:to-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add Sale
@@ -58,15 +58,15 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="p-6">
           <div class="flex flex-wrap gap-3 mb-4">
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Customer:</label>
+              <label class="text-sm font-medium text-neutral-700">Customer:</label>
               <select
                 v-model="selectedCustomer"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[200px]"
+                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
               >
                 <option value="">All Customers</option>
                 <option
@@ -80,11 +80,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Item:</label>
+              <label class="text-sm font-medium text-neutral-700">Item:</label>
               <select
                 v-model="selectedItem"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[200px]"
+                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
               >
                 <option value="">All Items</option>
                 <option
@@ -98,11 +98,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Warehouse:</label>
+              <label class="text-sm font-medium text-neutral-700">Warehouse:</label>
               <select
                 v-model="selectedWarehouse"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[200px]"
+                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
               >
                 <option value="">All Warehouses</option>
                 <option
@@ -116,11 +116,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Date Range:</label>
+              <label class="text-sm font-medium text-neutral-700">Date Range:</label>
               <select
                 v-model="selectedDateRange"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Time</option>
                 <option value="today">Today</option>
@@ -133,7 +133,7 @@
             <button
               @click="clearFilters"
               v-if="selectedCustomer || selectedItem || selectedWarehouse || selectedDateRange"
-              class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-lg transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
               Clear Filters
@@ -145,12 +145,12 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Sales</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-neutral-600">Total Sales</p>
+              <p class="text-2xl font-bold text-neutral-900">
                 TZS{{ totalSalesAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
               </p>
             </div>
@@ -164,26 +164,26 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Transactions</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalSales }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Transactions</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalSales }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <ShoppingCartIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <ShoppingCartIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Avg. Sale Value</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-neutral-600">Avg. Sale Value</p>
+              <p class="text-2xl font-bold text-neutral-900">
                 TZS{{ averageSaleValue.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
               </p>
             </div>
@@ -194,12 +194,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Quantity</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalQuantitySold.toLocaleString() }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Quantity</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalQuantitySold.toLocaleString() }}</p>
             </div>
             <div class="p-3 bg-yellow-100 rounded-xl">
               <CubeIcon class="w-6 h-6 text-yellow-600" />
@@ -209,8 +209,8 @@
       </div>
 
       <!-- Main Sales Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
-        <div class="p-6 border-b border-gray-200/50">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
+        <div class="p-6 border-b border-neutral-200/50">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -218,32 +218,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search sales..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -253,84 +253,84 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50/50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Sale ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Sale ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Customer</span>
+                <span class="text-sm font-semibold text-neutral-900">Customer</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Item</span>
+                <span class="text-sm font-semibold text-neutral-900">Item</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Warehouse</span>
+                <span class="text-sm font-semibold text-neutral-900">Warehouse</span>
               </th>
               <th
-                class="p-4 text-center cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-center cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('quantity')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Quantity</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Quantity</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th
-                class="p-4 text-right cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-right cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('amountPaid')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Amount Paid</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Amount Paid</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Remarks</span>
+                <span class="text-sm font-semibold text-neutral-900">Remarks</span>
               </th>
               <th
-                class="p-4 text-center cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-center cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('createdAt')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">Date</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">Date</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Status</span>
+                <span class="text-sm font-semibold text-neutral-900">Status</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-200/50">
             <tr v-if="loading">
               <td colspan="11" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading sales...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading sales...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedSales.length === 0">
-              <td colspan="11" class="p-12 text-center text-gray-500">
-                <ShoppingCartIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="11" class="p-12 text-center text-neutral-500">
+                <ShoppingCartIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No sales found' : 'No sales yet' }}
                 </p>
@@ -347,49 +347,49 @@
               v-else
               v-for="sale in paginatedSales"
               :key="sale.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50/50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(sale.id)"
                   @change="handleSelectItem(sale.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ sale.id.toString().padStart(4, '0') }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ sale.id.toString().padStart(4, '0') }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
                   <div
-                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+                    class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-600 rounded-full flex items-center justify-center"
                   >
                     <span class="text-white font-medium text-sm">{{ getCustomerInitials(sale.customer) }}</span>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ sale.customer?.name || 'Unknown Customer' }}</p>
-                    <p class="text-xs text-gray-500">{{ sale.customer?.phone || 'No phone' }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ sale.customer?.name || 'Unknown Customer' }}</p>
+                    <p class="text-xs text-neutral-500">{{ sale.customer?.phone || 'No phone' }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
-                  <CubeIcon class="w-4 h-4 text-gray-400" />
+                  <CubeIcon class="w-4 h-4 text-neutral-400" />
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ sale.item?.name || 'Unknown Item' }}</p>
-                    <p class="text-xs text-gray-500">Item #{{ sale.item?.id }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ sale.item?.name || 'Unknown Item' }}</p>
+                    <p class="text-xs text-neutral-500">Item #{{ sale.item?.id }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
-                  <BuildingStorefrontIcon class="w-4 h-4 text-gray-400" />
-                  <span class="text-sm text-gray-900">{{ sale.warehouseId?.name || 'Unknown Warehouse' }}</span>
+                  <BuildingStorefrontIcon class="w-4 h-4 text-neutral-400" />
+                  <span class="text-sm text-neutral-900">{{ sale.warehouseId?.name || 'Unknown Warehouse' }}</span>
                 </div>
               </td>
               <td class="p-4 text-center">
-                <span class="text-lg font-bold text-blue-600">
+                <span class="text-lg font-bold text-brand-600">
                   {{ Number(sale.quantity || 0).toLocaleString() }}
                 </span>
               </td>
@@ -400,14 +400,14 @@
               </td>
               <td class="p-4">
                 <div class="max-w-xs">
-                  <p class="text-sm text-gray-600 truncate" :title="sale.remarks">
+                  <p class="text-sm text-neutral-600 truncate" :title="sale.remarks">
                     {{ sale.remarks || 'No remarks' }}
                   </p>
                 </div>
               </td>
               <td class="p-4 text-center">
-                <div class="text-sm text-gray-900">{{ formatDate(sale.createdAt) }}</div>
-                <div class="text-xs text-gray-500">{{ formatTimeAgo(sale.createdAt) }}</div>
+                <div class="text-sm text-neutral-900">{{ formatDate(sale.createdAt) }}</div>
+                <div class="text-xs text-neutral-500">{{ formatTimeAgo(sale.createdAt) }}</div>
               </td>
               <td class="p-4">
                 <select
@@ -429,7 +429,7 @@
                 <div class="flex items-center space-x-2">
                   <button
                     @click="viewSaleDetails(sale)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-all duration-200"
                     title="View Details"
                   >
                     <EyeIcon class="w-4 h-4" />
@@ -464,11 +464,11 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-200/50"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredSales.length }} entries
-            <span v-if="hasActiveFilters || searchTerm" class="text-blue-600">
+            <span v-if="hasActiveFilters || searchTerm" class="text-brand-600">
               (filtered from {{ sales.length }} total)
             </span>
           </div>
@@ -477,7 +477,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -490,8 +490,8 @@
                 class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -501,7 +501,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -511,10 +511,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50/50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} sale{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -538,16 +538,16 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit Sale' : 'Create New Sale' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -557,11 +557,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Customer Selection -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Customer *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Customer *</label>
                 <select
                   v-model="form.customerId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Customer</option>
                   <option
@@ -576,11 +576,11 @@
 
               <!-- Item Selection -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Item *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Item *</label>
                 <select
                   v-model="form.itemId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Item</option>
                   <option
@@ -595,11 +595,11 @@
 
               <!-- Warehouse Selection -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Warehouse *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Warehouse *</label>
                 <select
                   v-model="form.warehouseId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Warehouse</option>
                   <option
@@ -614,24 +614,24 @@
 
               <!-- Quantity -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Quantity *</label>
                 <input
                   v-model.number="form.quantity"
                   type="number"
                   min="1"
                   step="1"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="1"
                 />
               </div>
 
               <!-- Amount Paid -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Amount Paid *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Amount Paid *</label>
                 <div class="relative">
                   <CurrencyDollarIcon
-                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                   />
                   <input
                     v-model.number="form.amountPaid"
@@ -639,7 +639,7 @@
                     min="0"
                     step="0.01"
                     required
-                    class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    class="w-full border border-neutral-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                     placeholder="0.00"
                   />
                 </div>
@@ -647,28 +647,28 @@
 
               <!-- Remarks -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Remarks</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Remarks</label>
                 <textarea
                   v-model="form.remarks"
                   rows="3"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Additional remarks about this sale..."
                 ></textarea>
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-200">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-600 text-white rounded-lg hover:from-brand-700 hover:to-brand-700 transition-all duration-200 font-medium shadow-soft hover:shadow-xl disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -686,14 +686,14 @@
       <!-- Sale Detail Modal -->
       <div
         v-if="showDetailModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">Sale Details</h3>
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">Sale Details</h3>
             <button
               @click="showDetailModal = false"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -702,61 +702,61 @@
           <div class="p-6" v-if="selectedSale">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Sale ID</label>
-                <p class="text-lg font-bold text-gray-900">#{{ selectedSale.id.toString().padStart(4, '0') }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Sale ID</label>
+                <p class="text-lg font-bold text-neutral-900">#{{ selectedSale.id.toString().padStart(4, '0') }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Sale Date</label>
-                <p class="text-lg font-medium text-gray-900">{{ formatDate(selectedSale.createdAt) }}</p>
-                <p class="text-sm text-gray-500">{{ formatTimeAgo(selectedSale.createdAt) }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Sale Date</label>
+                <p class="text-lg font-medium text-neutral-900">{{ formatDate(selectedSale.createdAt) }}</p>
+                <p class="text-sm text-neutral-500">{{ formatTimeAgo(selectedSale.createdAt) }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Customer</label>
-                <p class="text-lg font-medium text-gray-900">{{ selectedSale.customer?.name || 'Unknown' }}</p>
-                <p class="text-sm text-gray-500">{{ selectedSale.customer?.phone || 'No phone' }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Customer</label>
+                <p class="text-lg font-medium text-neutral-900">{{ selectedSale.customer?.name || 'Unknown' }}</p>
+                <p class="text-sm text-neutral-500">{{ selectedSale.customer?.phone || 'No phone' }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Item</label>
-                <p class="text-lg font-medium text-gray-900">{{ selectedSale.item?.name || 'Unknown' }}</p>
-                <p class="text-sm text-gray-500">Item #{{ selectedSale.item?.id }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Item</label>
+                <p class="text-lg font-medium text-neutral-900">{{ selectedSale.item?.name || 'Unknown' }}</p>
+                <p class="text-sm text-neutral-500">Item #{{ selectedSale.item?.id }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Warehouse</label>
-                <p class="text-lg font-medium text-gray-900">{{ selectedSale.warehouseId?.name || 'Unknown' }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Warehouse</label>
+                <p class="text-lg font-medium text-neutral-900">{{ selectedSale.warehouseId?.name || 'Unknown' }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Quantity</label>
-                <p class="text-2xl font-bold text-blue-600">{{ Number(selectedSale.quantity || 0).toLocaleString() }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Quantity</label>
+                <p class="text-2xl font-bold text-brand-600">{{ Number(selectedSale.quantity || 0).toLocaleString() }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Amount Paid</label>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Amount Paid</label>
                 <p class="text-2xl font-bold text-emerald-600">
                   TZS{{ Number(selectedSale.amountPaid).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                 </p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Last Updated</label>
-                <p class="text-lg font-medium text-gray-900">{{ formatDate(selectedSale.updatedAt) }}</p>
-                <p class="text-sm text-gray-500">{{ formatTimeAgo(selectedSale.updatedAt) }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Last Updated</label>
+                <p class="text-lg font-medium text-neutral-900">{{ formatDate(selectedSale.updatedAt) }}</p>
+                <p class="text-sm text-neutral-500">{{ formatTimeAgo(selectedSale.updatedAt) }}</p>
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Remarks</label>
-                <p class="text-lg text-gray-900">{{ selectedSale.remarks || 'No remarks' }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Remarks</label>
+                <p class="text-lg text-neutral-900">{{ selectedSale.remarks || 'No remarks' }}</p>
               </div>
             </div>
 
-            <div class="flex space-x-3 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex space-x-3 mt-8 pt-6 border-t border-neutral-200">
               <button
                 @click="editFromDetail"
-                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
+                class="flex-1 bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 transition-all duration-200 font-medium"
               >
                 Edit Sale
               </button>
@@ -774,15 +774,15 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete Sale</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete Sale</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete sale #{{ saleToDelete?.id?.toString().padStart(4, '0') }}?
               <span class="text-red-600 font-medium">
                 This action cannot be undone.
@@ -791,7 +791,7 @@
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
@@ -1460,13 +1460,13 @@ const updateSaleStatus = async (saleId, newStatus) => {
 const getStatusClass = (status) => {
   const statusClasses = {
     'pending': 'bg-yellow-50 text-yellow-700 border-yellow-300',
-    'confirmed': 'bg-blue-50 text-blue-700 border-blue-300',
+    'confirmed': 'bg-brand-50 text-brand-700 border-brand-300',
     'processing': 'bg-purple-50 text-purple-700 border-purple-300',
     'ready': 'bg-cyan-50 text-cyan-700 border-cyan-300',
     'delivered': 'bg-green-50 text-green-700 border-green-300',
     'cancelled': 'bg-red-50 text-red-700 border-red-300'
   }
-  return statusClasses[status] || 'bg-gray-50 text-gray-700 border-gray-300'
+  return statusClasses[status] || 'bg-neutral-50 text-neutral-700 border-neutral-300'
 }
 
 // Other actions

@@ -1,54 +1,54 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen min-h-screen bg-neutral-50 p-6">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>Accounting</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Item Account Mapping</span>
+        <span class="text-neutral-700 font-medium">Item Account Mapping</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              class="text-3xl font-bold text-neutral-900"
             >
               Item Account Mapping
             </h1>
-            <p class="text-gray-600 mt-2">Configure accounting mappings for inventory items</p>
+            <p class="text-neutral-600 mt-2">Configure accounting mappings for inventory items</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshMappings"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="openBulkMappingModal"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <AdjustmentsHorizontalIcon class="w-4 h-4 mr-2" />
               Bulk Map
             </button>
             <button
               @click="exportMappings"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <DocumentArrowDownIcon class="w-4 h-4 mr-2" />
               Export
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add Mapping
@@ -58,15 +58,15 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="p-6">
           <div class="flex flex-wrap gap-3 mb-4">
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Item:</label>
+              <label class="text-sm font-medium text-neutral-700">Item:</label>
               <select
                 v-model="selectedItem"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[200px]"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
               >
                 <option value="">All Items</option>
                 <option
@@ -80,11 +80,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Status:</label>
+              <label class="text-sm font-medium text-neutral-700">Status:</label>
               <select
                 v-model="selectedStatus"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Status</option>
                 <option value="active">Active</option>
@@ -93,11 +93,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Mapping Type:</label>
+              <label class="text-sm font-medium text-neutral-700">Mapping Type:</label>
               <select
                 v-model="selectedMappingType"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Types</option>
                 <option value="default">Default</option>
@@ -110,7 +110,7 @@
             <button
               @click="clearFilters"
               v-if="selectedItem || selectedStatus || selectedMappingType"
-              class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
               Clear Filters
@@ -122,26 +122,26 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Mappings</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalMappings }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Mappings</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalMappings }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <LinkIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <LinkIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Active Mappings</p>
-              <p class="text-2xl font-bold text-gray-900">{{ activeMappings }}</p>
+              <p class="text-sm font-medium text-neutral-600">Active Mappings</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ activeMappings }}</p>
             </div>
             <div class="p-3 bg-green-100 rounded-xl">
               <CheckCircleIcon class="w-6 h-6 text-green-600" />
@@ -150,12 +150,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Unmapped Items</p>
-              <p class="text-2xl font-bold text-gray-900">{{ unmappedItems }}</p>
+              <p class="text-sm font-medium text-neutral-600">Unmapped Items</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ unmappedItems }}</p>
             </div>
             <div class="p-3 bg-orange-100 rounded-xl">
               <ExclamationTriangleIcon class="w-6 h-6 text-orange-600" />
@@ -164,12 +164,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Accounts</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalAccounts }}</p>
+              <p class="text-sm font-medium text-neutral-600">Accounts</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalAccounts }}</p>
             </div>
             <div class="p-3 bg-purple-100 rounded-xl">
               <BanknotesIcon class="w-6 h-6 text-purple-600" />
@@ -179,8 +179,8 @@
       </div>
 
       <!-- Main Mappings Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
-        <div class="p-6 border-b border-gray-200/50">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
+        <div class="p-6 border-b border-neutral-100">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -188,32 +188,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search mappings..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2 border border-neutral-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -223,60 +223,60 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Item</span>
+                <span class="text-sm font-semibold text-neutral-900">Item</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Sale Account</span>
+                <span class="text-sm font-semibold text-neutral-900">Sale Account</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Inventory Account</span>
+                <span class="text-sm font-semibold text-neutral-900">Inventory Account</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">COGS Account</span>
+                <span class="text-sm font-semibold text-neutral-900">COGS Account</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Status</span>
+                <span class="text-sm font-semibold text-neutral-900">Status</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Type</span>
+                <span class="text-sm font-semibold text-neutral-900">Type</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-200/50">
             <tr v-if="loading">
               <td colspan="9" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading mappings...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading mappings...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedMappings.length === 0">
-              <td colspan="9" class="p-12 text-center text-gray-500">
-                <LinkIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="9" class="p-12 text-center text-neutral-500">
+                <LinkIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No mappings found' : 'No account mappings yet' }}
                 </p>
@@ -293,29 +293,29 @@
               v-else
               v-for="mapping in paginatedMappings"
               :key="mapping.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(mapping.id)"
                   @change="handleSelectItem(mapping.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ mapping.id }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ mapping.id }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
                   <div
-                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center"
+                    class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl flex items-center justify-center"
                   >
                     <CubeIcon class="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ mapping.item?.name || 'Unknown Item' }}</p>
-                    <p class="text-xs text-gray-500">{{ mapping.item?.code || 'No Code' }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ mapping.item?.name || 'Unknown Item' }}</p>
+                    <p class="text-xs text-neutral-500">{{ mapping.item?.code || 'No Code' }}</p>
                   </div>
                 </div>
               </td>
@@ -323,17 +323,17 @@
                 <div class="flex items-center space-x-2">
                   <BanknotesIcon class="w-4 h-4 text-green-400" />
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ mapping.saleAccount?.name || 'Not Set' }}</p>
-                    <p class="text-xs text-gray-500">{{ mapping.saleAccount?.code || '' }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ mapping.saleAccount?.name || 'Not Set' }}</p>
+                    <p class="text-xs text-neutral-500">{{ mapping.saleAccount?.code || '' }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
-                  <ArchiveBoxIcon class="w-4 h-4 text-blue-400" />
+                  <ArchiveBoxIcon class="w-4 h-4 text-brand-400" />
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ mapping.inventoryAccount?.name || 'Not Set' }}</p>
-                    <p class="text-xs text-gray-500">{{ mapping.inventoryAccount?.code || '' }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ mapping.inventoryAccount?.name || 'Not Set' }}</p>
+                    <p class="text-xs text-neutral-500">{{ mapping.inventoryAccount?.code || '' }}</p>
                   </div>
                 </div>
               </td>
@@ -341,8 +341,8 @@
                 <div class="flex items-center space-x-2">
                   <CalculatorIcon class="w-4 h-4 text-red-400" />
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ mapping.costOfGoodsAccount?.name || 'Not Set' }}</p>
-                    <p class="text-xs text-gray-500">{{ mapping.costOfGoodsAccount?.code || '' }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ mapping.costOfGoodsAccount?.name || 'Not Set' }}</p>
+                    <p class="text-xs text-neutral-500">{{ mapping.costOfGoodsAccount?.code || '' }}</p>
                   </div>
                 </div>
               </td>
@@ -355,20 +355,20 @@
                 </span>
               </td>
               <td class="p-4 text-center">
-                <span class="text-sm text-gray-600 capitalize">{{ mapping.mappingType || 'Default' }}</span>
+                <span class="text-sm text-neutral-600 capitalize">{{ mapping.mappingType || 'Default' }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
                   <button
                     @click="openEditModal(mapping)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-xl transition-all duration-200"
                     title="Edit Mapping"
                   >
                     <PencilIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="toggleMappingStatus(mapping)"
-                    class="p-2 hover:bg-gray-50 rounded-lg transition-all duration-200"
+                    class="p-2 hover:bg-neutral-50 rounded-xl transition-all duration-200"
                     :class="mapping.isActive ? 'text-orange-600 hover:text-orange-800' : 'text-green-600 hover:text-green-800'"
                     :title="mapping.isActive ? 'Deactivate' : 'Activate'"
                   >
@@ -376,14 +376,14 @@
                   </button>
                   <button
                     @click="duplicateMapping(mapping)"
-                    class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-xl transition-all duration-200"
                     title="Duplicate Mapping"
                   >
                     <DocumentDuplicateIcon class="w-4 h-4" />
                   </button>
                   <button
                     @click="deleteMapping(mapping)"
-                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all duration-200"
                     title="Delete Mapping"
                   >
                     <TrashIcon class="w-4 h-4" />
@@ -397,11 +397,11 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-100"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredMappings.length }} entries
-            <span v-if="hasActiveFilters || searchTerm" class="text-blue-600">
+            <span v-if="hasActiveFilters || searchTerm" class="text-brand-600">
               (filtered from {{ accountMappings.length }} total)
             </span>
           </div>
@@ -410,7 +410,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -420,11 +420,11 @@
                 v-for="page in getPageNumbers()"
                 :key="page"
                 @click="goToPage(page)"
-                class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
+                class="px-3 py-2 border rounded-xl text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -434,7 +434,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -444,10 +444,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} mapping{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -477,16 +477,16 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit Account Mapping' : 'Create New Account Mapping' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -496,11 +496,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Item Selection -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Item *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Item *</label>
                 <select
                   v-model="form.itemId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Item</option>
                   <option
@@ -515,11 +515,11 @@
 
               <!-- Sale Account -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Sale Account *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Sale Account *</label>
                 <select
                   v-model="form.saleAccountId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Account</option>
                   <option
@@ -534,11 +534,11 @@
 
               <!-- Inventory Account -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Inventory Account *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Inventory Account *</label>
                 <select
                   v-model="form.inventoryAccountId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Account</option>
                   <option
@@ -553,11 +553,11 @@
 
               <!-- COGS Account -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Cost of Goods Sold Account *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Cost of Goods Sold Account *</label>
                 <select
                   v-model="form.cogsAccountId"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Account</option>
                   <option
@@ -572,10 +572,10 @@
 
               <!-- Purchase Account -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Purchase Account</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Purchase Account</label>
                 <select
                   v-model="form.purchaseAccountId"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Account (Optional)</option>
                   <option
@@ -590,10 +590,10 @@
 
               <!-- Mapping Type -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Mapping Type</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Mapping Type</label>
                 <select
                   v-model="form.mappingType"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
                   <option value="default">Default</option>
                   <option value="seasonal">Seasonal</option>
@@ -604,52 +604,52 @@
 
               <!-- Priority -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Priority</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Priority</label>
                 <input
                   v-model.number="form.priority"
                   type="number"
                   min="1"
                   max="10"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="1"
                 />
-                <p class="text-xs text-gray-500 mt-1">Higher number = higher priority</p>
+                <p class="text-xs text-neutral-500 mt-1">Higher number = higher priority</p>
               </div>
 
               <!-- Effective From -->
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Effective From</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Effective From</label>
                 <input
                   v-model="form.effectiveFrom"
                   type="date"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
 
               <!-- Notes -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Notes</label>
                 <textarea
                   v-model="form.notes"
                   rows="3"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Additional notes about this mapping..."
                 ></textarea>
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-200">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-600 text-white rounded-xl hover:from-brand-700 hover:to-brand-700 transition-all duration-200 font-medium shadow-soft hover:shadow-xl disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -667,15 +667,15 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete Account Mapping</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete Account Mapping</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete the account mapping for "{{ mappingToDelete?.item?.name }}"?
               <span class="text-red-600 font-medium">
                 This action cannot be undone.
@@ -684,14 +684,14 @@
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-4 py-2 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 @click="confirmDelete"
                 :disabled="submitting"
-                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium disabled:opacity-50"
+                class="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 font-medium disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>

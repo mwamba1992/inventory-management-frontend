@@ -1,61 +1,61 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+  <div class="min-h-screen bg-neutral-50 p-4">
     <div class="max-w-full mx-auto">
       <!-- Breadcrumb -->
-      <div class="flex items-center text-sm text-gray-500 mb-6">
+      <div class="flex items-center text-sm text-neutral-500 mb-6">
         <HomeIcon class="w-4 h-4 mr-2" />
         <span>Home</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
         <span>CRM</span>
         <ChevronRightIcon class="w-4 h-4 mx-2" />
-        <span class="text-gray-700 font-medium">Customer Management</span>
+        <span class="text-neutral-700 font-medium">Customer Management</span>
       </div>
 
       <!-- Header Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6">
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              class="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent"
             >
               Customer Management
             </h1>
-            <p class="text-gray-600 mt-2">Manage your customer database and relationships</p>
+            <p class="text-neutral-600 mt-2">Manage your customer database and relationships</p>
           </div>
           <div class="flex items-center space-x-3 mt-4 lg:mt-0">
             <button
               @click="refreshCustomers"
               :disabled="loading"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
             >
               <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': loading }" />
               Refresh
             </button>
             <button
               @click="openBulkActionsModal"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <AdjustmentsHorizontalIcon class="w-4 h-4 mr-2" />
               Bulk Actions
             </button>
             <button
               @click="exportCustomers"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <DocumentArrowDownIcon class="w-4 h-4 mr-2" />
               Export
             </button>
             <button
               @click="openImportModal"
-              class="bg-white/80 hover:bg-white text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <DocumentArrowUpIcon class="w-4 h-4 mr-2" />
               Import
             </button>
             <button
               @click="openAddModal"
-              class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+              class="bg-gradient-to-r from-brand-600 to-brand-600 hover:from-brand-700 hover:to-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
               <PlusIcon class="w-4 h-4 mr-2" />
               Add Customer
@@ -65,15 +65,15 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 mb-8">
         <div class="p-6">
           <div class="flex flex-wrap gap-3 mb-4">
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Date Range:</label>
+              <label class="text-sm font-medium text-neutral-700">Date Range:</label>
               <select
                 v-model="selectedDateRange"
                 @change="currentPage = 1"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Time</option>
                 <option value="today">Today</option>
@@ -85,11 +85,11 @@
             </div>
 
             <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-gray-700">Sort By:</label>
+              <label class="text-sm font-medium text-neutral-700">Sort By:</label>
               <select
                 v-model="selectedSortBy"
                 @change="applySorting"
-                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="name-asc">Name (A-Z)</option>
                 <option value="name-desc">Name (Z-A)</option>
@@ -102,7 +102,7 @@
             <button
               @click="clearFilters"
               v-if="selectedDateRange || searchTerm"
-              class="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-lg transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
               Clear Filters
@@ -114,15 +114,15 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Total Customers</p>
-              <p class="text-2xl font-bold text-gray-900">{{ totalCustomers }}</p>
+              <p class="text-sm font-medium text-neutral-600">Total Customers</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ totalCustomers }}</p>
             </div>
-            <div class="p-3 bg-blue-100 rounded-xl">
-              <UsersIcon class="w-6 h-6 text-blue-600" />
+            <div class="p-3 bg-brand-100 rounded-xl">
+              <UsersIcon class="w-6 h-6 text-brand-600" />
             </div>
           </div>
           <div class="mt-2">
@@ -131,12 +131,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">New This Week</p>
-              <p class="text-2xl font-bold text-gray-900">{{ newCustomersThisWeek }}</p>
+              <p class="text-sm font-medium text-neutral-600">New This Week</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ newCustomersThisWeek }}</p>
             </div>
             <div class="p-3 bg-green-100 rounded-xl">
               <UserPlusIcon class="w-6 h-6 text-green-600" />
@@ -145,12 +145,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Active Today</p>
-              <p class="text-2xl font-bold text-gray-900">{{ activeCustomersToday }}</p>
+              <p class="text-sm font-medium text-neutral-600">Active Today</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ activeCustomersToday }}</p>
             </div>
             <div class="p-3 bg-orange-100 rounded-xl">
               <ClockIcon class="w-6 h-6 text-orange-600" />
@@ -159,12 +159,12 @@
         </div>
 
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300"
+          class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-xl transition-all duration-300"
         >
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-medium text-gray-600">Growth Rate</p>
-              <p class="text-2xl font-bold text-gray-900">{{ growthRate }}%</p>
+              <p class="text-sm font-medium text-neutral-600">Growth Rate</p>
+              <p class="text-2xl font-bold text-neutral-900">{{ growthRate }}%</p>
             </div>
             <div class="p-3 bg-purple-100 rounded-xl">
               <TrendingUpIcon class="w-6 h-6 text-purple-600" />
@@ -174,8 +174,8 @@
       </div>
 
       <!-- Main Customers Table -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
-        <div class="p-6 border-b border-gray-200/50">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
+        <div class="p-6 border-b border-neutral-200/50">
           <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
           >
@@ -183,32 +183,32 @@
               class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4"
             >
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">Show</span>
+                <span class="text-sm font-medium text-neutral-700">Show</span>
                 <select
                   v-model="entriesPerPage"
                   @change="currentPage = 1"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
                 >
                   <option :value="10">10</option>
                   <option :value="25">25</option>
                   <option :value="50">50</option>
                   <option :value="100">100</option>
                 </select>
-                <span class="text-sm font-medium text-gray-700">entries</span>
+                <span class="text-sm font-medium text-neutral-700">entries</span>
               </div>
             </div>
 
             <div class="flex items-center space-x-3">
               <div class="relative">
                 <MagnifyingGlassIcon
-                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
                 />
                 <input
                   v-model="searchTerm"
                   @input="currentPage = 1"
                   type="text"
                   placeholder="Search customers..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-64"
+                  class="pl-10 pr-4 py-2 border border-neutral-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white w-64"
                 />
               </div>
             </div>
@@ -218,57 +218,57 @@
         <!-- Table Section -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50/50">
+            <thead class="bg-neutral-50/50">
             <tr>
               <th class="p-4 text-left">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectAll"
                   @change="handleSelectAll"
                 />
               </th>
               <th
-                class="p-4 text-left cursor-pointer hover:bg-gray-100/50 transition-colors duration-200"
+                class="p-4 text-left cursor-pointer hover:bg-neutral-100/50 transition-colors duration-200"
                 @click="sortBy('id')"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-900">ID</span>
-                  <ArrowsUpDownIcon class="w-4 h-4 text-gray-400" />
+                  <span class="text-sm font-semibold text-neutral-900">ID</span>
+                  <ArrowsUpDownIcon class="w-4 h-4 text-neutral-400" />
                 </div>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Customer</span>
+                <span class="text-sm font-semibold text-neutral-900">Customer</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Phone</span>
+                <span class="text-sm font-semibold text-neutral-900">Phone</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Joined</span>
+                <span class="text-sm font-semibold text-neutral-900">Joined</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Last Updated</span>
+                <span class="text-sm font-semibold text-neutral-900">Last Updated</span>
               </th>
               <th class="p-4 text-center">
-                <span class="text-sm font-semibold text-gray-900">Status</span>
+                <span class="text-sm font-semibold text-neutral-900">Status</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-gray-900">Actions</span>
+                <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200/50">
+            <tbody class="divide-y divide-neutral-200/50">
             <tr v-if="loading">
               <td colspan="8" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
-                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span class="text-gray-500">Loading customers...</span>
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+                  <span class="text-neutral-500">Loading customers...</span>
                 </div>
               </td>
             </tr>
             <tr v-else-if="paginatedCustomers.length === 0">
-              <td colspan="8" class="p-12 text-center text-gray-500">
-                <UsersIcon class="w-12 h-12 mx-auto text-gray-300 mb-4" />
+              <td colspan="8" class="p-12 text-center text-neutral-500">
+                <UsersIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No customers found' : 'No customers yet' }}
                 </p>
@@ -285,45 +285,45 @@
               v-else
               v-for="customer in paginatedCustomers"
               :key="customer.id"
-              class="hover:bg-gray-50/50 transition-colors duration-200"
+              class="hover:bg-neutral-50/50 transition-colors duration-200"
             >
               <td class="p-4">
                 <input
                   type="checkbox"
-                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  class="rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                   :checked="selectedItems.has(customer.id)"
                   @change="handleSelectItem(customer.id, $event.target.checked)"
                 />
               </td>
               <td class="p-4">
-                <span class="text-sm font-medium text-gray-900">#{{ customer.id }}</span>
+                <span class="text-sm font-medium text-neutral-900">#{{ customer.id }}</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-3">
                   <div
-                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+                    class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-600 rounded-full flex items-center justify-center"
                   >
                     <span class="text-white font-medium text-sm">{{ getInitials(customer.name) }}</span>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ customer.name }}</p>
-                    <p class="text-xs text-gray-500">Customer ID: #{{ customer.id }}</p>
+                    <p class="text-sm font-medium text-neutral-900">{{ customer.name }}</p>
+                    <p class="text-xs text-neutral-500">Customer ID: #{{ customer.id }}</p>
                   </div>
                 </div>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
-                  <PhoneIcon class="w-4 h-4 text-gray-400" />
-                  <span class="text-sm text-gray-900">{{ customer.phone }}</span>
+                  <PhoneIcon class="w-4 h-4 text-neutral-400" />
+                  <span class="text-sm text-neutral-900">{{ customer.phone }}</span>
                 </div>
               </td>
               <td class="p-4 text-center">
-                <div class="text-sm text-gray-900">{{ formatDate(customer.createdAt) }}</div>
-                <div class="text-xs text-gray-500">{{ formatTimeAgo(customer.createdAt) }}</div>
+                <div class="text-sm text-neutral-900">{{ formatDate(customer.createdAt) }}</div>
+                <div class="text-xs text-neutral-500">{{ formatTimeAgo(customer.createdAt) }}</div>
               </td>
               <td class="p-4 text-center">
-                <div class="text-sm text-gray-900">{{ formatDate(customer.updatedAt) }}</div>
-                <div class="text-xs text-gray-500">{{ formatTimeAgo(customer.updatedAt) }}</div>
+                <div class="text-sm text-neutral-900">{{ formatDate(customer.updatedAt) }}</div>
+                <div class="text-xs text-neutral-500">{{ formatTimeAgo(customer.updatedAt) }}</div>
               </td>
               <td class="p-4 text-center">
                 <span
@@ -337,7 +337,7 @@
                 <div class="flex items-center space-x-2">
                   <button
                     @click="viewCustomer(customer)"
-                    class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                    class="p-2 text-brand-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-all duration-200"
                     title="View Details"
                   >
                     <EyeIcon class="w-4 h-4" />
@@ -379,11 +379,11 @@
 
         <!-- Pagination Section -->
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-gray-200/50"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-6 border-t border-neutral-200/50"
         >
-          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+          <div class="text-sm text-neutral-600 mb-4 sm:mb-0">
             Showing {{ startIndex }} to {{ endIndex }} of {{ filteredCustomers.length }} entries
-            <span v-if="hasActiveFilters || searchTerm" class="text-blue-600">
+            <span v-if="hasActiveFilters || searchTerm" class="text-brand-600">
               (filtered from {{ customers.length }} total)
             </span>
           </div>
@@ -392,7 +392,7 @@
             <button
               @click="previousPage"
               :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Previous
             </button>
@@ -405,8 +405,8 @@
                 class="px-3 py-2 border rounded-lg text-sm font-medium transition-colors duration-200"
                 :class="
                   currentPage === page
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'border-gray-300 hover:bg-gray-50'
+                    ? 'bg-brand-600 text-white border-brand-600'
+                    : 'border-neutral-300 hover:bg-neutral-50'
                 "
               >
                 {{ page }}
@@ -416,7 +416,7 @@
             <button
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200 text-sm font-medium"
+              class="px-3 py-2 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors duration-200 text-sm font-medium"
             >
               Next
             </button>
@@ -426,10 +426,10 @@
         <!-- Selection Info -->
         <div
           v-if="selectedItems.size > 0"
-          class="mx-6 mb-6 p-4 bg-blue-50/50 border border-blue-200 rounded-xl"
+          class="mx-6 mb-6 p-4 bg-brand-50/50 border border-brand-200 rounded-xl"
         >
           <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-blue-700">
+            <p class="text-sm font-medium text-brand-700">
               {{ selectedItems.size }} customer{{ selectedItems.size !== 1 ? 's' : '' }} selected
             </p>
             <div class="flex items-center space-x-2">
@@ -459,16 +459,16 @@
       <!-- Add/Edit Modal -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">
               {{ isEditing ? 'Edit Customer' : 'Add New Customer' }}
             </h3>
             <button
               @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -478,41 +478,41 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Customer Name -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Customer Name *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Customer Name *</label>
                 <input
                   v-model="form.name"
                   type="text"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter customer name"
                 />
               </div>
 
               <!-- Phone Number -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">Phone Number *</label>
                 <input
                   v-model="form.phone"
                   type="tel"
                   required
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter phone number"
                 />
               </div>
             </div>
 
-            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-neutral-200">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-6 py-3 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 :disabled="submitting"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:opacity-50"
+                class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-600 text-white rounded-lg hover:from-brand-700 hover:to-brand-700 transition-all duration-200 font-medium shadow-soft hover:shadow-xl disabled:opacity-50"
               >
                 <span v-if="submitting" class="flex items-center">
                   <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -530,14 +530,14 @@
       <!-- Customer Detail Modal -->
       <div
         v-if="showDetailModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center p-6 border-b border-gray-200">
-            <h3 class="text-xl font-bold text-gray-900">Customer Details</h3>
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center p-6 border-b border-neutral-200">
+            <h3 class="text-xl font-bold text-neutral-900">Customer Details</h3>
             <button
               @click="showDetailModal = false"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              class="text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
             >
               <XMarkIcon class="w-6 h-6" />
             </button>
@@ -546,24 +546,24 @@
           <div class="p-6" v-if="selectedCustomer">
             <div class="flex items-center space-x-4 mb-6">
               <div
-                class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+                class="w-16 h-16 bg-gradient-to-br from-brand-500 to-brand-600 rounded-full flex items-center justify-center"
               >
                 <span class="text-white font-bold text-xl">{{ getInitials(selectedCustomer.name) }}</span>
               </div>
               <div>
-                <h4 class="text-xl font-bold text-gray-900">{{ selectedCustomer.name }}</h4>
-                <p class="text-gray-600">Customer #{{ selectedCustomer.id }}</p>
+                <h4 class="text-xl font-bold text-neutral-900">{{ selectedCustomer.name }}</h4>
+                <p class="text-neutral-600">Customer #{{ selectedCustomer.id }}</p>
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
-                <p class="text-lg font-medium text-gray-900">{{ selectedCustomer.phone }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Phone Number</label>
+                <p class="text-lg font-medium text-neutral-900">{{ selectedCustomer.phone }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Status</label>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Status</label>
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                   :class="getCustomerStatusColor(selectedCustomer)"
@@ -573,22 +573,22 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Joined Date</label>
-                <p class="text-lg font-medium text-gray-900">{{ formatDate(selectedCustomer.createdAt) }}</p>
-                <p class="text-sm text-gray-500">{{ formatTimeAgo(selectedCustomer.createdAt) }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Joined Date</label>
+                <p class="text-lg font-medium text-neutral-900">{{ formatDate(selectedCustomer.createdAt) }}</p>
+                <p class="text-sm text-neutral-500">{{ formatTimeAgo(selectedCustomer.createdAt) }}</p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Last Updated</label>
-                <p class="text-lg font-medium text-gray-900">{{ formatDate(selectedCustomer.updatedAt) }}</p>
-                <p class="text-sm text-gray-500">{{ formatTimeAgo(selectedCustomer.updatedAt) }}</p>
+                <label class="block text-sm font-medium text-neutral-500 mb-1">Last Updated</label>
+                <p class="text-lg font-medium text-neutral-900">{{ formatDate(selectedCustomer.updatedAt) }}</p>
+                <p class="text-sm text-neutral-500">{{ formatTimeAgo(selectedCustomer.updatedAt) }}</p>
               </div>
             </div>
 
-            <div class="flex space-x-3 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex space-x-3 mt-8 pt-6 border-t border-neutral-200">
               <button
                 @click="editFromDetail"
-                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
+                class="flex-1 bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 transition-all duration-200 font-medium"
               >
                 Edit Customer
               </button>
@@ -606,15 +606,15 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md">
           <div class="p-6">
             <div class="flex items-center mb-4">
               <ExclamationTriangleIcon class="w-6 h-6 text-red-600 mr-3" />
-              <h3 class="text-lg font-bold text-gray-900">Delete Customer</h3>
+              <h3 class="text-lg font-bold text-neutral-900">Delete Customer</h3>
             </div>
-            <p class="text-gray-600 mb-6">
+            <p class="text-neutral-600 mb-6">
               Are you sure you want to delete "{{ customerToDelete?.name }}"?
               <span class="text-red-600 font-medium">
                 This action cannot be undone.
@@ -623,7 +623,7 @@
             <div class="flex justify-end space-x-3">
               <button
                 @click="showDeleteModal = false"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
@@ -952,10 +952,10 @@ const getCustomerStatusColor = (customer) => {
   const status = getCustomerStatus(customer)
   switch (status) {
     case 'Active Today': return 'bg-green-100 text-green-800'
-    case 'Recent': return 'bg-blue-100 text-blue-800'
+    case 'Recent': return 'bg-brand-100 text-brand-800'
     case 'Active': return 'bg-yellow-100 text-yellow-800'
-    case 'Inactive': return 'bg-gray-100 text-gray-800'
-    default: return 'bg-gray-100 text-gray-800'
+    case 'Inactive': return 'bg-neutral-100 text-neutral-800'
+    default: return 'bg-neutral-100 text-neutral-800'
   }
 }
 

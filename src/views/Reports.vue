@@ -1,16 +1,16 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="reports-container">
+  <div class="min-h-screen bg-neutral-50 p-6">
     <!-- Page Header -->
-    <div class="page-header">
-      <h1 class="page-title">Business Reports</h1>
-      <p class="page-subtitle">Detailed analytics and insights for your business</p>
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6 mb-6">
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-transparent">Business Reports</h1>
+      <p class="text-neutral-500 mt-2 mb-6">Detailed analytics and insights for your business</p>
 
       <!-- Filter Controls -->
-      <div class="filter-section">
-        <div class="filter-group">
-          <label>Date Range:</label>
-          <select v-model="selectedDateRange" @change="handleDateRangeChange">
+      <div class="flex gap-4 items-center flex-wrap">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-neutral-700">Date Range:</label>
+          <select v-model="selectedDateRange" @change="handleDateRangeChange" class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white">
             <option value="7">Last 7 days</option>
             <option value="30">Last 30 days</option>
             <option value="90">Last 3 months</option>
@@ -18,27 +18,27 @@
             <option value="custom">Custom Range</option>
           </select>
         </div>
-        <div v-if="selectedDateRange === 'custom'" class="filter-group">
-          <label>From Date:</label>
-          <input 
-            type="date" 
-            v-model="customDateFrom" 
+        <div v-if="selectedDateRange === 'custom'" class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-neutral-700">From Date:</label>
+          <input
+            type="date"
+            v-model="customDateFrom"
             @change="fetchReports"
-            class="date-input"
+            class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[150px]"
           />
         </div>
-        <div v-if="selectedDateRange === 'custom'" class="filter-group">
-          <label>To Date:</label>
-          <input 
-            type="date" 
-            v-model="customDateTo" 
+        <div v-if="selectedDateRange === 'custom'" class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-neutral-700">To Date:</label>
+          <input
+            type="date"
+            v-model="customDateTo"
             @change="fetchReports"
-            class="date-input"
+            class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[150px]"
           />
         </div>
-        <div class="filter-group">
-          <label>Report Type:</label>
-          <select v-model="selectedReport" @change="updateReport">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-neutral-700">Report Type:</label>
+          <select v-model="selectedReport" @change="updateReport" class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white">
             <option value="overview">Overview</option>
             <option value="sales">Sales Report</option>
             <option value="inventory">Inventory Report</option>
@@ -48,8 +48,8 @@
             <option value="balance-sheet">Balance Sheet</option>
           </select>
         </div>
-        <button @click="exportReport" class="export-btn">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+        <button @click="exportReport" class="btn-primary flex items-center text-sm gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
           </svg>
           Export PDF
@@ -58,120 +58,126 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="loading-container">
-      <div class="spinner"></div>
-      <p>Loading reports...</p>
+    <div v-if="loading" class="flex flex-col items-center justify-center p-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
+      <div class="w-10 h-10 border-4 border-neutral-200 border-t-brand-600 rounded-full animate-spin mb-4"></div>
+      <p class="text-neutral-500">Loading reports...</p>
     </div>
 
     <!-- Reports Content -->
-    <div v-else class="reports-content">
+    <div v-else class="flex flex-col gap-6">
 
       <!-- Overview Report -->
-      <div v-if="selectedReport === 'overview'" class="report-section">
-        <h2 class="section-title">Business Overview</h2>
+      <div v-if="selectedReport === 'overview'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Business Overview</h2>
 
         <!-- Summary Cards -->
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Revenue</h3>
-              <div :class="['trend', reportData.revenueGrowth >= 0 ? 'positive' : 'negative']">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Revenue</h3>
+              <div :class="[reportData.revenueGrowth >= 0 ? 'text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800' : 'text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800']">
                 {{ reportData.revenueGrowth >= 0 ? '+' : '' }}{{ reportData.revenueGrowth.toFixed(1) }}%
               </div>
             </div>
-            <div class="card-value">TZS{{ formatNumber(reportData.totalRevenue) }}</div>
-            <div class="card-period">Last {{ selectedDateRange }} days</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">TZS{{ formatNumber(reportData.totalRevenue) }}</div>
+            <div class="text-xs text-neutral-400">Last {{ selectedDateRange }} days</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Orders</h3>
-              <div :class="['trend', reportData.ordersGrowth >= 0 ? 'positive' : 'negative']">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Orders</h3>
+              <div :class="[reportData.ordersGrowth >= 0 ? 'text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800' : 'text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800']">
                 {{ reportData.ordersGrowth >= 0 ? '+' : '' }}{{ reportData.ordersGrowth.toFixed(1) }}%
               </div>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.totalOrders) }}</div>
-            <div class="card-period">Last {{ selectedDateRange }} days</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.totalOrders) }}</div>
+            <div class="text-xs text-neutral-400">Last {{ selectedDateRange }} days</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Active Customers</h3>
-              <div :class="['trend', reportData.customersGrowth >= 0 ? 'positive' : 'negative']">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Active Customers</h3>
+              <div :class="[reportData.customersGrowth >= 0 ? 'text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800' : 'text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800']">
                 {{ reportData.customersGrowth >= 0 ? '+' : '' }}{{ reportData.customersGrowth.toFixed(1) }}%
               </div>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.activeCustomers) }}</div>
-            <div class="card-period">Last {{ selectedDateRange }} days</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.activeCustomers) }}</div>
+            <div class="text-xs text-neutral-400">Last {{ selectedDateRange }} days</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Avg Order Value</h3>
-              <div :class="['trend', reportData.avgOrderGrowth >= 0 ? 'positive' : 'negative']">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Avg Order Value</h3>
+              <div :class="[reportData.avgOrderGrowth >= 0 ? 'text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800' : 'text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800']">
                 {{ reportData.avgOrderGrowth >= 0 ? '+' : '' }}{{ reportData.avgOrderGrowth.toFixed(1) }}%
               </div>
             </div>
-            <div class="card-value">TZS{{ formatNumber(reportData.avgOrderValue) }}</div>
-            <div class="card-period">Last {{ selectedDateRange }} days</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">TZS{{ formatNumber(reportData.avgOrderValue) }}</div>
+            <div class="text-xs text-neutral-400">Last {{ selectedDateRange }} days</div>
           </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="charts-grid">
-          <div class="chart-container">
-            <h3>Sales Trend</h3>
-            <canvas ref="salesChart" class="chart"></canvas>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="border border-neutral-100 rounded-2xl p-5 bg-white/50">
+            <h3 class="text-base font-semibold text-neutral-700 mb-4">Sales Trend</h3>
+            <canvas ref="salesChart" class="!w-full !h-[300px] max-w-full max-h-[300px] bg-neutral-50 rounded-lg block"></canvas>
           </div>
 
-          <div class="chart-container">
-            <h3>Top Products</h3>
-            <canvas ref="productsChart" class="chart"></canvas>
+          <div class="border border-neutral-100 rounded-2xl p-5 bg-white/50">
+            <h3 class="text-base font-semibold text-neutral-700 mb-4">Top Products</h3>
+            <canvas ref="productsChart" class="!w-full !h-[300px] max-w-full max-h-[300px] bg-neutral-50 rounded-lg block"></canvas>
           </div>
         </div>
       </div>
 
       <!-- Sales Report -->
-      <div v-if="selectedReport === 'sales'" class="report-section">
-        <h2 class="section-title">Sales Report</h2>
+      <div v-if="selectedReport === 'sales'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Sales Report</h2>
 
-        <div class="report-metrics">
-          <div class="metric-box">
-            <label>Total Sales:</label>
-            <span class="metric-value">TZS{{ formatNumber(reportData.salesMetrics.total) }}</span>
+        <div class="flex gap-6 mb-8 flex-wrap">
+          <div class="flex flex-col gap-1 p-4 border border-neutral-100 rounded-2xl bg-white/50 min-w-[150px]">
+            <label class="text-sm text-neutral-500 font-medium">Total Sales:</label>
+            <span class="text-xl font-bold text-neutral-900">TZS{{ formatNumber(reportData.salesMetrics.total) }}</span>
           </div>
-          <div class="metric-box">
-            <label>Units Sold:</label>
-            <span class="metric-value">{{ formatNumber(reportData.salesMetrics.units) }}</span>
+          <div class="flex flex-col gap-1 p-4 border border-neutral-100 rounded-2xl bg-white/50 min-w-[150px]">
+            <label class="text-sm text-neutral-500 font-medium">Units Sold:</label>
+            <span class="text-xl font-bold text-neutral-900">{{ formatNumber(reportData.salesMetrics.units) }}</span>
           </div>
-          <div class="metric-box">
-            <label>Growth Rate:</label>
-            <span class="metric-value positive">+{{ reportData.salesMetrics.growth }}%</span>
+          <div class="flex flex-col gap-1 p-4 border border-neutral-100 rounded-2xl bg-white/50 min-w-[150px]">
+            <label class="text-sm text-neutral-500 font-medium">Growth Rate:</label>
+            <span class="text-xl font-bold text-emerald-600">+{{ reportData.salesMetrics.growth }}%</span>
           </div>
         </div>
 
-        <div class="data-table-container">
-          <h3>Recent Sales</h3>
-          <table class="data-table">
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Recent Sales</h3>
+          <table class="w-full border-collapse">
             <thead>
             <tr>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Quantity</th>
-              <th>Amount</th>
-              <th>Status</th>
+              <th class="table-header">Date</th>
+              <th class="table-header">Customer</th>
+              <th class="table-header">Product</th>
+              <th class="table-header">Quantity</th>
+              <th class="table-header">Amount</th>
+              <th class="table-header">Status</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="sale in reportData.recentSales" :key="sale.id">
-              <td>{{ formatDate(sale.date) }}</td>
-              <td>{{ sale.customer }}</td>
-              <td>{{ sale.product }}</td>
-              <td>{{ sale.quantity }}</td>
-              <td>TZS{{ formatNumber(sale.amount) }}</td>
-              <td>
-                  <span :class="['status', sale.status.toLowerCase()]">
+            <tr v-for="sale in reportData.recentSales" :key="sale.id" class="table-row">
+              <td class="table-cell">{{ formatDate(sale.date) }}</td>
+              <td class="table-cell">{{ sale.customer }}</td>
+              <td class="table-cell">{{ sale.product }}</td>
+              <td class="table-cell">{{ sale.quantity }}</td>
+              <td class="table-cell">TZS{{ formatNumber(sale.amount) }}</td>
+              <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    sale.status.toLowerCase() === 'completed' ? 'badge-success' :
+                    sale.status.toLowerCase() === 'pending' ? 'badge-warning' :
+                    sale.status.toLowerCase() === 'shipped' ? 'badge-primary' :
+                    'bg-red-100 text-red-800'
+                  ]">
                     {{ sale.status }}
                   </span>
               </td>
@@ -182,60 +188,60 @@
       </div>
 
       <!-- Inventory Report -->
-      <div v-if="selectedReport === 'inventory'" class="report-section">
-        <h2 class="section-title">Inventory Report</h2>
+      <div v-if="selectedReport === 'inventory'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Inventory Report</h2>
 
         <!-- Inventory Summary Cards -->
-        <div class="summary-grid" style="margin-bottom: 32px;">
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Items</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Items</h3>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.inventory.totalItems) }}</div>
-            <div class="card-period">In inventory</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.inventory.totalItems) }}</div>
+            <div class="text-xs text-neutral-400">In inventory</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Stock Value</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Stock Value</h3>
             </div>
-            <div class="card-value">TZS{{ formatNumber(reportData.inventory.totalStockValue) }}</div>
-            <div class="card-period">Current valuation</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">TZS{{ formatNumber(reportData.inventory.totalStockValue) }}</div>
+            <div class="text-xs text-neutral-400">Current valuation</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Low Stock Items</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Low Stock Items</h3>
             </div>
-            <div class="card-value" style="color: #f59e0b;">{{ reportData.inventory.lowStockCount }}</div>
-            <div class="card-period">Need reorder</div>
+            <div class="text-2xl font-bold text-amber-500 mb-1">{{ reportData.inventory.lowStockCount }}</div>
+            <div class="text-xs text-neutral-400">Need reorder</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Out of Stock</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Out of Stock</h3>
             </div>
-            <div class="card-value" style="color: #ef4444;">{{ reportData.inventory.outOfStockCount }}</div>
-            <div class="card-period">Urgent attention</div>
+            <div class="text-2xl font-bold text-red-500 mb-1">{{ reportData.inventory.outOfStockCount }}</div>
+            <div class="text-xs text-neutral-400">Urgent attention</div>
           </div>
         </div>
 
-        <div class="inventory-alerts">
-          <div class="alert-box low-stock">
-            <h3>Low Stock Items</h3>
-            <div class="alert-count">{{ reportData.lowStockItems.length }}</div>
-            <ul>
-              <li v-for="item in reportData.lowStockItems.slice(0, 5)" :key="item.id">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-orange-200 bg-orange-50">
+            <h3 class="text-base font-semibold mb-3">Low Stock Items</h3>
+            <div class="text-2xl font-bold mb-3">{{ reportData.lowStockItems.length }}</div>
+            <ul class="list-none m-0 p-0">
+              <li v-for="item in reportData.lowStockItems.slice(0, 5)" :key="item.id" class="text-sm mb-1">
                 {{ item.name }} - {{ item.stock }} units left
               </li>
             </ul>
           </div>
 
-          <div class="alert-box out-of-stock">
-            <h3>Out of Stock</h3>
-            <div class="alert-count">{{ reportData.outOfStockItems.length }}</div>
-            <ul>
-              <li v-for="item in reportData.outOfStockItems.slice(0, 5)" :key="item.id">
+          <div class="p-5 rounded-2xl border border-red-200 bg-red-50">
+            <h3 class="text-base font-semibold mb-3">Out of Stock</h3>
+            <div class="text-2xl font-bold mb-3">{{ reportData.outOfStockItems.length }}</div>
+            <ul class="list-none m-0 p-0">
+              <li v-for="item in reportData.outOfStockItems.slice(0, 5)" :key="item.id" class="text-sm mb-1">
                 {{ item.name }}
               </li>
             </ul>
@@ -243,52 +249,57 @@
         </div>
 
         <!-- Items by Category -->
-        <div v-if="reportData.inventory.itemsByCategory.length > 0" class="data-table-container" style="margin-top: 32px;">
-          <h3>Items by Category</h3>
-          <table class="data-table">
+        <div v-if="reportData.inventory.itemsByCategory.length > 0" class="mt-8">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Items by Category</h3>
+          <table class="w-full border-collapse">
             <thead>
             <tr>
-              <th>Category</th>
-              <th>Item Count</th>
-              <th>Total Value</th>
+              <th class="table-header">Category</th>
+              <th class="table-header">Item Count</th>
+              <th class="table-header">Total Value</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="category in reportData.inventory.itemsByCategory" :key="category.category">
-              <td>{{ category.category }}</td>
-              <td>{{ formatNumber(category.count) }}</td>
-              <td>TZS{{ formatNumber(category.value) }}</td>
+            <tr v-for="category in reportData.inventory.itemsByCategory" :key="category.category" class="table-row">
+              <td class="table-cell">{{ category.category }}</td>
+              <td class="table-cell">{{ formatNumber(category.count) }}</td>
+              <td class="table-cell">TZS{{ formatNumber(category.value) }}</td>
             </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="data-table-container" style="margin-top: 32px;">
-          <h3>Inventory Summary</h3>
-          <table class="data-table">
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Inventory Summary</h3>
+          <table class="w-full border-collapse">
             <thead>
             <tr>
-              <th>Product Code</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th>Current Stock</th>
-              <th>Min Stock</th>
-              <th>Value</th>
-              <th>Warehouse</th>
-              <th>Status</th>
+              <th class="table-header">Product Code</th>
+              <th class="table-header">Product Name</th>
+              <th class="table-header">Category</th>
+              <th class="table-header">Current Stock</th>
+              <th class="table-header">Min Stock</th>
+              <th class="table-header">Value</th>
+              <th class="table-header">Warehouse</th>
+              <th class="table-header">Status</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="item in reportData.inventoryItems" :key="item.id">
-              <td><span class="font-medium">{{ item.productCode }}</span></td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.category || 'N/A' }}</td>
-              <td class="text-center">{{ formatNumber(item.currentStock) }}</td>
-              <td class="text-center">{{ formatNumber(item.minStock) }}</td>
-              <td>TZS{{ formatNumber(item.value) }}</td>
-              <td>{{ item.warehouse }}</td>
-              <td>
-                  <span :class="['status', getStockStatus(item).toLowerCase().replace(/\s+/g, '.')]">
+            <tr v-for="item in reportData.inventoryItems" :key="item.id" class="table-row">
+              <td class="table-cell"><span class="font-medium text-neutral-700">{{ item.productCode }}</span></td>
+              <td class="table-cell">{{ item.name }}</td>
+              <td class="table-cell">{{ item.category || 'N/A' }}</td>
+              <td class="table-cell text-center">{{ formatNumber(item.currentStock) }}</td>
+              <td class="table-cell text-center">{{ formatNumber(item.minStock) }}</td>
+              <td class="table-cell">TZS{{ formatNumber(item.value) }}</td>
+              <td class="table-cell">{{ item.warehouse }}</td>
+              <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    getStockStatus(item) === 'In Stock' ? 'badge-success' :
+                    getStockStatus(item) === 'Low Stock' ? 'badge-warning' :
+                    'bg-red-100 text-red-800'
+                  ]">
                     {{ getStockStatus(item) }}
                   </span>
               </td>
@@ -299,86 +310,91 @@
       </div>
 
       <!-- Customer Report -->
-      <div v-if="selectedReport === 'customers'" class="report-section">
-        <h2 class="section-title">Customer Report</h2>
+      <div v-if="selectedReport === 'customers'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Customer Report</h2>
 
         <!-- Customer Summary Cards -->
-        <div class="summary-grid" style="margin-bottom: 32px;">
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Customers</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Customers</h3>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.customerMetrics.totalCustomers || 0) }}</div>
-            <div class="card-period">All time</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.customerMetrics.totalCustomers || 0) }}</div>
+            <div class="text-xs text-neutral-400">All time</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Active Customers</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Active Customers</h3>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.customerMetrics.activeCustomers || 0) }}</div>
-            <div class="card-period">This period</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.customerMetrics.activeCustomers || 0) }}</div>
+            <div class="text-xs text-neutral-400">This period</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>New Customers</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">New Customers</h3>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.customerMetrics.newCustomers) }}</div>
-            <div class="card-period">This period</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.customerMetrics.newCustomers) }}</div>
+            <div class="text-xs text-neutral-400">This period</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Return Rate</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Return Rate</h3>
             </div>
-            <div class="card-value">{{ reportData.customerMetrics.returnRate.toFixed(1) }}%</div>
-            <div class="card-period">Returning customers</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ reportData.customerMetrics.returnRate.toFixed(1) }}%</div>
+            <div class="text-xs text-neutral-400">Returning customers</div>
           </div>
         </div>
 
-        <div class="customer-insights">
-          <div class="insight-card">
-            <h3>Returning Customers</h3>
-            <div class="insight-value">{{ reportData.customerMetrics.returningCustomers }}</div>
-            <div class="insight-period">{{ reportData.customerMetrics.returnRate.toFixed(1) }}% return rate</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="p-5 border border-neutral-100 rounded-2xl text-center bg-white/50 hover:shadow-soft transition-all duration-300">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Returning Customers</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ reportData.customerMetrics.returningCustomers }}</div>
+            <div class="text-xs text-neutral-400">{{ reportData.customerMetrics.returnRate.toFixed(1) }}% return rate</div>
           </div>
 
-          <div class="insight-card">
-            <h3>Customer Lifetime Value</h3>
-            <div class="insight-value">TZS{{ formatNumber(reportData.customerMetrics.avgLifetimeValue) }}</div>
-            <div class="insight-period">Average per customer</div>
+          <div class="p-5 border border-neutral-100 rounded-2xl text-center bg-white/50 hover:shadow-soft transition-all duration-300">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Customer Lifetime Value</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">TZS{{ formatNumber(reportData.customerMetrics.avgLifetimeValue) }}</div>
+            <div class="text-xs text-neutral-400">Average per customer</div>
           </div>
 
-          <div class="insight-card">
-            <h3>Customer Growth</h3>
-            <div class="insight-value">{{ reportData.customerMetrics.newCustomers }}</div>
-            <div class="insight-period">New this period</div>
+          <div class="p-5 border border-neutral-100 rounded-2xl text-center bg-white/50 hover:shadow-soft transition-all duration-300">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Customer Growth</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ reportData.customerMetrics.newCustomers }}</div>
+            <div class="text-xs text-neutral-400">New this period</div>
           </div>
         </div>
 
-        <div class="data-table-container">
-          <h3>Top Customers</h3>
-          <table class="data-table">
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Top Customers</h3>
+          <table class="w-full border-collapse">
             <thead>
             <tr>
-              <th>Customer</th>
-              <th>Phone</th>
-              <th>Total Orders</th>
-              <th>Total Spent</th>
-              <th>Last Order</th>
-              <th>Status</th>
+              <th class="table-header">Customer</th>
+              <th class="table-header">Phone</th>
+              <th class="table-header">Total Orders</th>
+              <th class="table-header">Total Spent</th>
+              <th class="table-header">Last Order</th>
+              <th class="table-header">Status</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="customer in reportData.topCustomers" :key="customer.id">
-              <td>{{ customer.name }}</td>
-              <td>{{ customer.phone }}</td>
-              <td>{{ customer.totalOrders }}</td>
-              <td>TZS{{ formatNumber(customer.totalSpent) }}</td>
-              <td>{{ formatDate(customer.lastOrder) }}</td>
-              <td>
-                  <span :class="['status', customer.status.toLowerCase()]">
+            <tr v-for="customer in reportData.topCustomers" :key="customer.id" class="table-row">
+              <td class="table-cell">{{ customer.name }}</td>
+              <td class="table-cell">{{ customer.phone }}</td>
+              <td class="table-cell">{{ customer.totalOrders }}</td>
+              <td class="table-cell">TZS{{ formatNumber(customer.totalSpent) }}</td>
+              <td class="table-cell">{{ formatDate(customer.lastOrder) }}</td>
+              <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    customer.status.toLowerCase() === 'active' ? 'badge-success' :
+                    customer.status.toLowerCase() === 'inactive' ? 'badge-warning' :
+                    'badge-primary'
+                  ]">
                     {{ customer.status }}
                   </span>
               </td>
@@ -389,159 +405,167 @@
       </div>
 
       <!-- Financial Report -->
-      <div v-if="selectedReport === 'financial'" class="report-section">
-        <h2 class="section-title">Financial Report</h2>
+      <div v-if="selectedReport === 'financial'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Financial Report</h2>
 
-        <div class="financial-summary">
-          <div class="financial-card revenue">
-            <h3>Total Revenue</h3>
-            <div class="amount positive">TZS{{ formatNumber(reportData.financial.revenue) }}</div>
-            <div :class="['change', reportData.financial.revenueGrowth >= 0 ? 'positive' : 'negative']">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Total Revenue</h3>
+            <div class="text-2xl font-bold text-emerald-600 mb-2">TZS{{ formatNumber(reportData.financial.revenue) }}</div>
+            <div :class="['text-xs', reportData.financial.revenueGrowth >= 0 ? 'text-emerald-600' : 'text-red-600']">
               {{ reportData.financial.revenueGrowth >= 0 ? '+' : '' }}{{ reportData.financial.revenueGrowth.toFixed(1) }}% vs last period
             </div>
           </div>
 
-          <div class="financial-card expenses">
-            <h3>Total Expenses</h3>
-            <div class="amount negative">TZS{{ formatNumber(reportData.financial.expenses) }}</div>
-            <div :class="['change', reportData.financial.expenseGrowth >= 0 ? 'negative' : 'positive']">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Total Expenses</h3>
+            <div class="text-2xl font-bold text-red-600 mb-2">TZS{{ formatNumber(reportData.financial.expenses) }}</div>
+            <div :class="['text-xs', reportData.financial.expenseGrowth >= 0 ? 'text-red-600' : 'text-emerald-600']">
               {{ reportData.financial.expenseGrowth >= 0 ? '+' : '' }}{{ reportData.financial.expenseGrowth.toFixed(1) }}% vs last period
             </div>
           </div>
 
-          <div class="financial-card profit">
-            <h3>Net Profit</h3>
-            <div class="amount positive">TZS{{ formatNumber(reportData.financial.profit) }}</div>
-            <div :class="['change', reportData.financial.profitGrowth >= 0 ? 'positive' : 'negative']">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Net Profit</h3>
+            <div class="text-2xl font-bold text-emerald-600 mb-2">TZS{{ formatNumber(reportData.financial.profit) }}</div>
+            <div :class="['text-xs', reportData.financial.profitGrowth >= 0 ? 'text-emerald-600' : 'text-red-600']">
               {{ reportData.financial.profitGrowth >= 0 ? '+' : '' }}{{ reportData.financial.profitGrowth.toFixed(1) }}% vs last period
             </div>
           </div>
 
-          <div class="financial-card margin">
-            <h3>Profit Margin</h3>
-            <div class="amount">{{ reportData.financial.profitMargin.toFixed(1) }}%</div>
-            <div :class="['change', reportData.financial.marginGrowth >= 0 ? 'positive' : 'negative']">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Profit Margin</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ reportData.financial.profitMargin.toFixed(1) }}%</div>
+            <div :class="['text-xs', reportData.financial.marginGrowth >= 0 ? 'text-emerald-600' : 'text-red-600']">
               {{ reportData.financial.marginGrowth >= 0 ? '+' : '' }}{{ reportData.financial.marginGrowth.toFixed(1) }}% vs last period
             </div>
           </div>
         </div>
 
-        <div class="expense-breakdown">
-          <h3>Expense Breakdown</h3>
-          <div class="expense-list">
-            <div v-for="expense in reportData.expenseBreakdown" :key="expense.category" class="expense-item">
-              <div class="expense-info">
-                <span class="expense-category">{{ formatCategory(expense.category) }}</span>
-                <span class="expense-amount">TZS{{ formatNumber(expense.amount) }}</span>
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Expense Breakdown</h3>
+          <div class="flex flex-col gap-3">
+            <div v-for="expense in reportData.expenseBreakdown" :key="expense.category" class="flex items-center gap-3">
+              <div class="flex justify-between min-w-[200px]">
+                <span class="font-medium text-neutral-700">{{ formatCategory(expense.category) }}</span>
+                <span class="font-semibold text-neutral-900">TZS{{ formatNumber(expense.amount) }}</span>
               </div>
-              <div class="expense-bar">
-                <div class="expense-fill" :style="{ width: expense.percentage + '%' }"></div>
+              <div class="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-500 to-brand-600 transition-all duration-300" :style="{ width: expense.percentage + '%' }"></div>
               </div>
-              <span class="expense-percentage">{{ expense.percentage.toFixed(1) }}%</span>
+              <span class="text-sm font-medium text-neutral-500 min-w-[40px] text-right">{{ expense.percentage.toFixed(1) }}%</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- WhatsApp Orders Report -->
-      <div v-if="selectedReport === 'whatsapp'" class="report-section">
-        <h2 class="section-title">WhatsApp Orders</h2>
+      <div v-if="selectedReport === 'whatsapp'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">WhatsApp Orders</h2>
 
         <!-- Order Statistics Cards -->
-        <div class="summary-grid" style="margin-bottom: 32px;">
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Orders</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Orders</h3>
             </div>
-            <div class="card-value">{{ formatNumber(reportData.whatsappOrders.totalOrders) }}</div>
-            <div class="card-period">All orders</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.whatsappOrders.totalOrders) }}</div>
+            <div class="text-xs text-neutral-400">All orders</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Pending</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Pending</h3>
             </div>
-            <div class="card-value" style="color: #f59e0b;">{{ formatNumber(reportData.whatsappOrders.pendingOrders) }}</div>
-            <div class="card-period">Awaiting confirmation</div>
+            <div class="text-2xl font-bold text-amber-500 mb-1">{{ formatNumber(reportData.whatsappOrders.pendingOrders) }}</div>
+            <div class="text-xs text-neutral-400">Awaiting confirmation</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Delivered</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Delivered</h3>
             </div>
-            <div class="card-value" style="color: #10b981;">{{ formatNumber(reportData.whatsappOrders.deliveredOrders) }}</div>
-            <div class="card-period">Successfully completed</div>
+            <div class="text-2xl font-bold text-emerald-500 mb-1">{{ formatNumber(reportData.whatsappOrders.deliveredOrders) }}</div>
+            <div class="text-xs text-neutral-400">Successfully completed</div>
           </div>
 
-          <div class="summary-card">
-            <div class="card-header">
-              <h3>Total Revenue</h3>
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Revenue</h3>
             </div>
-            <div class="card-value">TZS{{ formatNumber(reportData.whatsappOrders.totalRevenue) }}</div>
-            <div class="card-period">From completed orders</div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">TZS{{ formatNumber(reportData.whatsappOrders.totalRevenue) }}</div>
+            <div class="text-xs text-neutral-400">From completed orders</div>
           </div>
         </div>
 
         <!-- Status Breakdown -->
-        <div class="status-breakdown" style="margin-bottom: 32px;">
-          <h3>Orders by Status</h3>
-          <div class="status-grid">
-            <div class="status-item">
-              <span class="status-label">Pending</span>
-              <span class="status-count">{{ reportData.whatsappOrders.pendingOrders }}</span>
+        <div class="bg-white/50 p-6 rounded-2xl border border-neutral-100 mb-8">
+          <h3 class="text-lg font-semibold text-neutral-900 mb-5">Orders by Status</h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Pending</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ reportData.whatsappOrders.pendingOrders }}</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">Confirmed</span>
-              <span class="status-count">{{ reportData.whatsappOrders.confirmedOrders }}</span>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Confirmed</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ reportData.whatsappOrders.confirmedOrders }}</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">Processing</span>
-              <span class="status-count">{{ reportData.whatsappOrders.processingOrders }}</span>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Processing</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ reportData.whatsappOrders.processingOrders }}</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">Ready</span>
-              <span class="status-count">{{ reportData.whatsappOrders.readyOrders }}</span>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Ready</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ reportData.whatsappOrders.readyOrders }}</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">Delivered</span>
-              <span class="status-count">{{ reportData.whatsappOrders.deliveredOrders }}</span>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Delivered</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ reportData.whatsappOrders.deliveredOrders }}</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">Cancelled</span>
-              <span class="status-count">{{ reportData.whatsappOrders.cancelledOrders }}</span>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Cancelled</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ reportData.whatsappOrders.cancelledOrders }}</span>
             </div>
           </div>
         </div>
 
         <!-- Orders List -->
-        <div class="data-table-container">
-          <h3>All Orders</h3>
-          <table class="data-table">
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">All Orders</h3>
+          <table class="w-full border-collapse">
             <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Phone</th>
-              <th>Items</th>
-              <th>Total Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Actions</th>
+              <th class="table-header">Order ID</th>
+              <th class="table-header">Customer</th>
+              <th class="table-header">Phone</th>
+              <th class="table-header">Items</th>
+              <th class="table-header">Total Amount</th>
+              <th class="table-header">Status</th>
+              <th class="table-header">Date</th>
+              <th class="table-header">Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="order in reportData.whatsappOrders.orders" :key="order.id">
-              <td><span class="font-medium">#{{ order.id }}</span></td>
-              <td>{{ order.customerName }}</td>
-              <td>{{ order.customerPhone }}</td>
-              <td>{{ order.itemCount }} item(s)</td>
-              <td>TZS{{ formatNumber(order.totalAmount) }}</td>
-              <td>
+            <tr v-for="order in reportData.whatsappOrders.orders" :key="order.id" class="table-row">
+              <td class="table-cell"><span class="font-medium text-neutral-700">#{{ order.id }}</span></td>
+              <td class="table-cell">{{ order.customerName }}</td>
+              <td class="table-cell">{{ order.customerPhone }}</td>
+              <td class="table-cell">{{ order.itemCount }} item(s)</td>
+              <td class="table-cell">TZS{{ formatNumber(order.totalAmount) }}</td>
+              <td class="table-cell">
                 <select
                   :value="order.status"
                   @change="updateOrderStatus(order.id, $event.target.value)"
-                  class="status-select"
-                  :class="[order.status]"
+                  class="px-3 py-1.5 border rounded-xl text-sm font-medium bg-white cursor-pointer transition-all duration-200"
+                  :class="{
+                    'text-amber-500 border-amber-500 bg-amber-50': order.status === 'pending',
+                    'text-brand-500 border-brand-500 bg-brand-50': order.status === 'confirmed',
+                    'text-violet-500 border-violet-500 bg-violet-50': order.status === 'processing',
+                    'text-cyan-500 border-cyan-500 bg-cyan-50': order.status === 'ready',
+                    'text-emerald-500 border-emerald-500 bg-emerald-50': order.status === 'delivered',
+                    'text-red-500 border-red-500 bg-red-50': order.status === 'cancelled',
+                    'opacity-60 cursor-not-allowed': order.status === 'delivered' || order.status === 'cancelled'
+                  }"
                   :disabled="order.status === 'delivered' || order.status === 'cancelled'"
                 >
                   <option value="pending">Pending</option>
@@ -552,12 +576,12 @@
                   <option value="cancelled" disabled>Cancelled</option>
                 </select>
               </td>
-              <td>{{ formatDate(order.createdAt) }}</td>
-              <td>
+              <td class="table-cell">{{ formatDate(order.createdAt) }}</td>
+              <td class="table-cell">
                 <button
                   v-if="order.status !== 'delivered' && order.status !== 'cancelled'"
                   @click="cancelOrder(order.id)"
-                  class="cancel-btn"
+                  class="px-3 py-1.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white border-none rounded-lg text-sm font-medium cursor-pointer transition-colors duration-200"
                 >
                   Cancel
                 </button>
@@ -569,18 +593,18 @@
       </div>
 
       <!-- Balance Sheet Report -->
-      <div v-if="selectedReport === 'balance-sheet'" class="report-section">
-        <h2 class="section-title">Balance Sheet</h2>
-        <div class="balance-sheet-redirect">
-          <div class="redirect-card">
-            <svg class="redirect-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-if="selectedReport === 'balance-sheet'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Balance Sheet</h2>
+        <div class="flex justify-center items-center py-12 px-6">
+          <div class="max-w-[600px] text-center py-12 px-8 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl text-white shadow-soft-lg">
+            <svg class="w-20 h-20 mx-auto mb-6 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3>View Full Balance Sheet</h3>
-            <p>The Balance Sheet report is available on a dedicated page with advanced features including date selection, PDF export, and detailed financial position analysis.</p>
-            <button @click="goToBalanceSheet" class="view-report-btn">
+            <h3 class="text-[28px] font-bold mb-4 text-white">View Full Balance Sheet</h3>
+            <p class="text-base leading-relaxed mb-8 text-white/95">The Balance Sheet report is available on a dedicated page with advanced features including date selection, PDF export, and detailed financial position analysis.</p>
+            <button @click="goToBalanceSheet" class="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-brand-600 border-none rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-soft hover:-translate-y-0.5 hover:shadow-soft-lg active:translate-y-0">
               View Balance Sheet Report
-              <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </button>
@@ -1086,7 +1110,7 @@ const handleDateRangeChange = () => {
     // Set default dates if custom is selected
     const today = new Date();
     const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
+
     customDateTo.value = today.toISOString().split('T')[0];
     customDateFrom.value = lastWeek.toISOString().split('T')[0];
   }
@@ -1182,746 +1206,3 @@ watch(selectedReport, () => {
   }
 })
 </script>
-
-<style scoped>
-.reports-container {
-  padding: 24px;
-  background-color: #f8fafc;
-  min-height: 100vh;
-}
-
-.page-header {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  color: #64748b;
-  margin: 0 0 24px 0;
-}
-
-.filter-section {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.filter-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-}
-
-.filter-group select,
-.date-input {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
-  font-size: 14px;
-}
-
-.date-input {
-  min-width: 150px;
-}
-
-.export-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.export-btn:hover {
-  background: #2563eb;
-}
-
-.icon {
-  width: 16px;
-  height: 16px;
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.reports-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.report-section {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 24px 0;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.summary-card {
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background: #fafafa;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.card-header h3 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-.trend {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.trend.positive {
-  color: #065f46;
-  background: #d1fae5;
-}
-
-.trend.negative {
-  color: #991b1b;
-  background: #fee2e2;
-}
-
-.card-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 4px;
-}
-
-.card-period {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 24px;
-}
-
-.chart-container {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 20px;
-  overflow: hidden;
-  position: relative;
-}
-
-.chart-container h3 {
-  margin: 0 0 16px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.chart {
-  width: 100% !important;
-  height: 300px !important;
-  max-width: 100%;
-  max-height: 300px;
-  background: #f9fafb;
-  border-radius: 8px;
-  display: block;
-}
-
-.report-metrics {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-}
-
-.metric-box {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  min-width: 150px;
-}
-
-.metric-box label {
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.metric-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.metric-value.positive {
-  color: #059669;
-}
-
-.data-table-container {
-  margin-top: 24px;
-}
-
-.data-table-container h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.data-table th,
-.data-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.data-table th {
-  background: #f9fafb;
-  font-weight: 600;
-  color: #374151;
-}
-
-.data-table tr:hover {
-  background: #f9fafb;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status.completed {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status.pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status.shipped {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.status.active {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status.in.stock {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status.low.stock {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status.out.of.stock {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.inventory-alerts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.alert-box {
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid;
-}
-
-.alert-box.low-stock {
-  background: #fef3c7;
-  border-color: #f59e0b;
-}
-
-.alert-box.out-of-stock {
-  background: #fee2e2;
-  border-color: #ef4444;
-}
-
-.alert-box h3 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.alert-count {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.alert-box ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.alert-box li {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.customer-insights {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.insight-card {
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.insight-card h3 {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-.insight-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 8px;
-}
-
-.insight-period {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.financial-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.financial-card {
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-}
-
-.financial-card h3 {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-.amount {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.amount.positive {
-  color: #059669;
-}
-
-.amount.negative {
-  color: #dc2626;
-}
-
-.change {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.expense-breakdown {
-  margin-top: 32px;
-}
-
-.expense-breakdown h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.expense-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.expense-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.expense-info {
-  display: flex;
-  justify-content: space-between;
-  min-width: 200px;
-}
-
-.expense-category {
-  font-weight: 500;
-  color: #374151;
-}
-
-.expense-amount {
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.expense-bar {
-  flex: 1;
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.expense-fill {
-  height: 100%;
-  background: #3b82f6;
-  transition: width 0.3s ease;
-}
-
-.expense-percentage {
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 40px;
-  text-align: right;
-}
-
-@media (max-width: 768px) {
-  .reports-container {
-    padding: 16px;
-  }
-
-  .filter-section {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-group {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .summary-grid,
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .report-metrics {
-    flex-direction: column;
-  }
-
-  .expense-item {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .expense-info {
-    min-width: auto;
-  }
-}
-
-/* Utility classes */
-.text-center {
-  text-align: center;
-}
-
-.font-medium {
-  font-weight: 500;
-  color: #374151;
-}
-
-/* WhatsApp Orders Styles */
-.status-breakdown {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-}
-
-.status-breakdown h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-.status-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.status-label {
-  font-size: 14px;
-  color: #64748b;
-  margin-bottom: 8px;
-}
-
-.status-count {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.status-select {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.status-select:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.status-select.pending {
-  color: #f59e0b;
-  border-color: #f59e0b;
-  background: #fffbeb;
-}
-
-.status-select.confirmed {
-  color: #3b82f6;
-  border-color: #3b82f6;
-  background: #eff6ff;
-}
-
-.status-select.processing {
-  color: #8b5cf6;
-  border-color: #8b5cf6;
-  background: #f5f3ff;
-}
-
-.status-select.ready {
-  color: #06b6d4;
-  border-color: #06b6d4;
-  background: #ecfeff;
-}
-
-.status-select.delivered {
-  color: #10b981;
-  border-color: #10b981;
-  background: #f0fdf4;
-}
-
-.status-select.cancelled {
-  color: #ef4444;
-  border-color: #ef4444;
-  background: #fef2f2;
-}
-
-.cancel-btn {
-  padding: 6px 12px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.cancel-btn:hover {
-  background: #dc2626;
-}
-
-.cancel-btn:active {
-  background: #b91c1c;
-}
-
-/* Balance Sheet Redirect Styles */
-.balance-sheet-redirect {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 48px 24px;
-}
-
-.redirect-card {
-  max-width: 600px;
-  text-align: center;
-  padding: 48px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  color: white;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.redirect-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 24px;
-  opacity: 0.9;
-}
-
-.redirect-card h3 {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0 0 16px 0;
-  color: white;
-}
-
-.redirect-card p {
-  font-size: 16px;
-  line-height: 1.6;
-  margin: 0 0 32px 0;
-  opacity: 0.95;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-.view-report-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
-  background: white;
-  color: #667eea;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.view-report-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-.view-report-btn:active {
-  transform: translateY(0);
-}
-
-.arrow-icon {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.3s ease;
-}
-
-.view-report-btn:hover .arrow-icon {
-  transform: translateX(4px);
-}
-</style>

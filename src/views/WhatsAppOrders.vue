@@ -1,137 +1,191 @@
 <template>
   <SwalAlert ref="swalAlert" />
-  <div class="whatsapp-orders-container">
-    <!-- Page Header -->
-    <div class="page-header">
-      <h1 class="page-title">WhatsApp Orders Management</h1>
-      <p class="page-subtitle">Manage and track WhatsApp orders</p>
-    </div>
-
-    <!-- Loading State -->
-    <div v-if="loading" class="loading-state">
-      <p>Loading orders...</p>
-    </div>
-
-    <!-- Content -->
-    <div v-else class="content">
-      <!-- Order Statistics Cards -->
-      <div class="summary-grid">
-        <div class="summary-card">
-          <div class="card-header">
-            <h3>Total Orders</h3>
+  <div class="min-h-screen bg-neutral-50">
+    <!-- Header -->
+    <div class="bg-white/80 backdrop-blur-sm shadow-soft border-b border-neutral-100">
+      <div class="px-6 py-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="flex items-center text-sm text-neutral-400 mb-2">
+              <HomeIcon class="w-4 h-4 mr-2" />
+              <span>Home</span>
+              <ChevronRightIcon class="w-4 h-4 mx-2" />
+              <span class="text-neutral-700 font-medium">WhatsApp Orders</span>
+            </div>
+            <h1 class="text-3xl font-bold text-neutral-900">WhatsApp Orders</h1>
+            <p class="text-neutral-500 mt-1">Manage and track WhatsApp orders</p>
           </div>
-          <div class="card-value">{{ formatNumber(orderStats.totalOrders) }}</div>
-          <div class="card-period">All orders</div>
-        </div>
-
-        <div class="summary-card">
-          <div class="card-header">
-            <h3>Pending</h3>
-          </div>
-          <div class="card-value" style="color: #f59e0b;">{{ formatNumber(orderStats.pendingOrders) }}</div>
-          <div class="card-period">Awaiting confirmation</div>
-        </div>
-
-        <div class="summary-card">
-          <div class="card-header">
-            <h3>Delivered</h3>
-          </div>
-          <div class="card-value" style="color: #10b981;">{{ formatNumber(orderStats.deliveredOrders) }}</div>
-          <div class="card-period">Successfully completed</div>
-        </div>
-
-        <div class="summary-card">
-          <div class="card-header">
-            <h3>Total Revenue</h3>
-          </div>
-          <div class="card-value">TZS{{ formatNumber(orderStats.totalRevenue) }}</div>
-          <div class="card-period">From completed orders</div>
-        </div>
-      </div>
-
-      <!-- Status Breakdown -->
-      <div class="status-breakdown">
-        <h3>Orders by Status</h3>
-        <div class="status-grid">
-          <div class="status-item">
-            <span class="status-label">Pending</span>
-            <span class="status-count">{{ orderStats.pendingOrders }}</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Confirmed</span>
-            <span class="status-count">{{ orderStats.confirmedOrders }}</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Processing</span>
-            <span class="status-count">{{ orderStats.processingOrders }}</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Ready</span>
-            <span class="status-count">{{ orderStats.readyOrders }}</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Delivered</span>
-            <span class="status-count">{{ orderStats.deliveredOrders }}</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Cancelled</span>
-            <span class="status-count">{{ orderStats.cancelledOrders }}</span>
+          <div class="flex items-center space-x-3">
+            <button
+              @click="fetchOrders"
+              class="btn-secondary flex items-center text-sm !px-3"
+            >
+              <ArrowPathIcon class="w-4 h-4" :class="{ 'animate-spin': loading }" />
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Orders List -->
-      <div class="data-table-container">
-        <h3>All Orders</h3>
-        <table class="data-table">
-          <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Items</th>
-            <th>Total Amount</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="order in orders" :key="order.id">
-            <td><span class="font-medium">#{{ order.id }}</span></td>
-            <td>{{ order.customerName }}</td>
-            <td>{{ order.customerPhone }}</td>
-            <td>{{ order.itemCount }} item(s)</td>
-            <td>TZS{{ formatNumber(order.totalAmount) }}</td>
-            <td>
-              <select
-                :value="order.status"
-                @change="updateOrderStatus(order.id, $event.target.value)"
-                class="status-select"
-                :class="[order.status]"
-                :disabled="order.status === 'delivered' || order.status === 'cancelled'"
-              >
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="processing">Processing</option>
-                <option value="ready">Ready</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled" disabled>Cancelled</option>
-              </select>
-            </td>
-            <td>{{ formatDate(order.createdAt) }}</td>
-            <td>
-              <button
-                v-if="order.status !== 'delivered' && order.status !== 'cancelled'"
-                @click="cancelOrder(order.id)"
-                class="cancel-btn"
-              >
-                Cancel
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+    <div class="p-6">
+      <!-- Loading State -->
+      <div v-if="loading" class="flex flex-col items-center justify-center p-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20">
+        <div class="w-10 h-10 border-4 border-neutral-200 border-t-brand-600 rounded-full animate-spin mb-4"></div>
+        <p class="text-neutral-500">Loading orders...</p>
+      </div>
+
+      <!-- Content -->
+      <div v-else class="flex flex-col gap-6">
+        <!-- Order Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Orders</h3>
+              <div class="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center">
+                <ClipboardDocumentListIcon class="w-5 h-5 text-brand-600" />
+              </div>
+            </div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(orderStats.totalOrders) }}</div>
+            <div class="text-xs text-neutral-400">All orders</div>
+          </div>
+
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Pending</h3>
+              <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
+                <ClockIcon class="w-5 h-5 text-amber-500" />
+              </div>
+            </div>
+            <div class="text-2xl font-bold text-amber-500 mb-1">{{ formatNumber(orderStats.pendingOrders) }}</div>
+            <div class="text-xs text-neutral-400">Awaiting confirmation</div>
+          </div>
+
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Delivered</h3>
+              <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center">
+                <CheckCircleIcon class="w-5 h-5 text-emerald-500" />
+              </div>
+            </div>
+            <div class="text-2xl font-bold text-emerald-500 mb-1">{{ formatNumber(orderStats.deliveredOrders) }}</div>
+            <div class="text-xs text-neutral-400">Successfully completed</div>
+          </div>
+
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 hover:shadow-soft-lg transition-all duration-300">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="text-sm font-medium text-neutral-500">Total Revenue</h3>
+              <div class="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center">
+                <CurrencyDollarIcon class="w-5 h-5 text-brand-600" />
+              </div>
+            </div>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">TZS{{ formatNumber(orderStats.totalRevenue) }}</div>
+            <div class="text-xs text-neutral-400">From completed orders</div>
+          </div>
+        </div>
+
+        <!-- Status Breakdown -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+          <h3 class="text-lg font-semibold text-neutral-900 mb-5">Orders by Status</h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Pending</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ orderStats.pendingOrders }}</span>
+            </div>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Confirmed</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ orderStats.confirmedOrders }}</span>
+            </div>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Processing</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ orderStats.processingOrders }}</span>
+            </div>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Ready</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ orderStats.readyOrders }}</span>
+            </div>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Delivered</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ orderStats.deliveredOrders }}</span>
+            </div>
+            <div class="flex flex-col items-center p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+              <span class="text-sm text-neutral-500 mb-2">Cancelled</span>
+              <span class="text-2xl font-bold text-neutral-900">{{ orderStats.cancelledOrders }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 overflow-hidden">
+          <div class="px-6 py-4 border-b border-neutral-100">
+            <h3 class="text-lg font-semibold text-neutral-900">All Orders</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-neutral-50 border-b border-neutral-200">
+                  <th class="table-header">Order ID</th>
+                  <th class="table-header">Customer</th>
+                  <th class="table-header">Phone</th>
+                  <th class="table-header">Items</th>
+                  <th class="table-header">Total Amount</th>
+                  <th class="table-header">Status</th>
+                  <th class="table-header">Date</th>
+                  <th class="table-header">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-neutral-100">
+                <tr v-if="orders.length === 0">
+                  <td colspan="8" class="px-6 py-12 text-center">
+                    <ClipboardDocumentListIcon class="w-12 h-12 text-neutral-300 mx-auto mb-3" />
+                    <p class="text-neutral-500 font-medium">No orders found</p>
+                    <p class="text-sm text-neutral-400 mt-1">WhatsApp orders will appear here</p>
+                  </td>
+                </tr>
+                <tr v-for="order in orders" :key="order.id" class="table-row">
+                  <td class="table-cell font-medium text-neutral-900">#{{ order.id }}</td>
+                  <td class="table-cell">{{ order.customerName }}</td>
+                  <td class="table-cell">{{ order.customerPhone }}</td>
+                  <td class="table-cell">{{ order.itemCount }} item(s)</td>
+                  <td class="table-cell font-medium">TZS{{ formatNumber(order.totalAmount) }}</td>
+                  <td class="table-cell">
+                    <select
+                      :value="order.status"
+                      @change="updateOrderStatus(order.id, $event.target.value)"
+                      class="px-3 py-1.5 border rounded-xl text-sm font-medium bg-white cursor-pointer transition-all duration-200"
+                      :class="{
+                        'text-amber-500 border-amber-400 bg-amber-50': order.status === 'pending',
+                        'text-brand-500 border-brand-400 bg-brand-50': order.status === 'confirmed',
+                        'text-violet-500 border-violet-400 bg-violet-50': order.status === 'processing',
+                        'text-cyan-500 border-cyan-400 bg-cyan-50': order.status === 'ready',
+                        'text-emerald-500 border-emerald-400 bg-emerald-50': order.status === 'delivered',
+                        'text-red-500 border-red-400 bg-red-50': order.status === 'cancelled',
+                        'opacity-60 cursor-not-allowed': order.status === 'delivered' || order.status === 'cancelled'
+                      }"
+                      :disabled="order.status === 'delivered' || order.status === 'cancelled'"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="processing">Processing</option>
+                      <option value="ready">Ready</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled" disabled>Cancelled</option>
+                    </select>
+                  </td>
+                  <td class="table-cell">{{ formatDate(order.createdAt) }}</td>
+                  <td class="table-cell">
+                    <button
+                      v-if="order.status !== 'delivered' && order.status !== 'cancelled'"
+                      @click="cancelOrder(order.id)"
+                      class="btn-danger text-sm !py-1.5 !px-3"
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -139,6 +193,15 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import {
+  HomeIcon,
+  ChevronRightIcon,
+  ArrowPathIcon,
+  ClipboardDocumentListIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  CurrencyDollarIcon
+} from '@heroicons/vue/24/outline'
 import { Configs } from '@/utils/Configs'
 import SwalAlert from '@/components/common/SwalAlert.vue'
 import { useUserStore } from '@/stores/user'
@@ -194,7 +257,6 @@ const apiCall = async (url, options = {}) => {
 const fetchOrders = async () => {
   loading.value = true
   try {
-    // Fetch order statistics
     const stats = await apiCall('/whatsapp/stats/orders')
 
     orderStats.totalOrders = stats.totalOrders || 0
@@ -206,7 +268,6 @@ const fetchOrders = async () => {
     orderStats.cancelledOrders = stats.cancelled || 0
     orderStats.totalRevenue = stats.totalRevenue || 0
 
-    // Fetch all orders
     const ordersList = await apiCall('/whatsapp/orders')
 
     orders.value = (ordersList || []).map(order => ({
@@ -236,7 +297,6 @@ const updateOrderStatus = async (orderId, newStatus) => {
 
     swalAlert.value?.showSuccess('Status Updated', `Order #${orderId} status changed to ${newStatus}`)
 
-    // Refresh orders
     await fetchOrders()
   } catch (error) {
     console.error('Error updating order status:', error)
@@ -257,7 +317,6 @@ const cancelOrder = async (orderId) => {
 
     swalAlert.value?.showSuccess('Order Cancelled', `Order #${orderId} has been cancelled and inventory restored`)
 
-    // Refresh orders
     await fetchOrders()
   } catch (error) {
     console.error('Error cancelling order:', error)
@@ -278,241 +337,3 @@ onMounted(() => {
   fetchOrders()
 })
 </script>
-
-<style scoped>
-.whatsapp-orders-container {
-  padding: 24px;
-  background-color: #f8fafc;
-  min-height: 100vh;
-}
-
-.page-header {
-  margin-bottom: 32px;
-}
-
-.page-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 8px 0;
-}
-
-.page-subtitle {
-  color: #64748b;
-  margin: 0;
-}
-
-.loading-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: 18px;
-  color: #64748b;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-}
-
-.summary-card {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.card-header h3 {
-  font-size: 14px;
-  font-weight: 500;
-  color: #64748b;
-  margin: 0;
-}
-
-.card-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 4px;
-}
-
-.card-period {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.status-breakdown {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-}
-
-.status-breakdown h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-.status-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.status-label {
-  font-size: 14px;
-  color: #64748b;
-  margin-bottom: 8px;
-}
-
-.status-count {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.data-table-container {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  overflow-x: auto;
-}
-
-.data-table-container h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table th {
-  text-align: left;
-  padding: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.data-table td {
-  padding: 16px 12px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #1e293b;
-}
-
-.data-table tbody tr:hover {
-  background: #f9fafb;
-}
-
-.font-medium {
-  font-weight: 500;
-  color: #374151;
-}
-
-.status-select {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.status-select:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.status-select.pending {
-  color: #f59e0b;
-  border-color: #f59e0b;
-  background: #fffbeb;
-}
-
-.status-select.confirmed {
-  color: #3b82f6;
-  border-color: #3b82f6;
-  background: #eff6ff;
-}
-
-.status-select.processing {
-  color: #8b5cf6;
-  border-color: #8b5cf6;
-  background: #f5f3ff;
-}
-
-.status-select.ready {
-  color: #06b6d4;
-  border-color: #06b6d4;
-  background: #ecfeff;
-}
-
-.status-select.delivered {
-  color: #10b981;
-  border-color: #10b981;
-  background: #f0fdf4;
-}
-
-.status-select.cancelled {
-  color: #ef4444;
-  border-color: #ef4444;
-  background: #fef2f2;
-}
-
-.cancel-btn {
-  padding: 6px 12px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.cancel-btn:hover {
-  background: #dc2626;
-}
-
-.cancel-btn:active {
-  background: #b91c1c;
-}
-</style>
