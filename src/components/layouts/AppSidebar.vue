@@ -123,7 +123,17 @@ const sidebarItems = [
       { label: 'Roles', key: 'users', route: '/users/roles' },
     ],
   },
-  { icon: DocumentTextIcon, label: 'Reports', key: 'reports', route: '/reports' },
+  {
+    icon: DocumentTextIcon,
+    label: 'Reports',
+    key: 'reports',
+    route: '/reports',
+    subItems: [
+      { label: 'All Reports', key: 'all-reports', route: '/reports' },
+      { label: 'Balance Sheet', key: 'balance-sheet', route: '/reports/balance-sheet' },
+      { label: 'Product Catalogue', key: 'catalogue', route: '/reports/catalogue' },
+    ],
+  },
   { icon: ChatBubbleLeftRightIcon, label: 'WhatsApp Orders', key: 'whatsapp-orders', route: '/whatsapp-orders' },
   { icon: QuestionMarkCircleIcon, label: 'Help and Support', key: 'help', route: '/help' },
 ]

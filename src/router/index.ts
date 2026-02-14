@@ -21,6 +21,7 @@ import Expense from '@/views/expense/Expense.vue'
 import Login from '@/views/Login.vue'
 import WhatsAppOrders from '@/views/WhatsAppOrders.vue'
 import BalanceSheet from '@/views/reports/BalanceSheet.vue'
+import CataloguePDF from '@/views/reports/CataloguePDF.vue'
 import ColorCategories from '@/views/settings/ColorCategories.vue'
 import Brands from '@/views/settings/Brands.vue'
 
@@ -144,6 +145,11 @@ const router = createRouter({
           path: '/reports/balance-sheet',
           name: 'BalanceSheet',
           component: BalanceSheet,
+        },
+        {
+          path: '/reports/catalogue',
+          name: 'CataloguePDF',
+          component: CataloguePDF,
         },
         {
           path: '/settings',

@@ -46,6 +46,7 @@
             <option value="financial">Financial Report</option>
             <option value="whatsapp">WhatsApp Orders</option>
             <option value="balance-sheet">Balance Sheet</option>
+            <option value="catalogue">Product Catalogue</option>
           </select>
         </div>
         <button @click="exportReport" class="btn-primary flex items-center text-sm gap-2">
@@ -604,6 +605,26 @@
             <p class="text-base leading-relaxed mb-8 text-white/95">The Balance Sheet report is available on a dedicated page with advanced features including date selection, PDF export, and detailed financial position analysis.</p>
             <button @click="goToBalanceSheet" class="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-brand-600 border-none rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-soft hover:-translate-y-0.5 hover:shadow-soft-lg active:translate-y-0">
               View Balance Sheet Report
+              <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Catalogue Report -->
+      <div v-if="selectedReport === 'catalogue'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Product Catalogue</h2>
+        <div class="flex justify-center items-center py-12 px-6">
+          <div class="max-w-[600px] text-center py-12 px-8 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl text-white shadow-soft-lg">
+            <svg class="w-20 h-20 mx-auto mb-6 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <h3 class="text-[28px] font-bold mb-4 text-white">Product Catalogue PDF</h3>
+            <p class="text-base leading-relaxed mb-8 text-white/95">Generate and preview your product catalogue as a PDF. Filter by category or stock status, preview in-browser, then download when ready.</p>
+            <button @click="goToCatalogue" class="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-emerald-600 border-none rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 shadow-soft hover:-translate-y-0.5 hover:shadow-soft-lg active:translate-y-0">
+              Open Catalogue PDF
               <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -1189,6 +1210,10 @@ const formatCategory = (category) => {
 
 const goToBalanceSheet = () => {
   router.push('/reports/balance-sheet')
+}
+
+const goToCatalogue = () => {
+  router.push('/reports/catalogue')
 }
 
 // Lifecycle
