@@ -132,9 +132,8 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { Configs } from '@/utils/Configs'
+import api from '@/services/Api'
 import SwalAlert from '@/components/common/SwalAlert.vue'
-import { useUserStore } from '@/stores/user'
 import {
   HomeIcon,
   ChevronRightIcon,
@@ -145,10 +144,7 @@ import {
   DocumentTextIcon
 } from '@heroicons/vue/24/outline'
 
-const userStore = useUserStore()
 const swalAlert = ref(null)
-
-const API_BASE_URL = Configs.API_BASE_URL
 
 // Filter state
 const selectedCategory = ref('')
@@ -163,22 +159,15 @@ const pdfBlob = ref(null)
 // Fetch categories for the filter dropdown
 const fetchCategories = async () => {
   try {
-    const token = userStore.getToken
-    const response = await fetch(`${API_BASE_URL}/item-categories`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
-      }
-    })
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-    categories.value = await response.json()
+    const response = await api.get('/item-categories')
+    categories.value = response.data
   } catch (err) {
     console.error('Failed to fetch categories:', err)
   }
 }
 
-// Build the PDF endpoint URL with query params
-const buildPdfUrl = () => {
+// Build the PDF endpoint path with query params
+const buildPdfPath = () => {
   const params = new URLSearchParams()
   if (selectedCategory.value) {
     params.append('categoryId', selectedCategory.value)
@@ -187,7 +176,7 @@ const buildPdfUrl = () => {
     params.append('inStockOnly', 'true')
   }
   const queryString = params.toString()
-  return `${API_BASE_URL}/reports/catalogue/pdf${queryString ? '?' + queryString : ''}`
+  return `/reports/catalogue/pdf${queryString ? '?' + queryString : ''}`
 }
 
 // Generate PDF preview
@@ -201,21 +190,9 @@ const generatePreview = async () => {
   }
 
   try {
-    const token = userStore.getToken
-    const response = await fetch(buildPdfUrl(), {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
-      }
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '')
-      throw new Error(errorText || `HTTP error! status: ${response.status}`)
-    }
-
-    const blob = await response.blob()
-    pdfBlob.value = blob
-    pdfBlobUrl.value = URL.createObjectURL(blob)
+    const response = await api.get(buildPdfPath(), { responseType: 'blob' })
+    pdfBlob.value = response.data
+    pdfBlobUrl.value = URL.createObjectURL(response.data)
   } catch (err) {
     console.error('Failed to generate catalogue PDF:', err)
     swalAlert.value?.showError('PDF Generation Failed', err.message || 'An error occurred while generating the catalogue PDF')

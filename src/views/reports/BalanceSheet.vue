@@ -185,10 +185,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Configs } from '@/utils/Configs'
+import api from '@/services/Api'
 import SwalAlert from '@/components/common/SwalAlert.vue'
-
-const API_BASE_URL = Configs.API_BASE_URL
 
 const asOfDate = ref(new Date().toISOString().split('T')[0])
 const balanceSheet = ref(null)
@@ -202,22 +200,16 @@ const isBalanced = computed(() => {
 })
 
 const apiCall = async (url, options = {}) => {
-  const token = localStorage.getItem('token')
-  const response = await fetch(`${API_BASE_URL}${url}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      ...options.headers
-    }
-  })
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+  try {
+    const method = (options.method || 'GET').toLowerCase()
+    const data = options.body ? JSON.parse(options.body) : undefined
+    const response = await api({ url, method, data })
+    return response.data
+  } catch (err) {
+    const message = err.response?.data?.message || err.message
+    console.error('API call failed:', message)
+    throw new Error(message)
   }
-
-  return await response.json()
 }
 
 const fetchBalanceSheet = async () => {

@@ -202,11 +202,9 @@ import {
   CheckCircleIcon,
   CurrencyDollarIcon
 } from '@heroicons/vue/24/outline'
-import { Configs } from '@/utils/Configs'
+import api from '@/services/Api'
 import SwalAlert from '@/components/common/SwalAlert.vue'
-import { useUserStore } from '@/stores/user'
 
-const userStore = useUserStore()
 const swalAlert = ref(null)
 const loading = ref(true)
 
@@ -223,34 +221,16 @@ const orderStats = reactive({
 
 const orders = ref([])
 
-const API_BASE_URL = Configs.API_BASE_URL
-
 const apiCall = async (url, options = {}) => {
   try {
-    const token = userStore.getToken
-    const headers = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    }
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-    }
-
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-      headers,
-      ...options,
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
-    }
-
-    return await response.json()
+    const method = (options.method || 'GET').toLowerCase()
+    const data = options.body ? JSON.parse(options.body) : undefined
+    const response = await api({ url, method, data })
+    return response.data
   } catch (err) {
-    console.error('API call failed:', err)
-    throw err
+    const message = err.response?.data?.message || err.message
+    console.error('API call failed:', message)
+    throw new Error(message)
   }
 }
 
