@@ -13,7 +13,7 @@
 
           <!-- Title -->
           <h1 class="text-xl font-semibold text-white whitespace-nowrap">
-            Global Authentic TZ
+            {{ businessName || 'Inventory Portal' }}
           </h1>
         </div>
 
@@ -118,11 +118,11 @@ const searchQuery = ref('')
 const profileMenuOpen = ref(false)
 const profileDropdown = ref(null)
 const userName = ref('')
+const businessName = ref('')
 
-// User data (this would typically come from a store/API)
 const currentUser = ref({
-  name: 'John Doe',
-  email: 'john.doe@mwendavano.com',
+  name: '',
+  email: '',
   role: 'Administrator'
 })
 
@@ -150,7 +150,14 @@ const handleClickOutside = (event) => {
 
 // Lifecycle
 onMounted(() => {
-  userName.value = useUserStore().getName;
+  const store = useUserStore()
+  userName.value = store.getName
+  businessName.value = store.getBusinessName || ''
+  currentUser.value = {
+    name: store.getName || 'User',
+    email: '',
+    role: 'Administrator'
+  }
   document.addEventListener('click', handleClickOutside)
 })
 

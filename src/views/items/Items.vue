@@ -88,27 +88,9 @@
               </select>
             </div>
 
-            <div class="flex items-center space-x-2">
-              <label class="text-sm font-medium text-neutral-700">Business:</label>
-              <select
-                v-model="selectedBusiness"
-                @change="currentPage = 1"
-                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
-              >
-                <option value="">All Businesses</option>
-                <option
-                  v-for="business in availableBusinesses"
-                  :key="business.id"
-                  :value="business.id"
-                >
-                  {{ business.name }}
-                </option>
-              </select>
-            </div>
-
             <button
               @click="clearFilters"
-              v-if="selectedCategory || selectedWarehouse || selectedBusiness"
+              v-if="selectedCategory || selectedWarehouse"
               class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
@@ -119,7 +101,7 @@
       </div>
 
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div class="card">
           <div class="flex items-center justify-between p-6">
             <div>
@@ -156,17 +138,6 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="flex items-center justify-between p-6">
-            <div>
-              <p class="text-sm font-medium text-neutral-600">Businesses</p>
-              <p class="text-2xl font-bold text-neutral-900">{{ availableBusinesses.length }}</p>
-            </div>
-            <div class="p-3 bg-orange-100 rounded-xl">
-              <BuildingOfficeIcon class="w-6 h-6 text-orange-600" />
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Main Items Table -->
@@ -258,16 +229,13 @@
                 <span class="text-sm font-semibold text-neutral-900">Warehouse</span>
               </th>
               <th class="p-4 text-left">
-                <span class="text-sm font-semibold text-neutral-900">Business</span>
-              </th>
-              <th class="p-4 text-left">
                 <span class="text-sm font-semibold text-neutral-900">Actions</span>
               </th>
             </tr>
             </thead>
             <tbody class="divide-y divide-neutral-100">
             <tr v-if="loading">
-              <td colspan="10" class="p-12 text-center">
+              <td colspan="9" class="p-12 text-center">
                 <div class="flex items-center justify-center space-x-3">
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
                   <span class="text-neutral-500">Loading items...</span>
@@ -275,7 +243,7 @@
               </td>
             </tr>
             <tr v-else-if="paginatedItems.length === 0">
-              <td colspan="10" class="p-12 text-center text-neutral-500">
+              <td colspan="9" class="p-12 text-center text-neutral-500">
                 <CubeIcon class="w-12 h-12 mx-auto text-neutral-300 mb-4" />
                 <p class="text-lg font-medium">
                   {{ hasActiveFilters || searchTerm ? 'No items found' : 'No items yet' }}
@@ -385,18 +353,6 @@
                   </div>
                 </div>
                 <span v-else class="text-xs text-neutral-400">No warehouse</span>
-              </td>
-              <td class="p-4">
-                <div v-if="item.business">
-                  <div class="flex items-center space-x-2">
-                    <BuildingOfficeIcon class="w-4 h-4 text-orange-600" />
-                    <div>
-                      <p class="text-sm font-medium text-neutral-900">{{ item.business.name }}</p>
-                      <p class="text-xs text-neutral-500">Business</p>
-                    </div>
-                  </div>
-                </div>
-                <span v-else class="text-xs text-neutral-400">No business</span>
               </td>
               <td class="p-4">
                 <div class="flex items-center space-x-2">
@@ -720,11 +676,11 @@
                 </div>
               </div>
 
-              <!-- Location & Business -->
+              <!-- Location -->
               <div class="md:col-span-2">
                 <h4 class="text-lg font-semibold text-neutral-900 mb-4 flex items-center">
                   <MapPinIcon class="w-5 h-5 mr-2" />
-                  Location & Business
+                  Location
                 </h4>
               </div>
 
@@ -742,24 +698,6 @@
                     :value="warehouse.id"
                   >
                     {{ warehouse.name }} - {{ warehouse.address }}
-                  </option>
-                </select>
-              </div>
-
-              <div>
-                <label class="input-label">Business *</label>
-                <select
-                  v-model="form.businessId"
-                  required
-                  class="input-field"
-                >
-                  <option value="">Select Business</option>
-                  <option
-                    v-for="business in availableBusinesses"
-                    :key="business.id"
-                    :value="business.id"
-                  >
-                    {{ business.name }}
                   </option>
                 </select>
               </div>
@@ -814,8 +752,6 @@
                       </span>
                       <span class="text-xs text-neutral-400">•</span>
                       <span class="text-xs text-neutral-700 font-medium">{{ getWarehouseName(form.warehouseId) }}</span>
-                      <span class="text-xs text-neutral-400">•</span>
-                      <span class="text-xs text-neutral-700 font-medium">{{ getBusinessName(form.businessId) }}</span>
                     </div>
                   </div>
                 </div>
@@ -845,6 +781,254 @@
               </button>
             </div>
           </form>
+        </div>
+      </div>
+
+      <!-- View Item Details Modal -->
+      <div
+        v-if="showViewModal && viewingItem"
+        class="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        @click.self="closeViewModal"
+      >
+        <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <!-- Header with image -->
+          <div class="relative">
+            <div class="bg-gradient-to-br from-brand-600 to-brand-700 rounded-t-2xl p-6 pb-16">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/20 text-white mb-3">
+                    #{{ viewingItem.id }}
+                  </span>
+                  <h3 class="text-2xl font-bold text-white">{{ viewingItem.name }}</h3>
+                  <p class="text-brand-100 text-sm mt-1">{{ viewingItem.desc || 'No description' }}</p>
+                </div>
+                <button
+                  @click="closeViewModal"
+                  class="text-white/70 hover:text-white transition-colors duration-200 p-1"
+                >
+                  <XMarkIcon class="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            <!-- Floating image/icon -->
+            <div class="absolute -bottom-8 left-6">
+              <div v-if="viewingItem.imageUrl" class="w-16 h-16 rounded-2xl overflow-hidden shadow-lg ring-4 ring-white">
+                <img
+                  :src="viewingItem.imageUrl.startsWith('http') ? viewingItem.imageUrl : `${API_BASE_URL}${viewingItem.imageUrl}`"
+                  :alt="viewingItem.name"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div v-else class="w-16 h-16 bg-gradient-to-br from-brand-400 to-brand-600 rounded-2xl flex items-center justify-center shadow-lg ring-4 ring-white">
+                <CubeIcon class="w-8 h-8 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 pt-12 space-y-6">
+            <!-- Quick Info Badges -->
+            <div class="flex flex-wrap gap-2">
+              <span v-if="viewingItem.code" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-brand-50 text-brand-700 border border-brand-200">
+                {{ viewingItem.code }}
+              </span>
+              <span
+                :class="[
+                  'inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium',
+                  viewingItem.condition === 'new' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-orange-50 text-orange-700 border border-orange-200'
+                ]"
+              >
+                {{ viewingItem.condition === 'new' ? 'New' : 'Used' }}
+              </span>
+              <span v-if="viewingItem.brand" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                {{ viewingItem.brand.name || viewingItem.brand.code }}
+              </span>
+            </div>
+
+            <!-- Price Section -->
+            <div>
+              <div class="flex items-center space-x-2 mb-3">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <BanknotesIcon class="w-4 h-4 text-green-600" />
+                </div>
+                <h4 class="text-sm font-semibold text-neutral-900">Pricing Information</h4>
+              </div>
+              <div v-if="loadingViewDetails" class="flex items-center space-x-2 py-4">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-600"></div>
+                <span class="text-sm text-neutral-500">Loading pricing...</span>
+              </div>
+              <div v-else-if="viewItemPrices.length > 0" class="space-y-3">
+                <div
+                  v-for="price in viewItemPrices"
+                  :key="price.id"
+                  class="bg-neutral-50 rounded-xl p-4 border border-neutral-100"
+                >
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div>
+                      <p class="text-xs text-neutral-500 mb-1">Purchase</p>
+                      <p class="text-sm font-bold text-neutral-900">TZS {{ formatViewCurrency(price.purchaseAmount) }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-neutral-500 mb-1">Freight</p>
+                      <p class="text-sm font-bold text-neutral-900">TZS {{ formatViewCurrency(price.freightAmount) }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-neutral-500 mb-1">Margin</p>
+                      <p class="text-sm font-bold text-green-600">{{ price.profitMargin }}%</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-neutral-500 mb-1">Selling Price</p>
+                      <p class="text-lg font-bold text-brand-600">TZS {{ formatViewCurrency(price.sellingPrice) }}</p>
+                    </div>
+                  </div>
+                  <div class="mt-3 flex items-center justify-between">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                      :class="price.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                    >
+                      {{ price.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                    <span class="text-xs text-neutral-400">
+                      Total Cost: TZS {{ formatViewCurrency((price.purchaseAmount || 0) + (price.freightAmount || 0)) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="bg-neutral-50 rounded-xl p-4 border border-neutral-100 text-center">
+                <CurrencyDollarIcon class="w-8 h-8 text-neutral-300 mx-auto mb-2" />
+                <p class="text-sm text-neutral-500">No pricing set for this item</p>
+              </div>
+            </div>
+
+            <!-- Stock Section -->
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <ArchiveBoxIcon class="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 class="text-sm font-semibold text-neutral-900">Stock Information</h4>
+                </div>
+                <span v-if="!loadingViewDetails && viewItemStocks.length > 0" class="text-sm font-bold text-brand-600">
+                  Total: {{ formatViewCurrency(getTotalStock) }} units
+                </span>
+              </div>
+              <div v-if="loadingViewDetails" class="flex items-center space-x-2 py-4">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-600"></div>
+                <span class="text-sm text-neutral-500">Loading stock...</span>
+              </div>
+              <div v-else-if="viewItemStocks.length > 0" class="space-y-3">
+                <div
+                  v-for="stock in viewItemStocks"
+                  :key="stock.id"
+                  class="bg-neutral-50 rounded-xl p-4 border border-neutral-100"
+                >
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                      <BuildingStorefrontIcon class="w-4 h-4 text-purple-600" />
+                      <span class="text-sm font-medium text-neutral-900">{{ stock.warehouse?.name || 'Unknown Warehouse' }}</span>
+                    </div>
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                      :class="getStockStatus(stock.quantity, stock.reorderPoint).class"
+                    >
+                      {{ getStockStatus(stock.quantity, stock.reorderPoint).text }}
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <p class="text-xs text-neutral-500 mb-1">Quantity</p>
+                      <p class="text-xl font-bold" :class="stock.quantity <= 0 ? 'text-red-600' : 'text-neutral-900'">
+                        {{ formatViewCurrency(stock.quantity) }}
+                      </p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-neutral-500 mb-1">Reorder Point</p>
+                      <p class="text-sm font-medium text-neutral-600">{{ formatViewCurrency(stock.reorderPoint || 10) }}</p>
+                    </div>
+                  </div>
+                  <!-- Color distributions -->
+                  <div v-if="stock.distributions && stock.distributions.length > 0" class="mt-3 pt-3 border-t border-neutral-200">
+                    <p class="text-xs text-neutral-500 mb-2">Color Distribution</p>
+                    <div class="flex flex-wrap gap-2">
+                      <div
+                        v-for="dist in stock.distributions"
+                        :key="dist.id"
+                        class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full border border-neutral-200 bg-white text-xs"
+                      >
+                        <div
+                          class="w-3 h-3 rounded-full border border-neutral-300"
+                          :style="{ backgroundColor: dist.colorCategory?.hexCode || '#CCC' }"
+                        ></div>
+                        <span class="font-medium text-neutral-700">{{ dist.colorCategory?.name || 'N/A' }}</span>
+                        <span class="font-bold text-brand-600">{{ dist.quantity }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="bg-neutral-50 rounded-xl p-4 border border-neutral-100 text-center">
+                <ArchiveBoxIcon class="w-8 h-8 text-neutral-300 mx-auto mb-2" />
+                <p class="text-sm text-neutral-500">No stock records for this item</p>
+              </div>
+            </div>
+
+            <!-- Details Section -->
+            <div>
+              <div class="flex items-center space-x-2 mb-3">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <TagIcon class="w-4 h-4 text-orange-600" />
+                </div>
+                <h4 class="text-sm font-semibold text-neutral-900">Item Details</h4>
+              </div>
+              <div class="bg-neutral-50 rounded-xl border border-neutral-100 divide-y divide-neutral-100">
+                <div class="flex items-center justify-between p-4">
+                  <span class="text-sm text-neutral-500">Category</span>
+                  <span v-if="viewingItem.category && (viewingItem.category.code || viewingItem.category.description)" class="text-sm font-medium text-neutral-900">
+                    {{ [viewingItem.category.code, viewingItem.category.description].filter(Boolean).join(' - ') }}
+                  </span>
+                  <span v-else class="text-sm text-neutral-400">Not assigned</span>
+                </div>
+                <div class="flex items-center justify-between p-4">
+                  <span class="text-sm text-neutral-500">Warehouse</span>
+                  <span v-if="viewingItem.warehouse && (viewingItem.warehouse.code || viewingItem.warehouse.description || viewingItem.warehouse.name)" class="text-sm font-medium text-neutral-900">
+                    {{ viewingItem.warehouse.name || [viewingItem.warehouse.code, viewingItem.warehouse.description].filter(Boolean).join(' - ') }}
+                  </span>
+                  <span v-else class="text-sm text-neutral-400">Not assigned</span>
+                </div>
+                <div class="flex items-center justify-between p-4">
+                  <span class="text-sm text-neutral-500">Business</span>
+                  <span v-if="viewingItem.business && viewingItem.business.name" class="text-sm font-medium text-neutral-900">
+                    {{ viewingItem.business.name }}
+                  </span>
+                  <span v-else class="text-sm text-neutral-400">Not assigned</span>
+                </div>
+                <div class="flex items-center justify-between p-4">
+                  <span class="text-sm text-neutral-500">Supplier</span>
+                  <span v-if="viewingItem.supplier && (viewingItem.supplier.name || viewingItem.supplier.code)" class="text-sm font-medium text-neutral-900">
+                    {{ viewingItem.supplier.name || viewingItem.supplier.code }}
+                  </span>
+                  <span v-else class="text-sm text-neutral-400">Not assigned</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="flex justify-between items-center pt-4 border-t border-neutral-100">
+              <button
+                @click="() => { const item = viewingItem; closeViewModal(); openEditModal(item) }"
+                class="btn-secondary flex items-center text-sm"
+              >
+                <PencilIcon class="w-4 h-4 mr-2" />
+                Edit Item
+              </button>
+              <button
+                @click="closeViewModal"
+                class="btn-primary text-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -907,15 +1091,22 @@ import {
   CubeIcon,
   TagIcon,
   BuildingStorefrontIcon,
-  BuildingOfficeIcon,
   EyeIcon,
   DocumentDuplicateIcon,
   DocumentArrowDownIcon,
   MapPinIcon,
+  BanknotesIcon,
+  ChartBarIcon,
+  UserGroupIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  ArrowTrendingUpIcon,
+  ArchiveBoxIcon,
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
 import { Configs } from '@/utils/Configs'
+import { useUserStore } from '@/stores/user'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
@@ -928,7 +1119,6 @@ const items = ref([])
 const availableCategories = ref([])
 const availableBrands = ref([])
 const availableWarehouses = ref([])
-const availableBusinesses = ref([])
 const availableSuppliers = ref([])
 const searchTerm = ref('')
 const entriesPerPage = ref(10)
@@ -944,26 +1134,29 @@ const error = ref('')
 // Filter states
 const selectedCategory = ref('')
 const selectedWarehouse = ref('')
-const selectedBusiness = ref('')
 
 // Modal states
 const showModal = ref(false)
 const showDeleteModal = ref(false)
+const showViewModal = ref(false)
 const isEditing = ref(false)
 const itemToDelete = ref(null)
+const viewingItem = ref(null)
+const viewItemPrices = ref([])
+const viewItemStocks = ref([])
+const loadingViewDetails = ref(false)
 
 // Form data
 const form = ref({
   id: null,
   name: '',
   code: '',
-  condition: 'new', // Default to 'new'
+  condition: 'new',
   desc: '',
   categoryId: '',
   brandId: '',
   supplierId: '',
   warehouseId: '',
-  businessId: '',
 })
 
 // Image upload states
@@ -974,9 +1167,11 @@ const isDragging = ref(false)
 // API Functions
 const apiCall = async (url, options = {}) => {
   try {
+    const token = useUserStore().getToken
     const response = await fetch(`${API_BASE_URL}${url}`, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers,
       },
       ...options,
@@ -1049,21 +1244,6 @@ const fetchWarehouses = async () => {
   }
 }
 
-const fetchBusinesses = async () => {
-  try {
-    const data = await apiCall('/business')
-    availableBusinesses.value = data
-  } catch (err) {
-    console.error('Failed to fetch businesses:', err)
-    // Fallback businesses if API fails
-    availableBusinesses.value = [
-      { id: 1, name: 'Main Business Unit' },
-      { id: 2, name: 'Secondary Division' },
-      { id: 3, name: 'Subsidiary Company' }
-    ]
-  }
-}
-
 const fetchSuppliers = async () => {
   try {
     const data = await apiCall('/item-suppliers')
@@ -1132,7 +1312,7 @@ const deleteItemApi = async (id) => {
 
 // Computed properties
 const hasActiveFilters = computed(() => {
-  return selectedCategory.value || selectedWarehouse.value || selectedBusiness.value
+  return selectedCategory.value || selectedWarehouse.value
 })
 
 const filteredItems = computed(() => {
@@ -1148,10 +1328,7 @@ const filteredItems = computed(() => {
     const matchesWarehouse = selectedWarehouse.value === '' ||
       (item.warehouse && item.warehouse.id.toString() === selectedWarehouse.value.toString())
 
-    const matchesBusiness = selectedBusiness.value === '' ||
-      (item.business && item.business.id.toString() === selectedBusiness.value.toString())
-
-    return matchesSearch && matchesCategory && matchesWarehouse && matchesBusiness
+    return matchesSearch && matchesCategory && matchesWarehouse
   })
 
   if (sortField.value) {
@@ -1213,12 +1390,6 @@ const getWarehouseName = (warehouseId) => {
   return warehouse ? warehouse.code : ''
 }
 
-const getBusinessName = (businessId) => {
-  if (!businessId) return ''
-  const business = availableBusinesses.value.find(bus => bus.id.toString() === businessId.toString())
-  return business ? business.name : ''
-}
-
 const getSupplierName = (supplierId) => {
   if (!supplierId) return ''
   const supplier = availableSuppliers.value.find(sup => sup.id.toString() === supplierId.toString())
@@ -1228,7 +1399,6 @@ const getSupplierName = (supplierId) => {
 const clearFilters = () => {
   selectedCategory.value = ''
   selectedWarehouse.value = ''
-  selectedBusiness.value = ''
   currentPage.value = 1
 }
 
@@ -1241,7 +1411,6 @@ const exportItems = () => {
     Description: item.desc || '',
     Category: item.category?.code || '',
     Warehouse: item.warehouse?.code || '',
-    Business: item.business?.name || '',
     Image: item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`) : 'No image'
   }))
 
@@ -1341,7 +1510,6 @@ const openAddModal = () => {
     brandId: '',
     supplierId: '',
     warehouseId: '',
-    businessId: '',
   }
   showModal.value = true
 }
@@ -1358,7 +1526,6 @@ const openEditModal = (item) => {
     brandId: item.brand?.id || '',
     supplierId: item.supplier?.id || '',
     warehouseId: item.warehouse?.id || '',
-    businessId: item.business?.id || '',
   }
   // Set existing image preview if item has an image
   if (item.imageUrl) {
@@ -1379,7 +1546,6 @@ const closeModal = () => {
     brandId: '',
     supplierId: '',
     warehouseId: '',
-    businessId: '',
   }
   // Clean up image states
   removeImage()
@@ -1397,7 +1563,6 @@ const saveItem = async () => {
       brandId: form.value.brandId || null,
       supplierId: form.value.supplierId || null,
       warehouseId: form.value.warehouseId,
-      businessId: form.value.businessId,
     }
 
     let savedItem
@@ -1438,7 +1603,6 @@ const duplicateItem = (item) => {
     brandId: item.brand?.id || '',
     supplierId: item.supplier?.id || '',
     warehouseId: item.warehouse?.id || '',
-    businessId: item.business?.id || '',
   }
   showModal.value = true
 }
@@ -1485,14 +1649,49 @@ const bulkDelete = async () => {
   }
 }
 
-const viewItemDetails = (item) => {
-  const categoryInfo = item.category ? `${item.category.code} - ${item.category.description}` : 'No category'
-  const warehouseInfo = item.warehouse ? `${item.warehouse.code} - ${item.warehouse.description}` : 'No warehouse'
-  const businessInfo = item.business ? item.business.name : 'No business'
+const viewItemDetails = async (item) => {
+  viewingItem.value = item
+  showViewModal.value = true
+  loadingViewDetails.value = true
+  viewItemPrices.value = []
+  viewItemStocks.value = []
 
-  alert(
-    `Item Details:\nName: ${item.name}\nID: #${item.id}\nDescription: ${item.desc || 'No description'}\nCategory: ${categoryInfo}\nWarehouse: ${warehouseInfo}\nBusiness: ${businessInfo}`
-  )
+  try {
+    const [prices, stocks] = await Promise.all([
+      apiCall('/items/item-prices').catch(() => []),
+      apiCall('/items/item-stocks').catch(() => []),
+    ])
+    viewItemPrices.value = prices.filter(p => p.item?.id === item.id)
+    viewItemStocks.value = stocks.filter(s => s.item?.id === item.id)
+  } catch (err) {
+    console.error('Failed to fetch item details:', err)
+  } finally {
+    loadingViewDetails.value = false
+  }
+}
+
+const closeViewModal = () => {
+  showViewModal.value = false
+  viewingItem.value = null
+  viewItemPrices.value = []
+  viewItemStocks.value = []
+}
+
+const formatViewCurrency = (value) => {
+  if (!value && value !== 0) return '0'
+  return Number(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+
+const getTotalStock = computed(() => {
+  return viewItemStocks.value.reduce((sum, s) => sum + (s.quantity || 0), 0)
+})
+
+const getStockStatus = (quantity, reorderPoint) => {
+  const rp = reorderPoint || 10
+  if (quantity <= 0) return { text: 'Out of Stock', class: 'bg-red-100 text-red-800' }
+  if (quantity <= rp) return { text: 'Low Stock', class: 'bg-orange-100 text-orange-800' }
+  if (quantity > rp * 3) return { text: 'Overstock', class: 'bg-blue-100 text-blue-800' }
+  return { text: 'Normal', class: 'bg-green-100 text-green-800' }
 }
 
 // Image Upload Functions
@@ -1610,6 +1809,6 @@ const refreshItems = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  await Promise.all([fetchItems(), fetchCategories(), fetchBrands(), fetchWarehouses(), fetchBusinesses(), fetchSuppliers()])
+  await Promise.all([fetchItems(), fetchCategories(), fetchBrands(), fetchWarehouses(), fetchSuppliers()])
 })
 </script>

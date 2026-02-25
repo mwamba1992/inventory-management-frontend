@@ -130,6 +130,7 @@ import {
 import router from '@/router'
 import { SetupService as LoginService } from '@/services/LoginService'
 import { useUserStore } from '@/stores/user'
+import api from '@/services/Api'
 
 // Reactive form data
 const form = reactive({
@@ -186,13 +187,29 @@ async function handleLogin() {
 
     if (response && response.access_token) {
       let userDetails = base64UrlDecode(response.access_token.split('.')[1]);
+
+      // Set user first so token is available for subsequent API calls
       user.setUser({
         id: userDetails.sub,
         name: userDetails.username,
         permissions: userDetails.permissions.map((permission) => permission.name),
         token: response.access_token,
-        refreshToken: response.refresh_token
+        refreshToken: response.refresh_token,
+        businessId: userDetails.businessId || null,
+        businessName: null
       });
+
+      // Fetch business name from the JWT businessId
+      if (userDetails.businessId) {
+        try {
+          const bizResponse = await api.get(`/business/${userDetails.businessId}`)
+          user.businessName = bizResponse.data?.name || 'My Business'
+        } catch (bizErr) {
+          console.error('Failed to fetch business details:', bizErr)
+          user.businessName = 'My Business'
+        }
+      }
+
       await router.push('/');
     } else {
       loginError.value = 'Invalid credentials';

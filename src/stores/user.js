@@ -1,5 +1,3 @@
-// stores/userStore.js (or wherever you define your store)
-
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
@@ -8,7 +6,9 @@ export const useUserStore = defineStore('user', {
         name: null,
         token: null,
         refreshToken: null,
-        permissions: []
+        permissions: [],
+        businessId: null,
+        businessName: null
     }),
     getters: {
         getId(state) {
@@ -25,6 +25,12 @@ export const useUserStore = defineStore('user', {
         },
         getRefreshToken(state) {
             return state.refreshToken
+        },
+        getBusinessId(state) {
+            return state.businessId
+        },
+        getBusinessName(state) {
+            return state.businessName
         }
     },
     actions: {
@@ -34,6 +40,8 @@ export const useUserStore = defineStore('user', {
             this.name = user.name
             this.refreshToken = user.refreshToken
             this.permissions = user.permissions || []
+            this.businessId = user.businessId || null
+            this.businessName = user.businessName || null
         },
         clearUser() {
             this.id = null
@@ -41,7 +49,9 @@ export const useUserStore = defineStore('user', {
             this.name = null
             this.permissions = []
             this.refreshToken = null
+            this.businessId = null
+            this.businessName = null
         }
     },
-    persist: true // Add this line to persist the state
+    persist: true
 })

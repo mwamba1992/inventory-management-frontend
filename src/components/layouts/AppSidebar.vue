@@ -3,7 +3,7 @@
     <div class="p-6">
       <!-- Brand Logo/Header -->
       <div class="mb-8 pb-6 border-b border-neutral-100">
-        <h1 class="text-xl font-bold text-neutral-900">Global Authentic TZ</h1>
+        <h1 class="text-xl font-bold text-neutral-900">{{ businessName || 'Inventory Portal' }}</h1>
         <p class="text-xs text-neutral-500 mt-1">Inventory Portal</p>
       </div>
 
@@ -59,8 +59,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import {
   ChatBubbleLeftRightIcon,
   ChevronDownIcon,
@@ -76,6 +77,13 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
+
+// Business name from store
+const businessName = ref('')
+
+onMounted(() => {
+  businessName.value = useUserStore().getBusinessName || ''
+})
 
 // Track open submenus
 const expandedMenus = ref({})
