@@ -602,6 +602,7 @@ import {
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
 import { Configs } from '@/utils/Configs'
+import { useUserStore } from '@/stores/user'
 
 // Create a ref to the SwalAlert component
 const swalAlert = ref(null)
@@ -640,9 +641,11 @@ const form = ref({
 // API Functions
 const apiCall = async (url, options = {}) => {
   try {
+    const token = useUserStore().getToken
     const response = await fetch(`${API_BASE_URL}${url}`, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers,
       },
       ...options,
