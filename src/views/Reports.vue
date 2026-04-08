@@ -43,6 +43,7 @@
             <option value="sales">Sales Report</option>
             <option value="inventory">Inventory Report</option>
             <option value="customers">Customer Report</option>
+            <option value="retention">Customer Retention</option>
             <option value="financial">Financial Report</option>
             <option value="whatsapp">WhatsApp Orders</option>
             <option value="balance-sheet">Balance Sheet</option>
@@ -405,6 +406,121 @@
         </div>
       </div>
 
+      <!-- Customer Retention Report -->
+      <div v-if="selectedReport === 'retention'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Customer Retention (Lifetime)</h2>
+
+        <!-- KPI cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Total Customers</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ formatNumber(reportData.retention.totalCustomersWithOrders) }}</div>
+            <div class="text-xs text-neutral-400">With at least 1 order</div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Repeat Purchase Rate</h3>
+            <div class="text-2xl font-bold text-emerald-600 mb-1">{{ reportData.retention.repeatPurchaseRate }}%</div>
+            <div class="text-xs text-neutral-400">{{ reportData.retention.repeatCustomers }} repeat / {{ reportData.retention.oneTimeCustomers }} one-time</div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Avg Lifetime Value</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">TZS{{ formatNumber(reportData.retention.averageLifetimeValue) }}</div>
+            <div class="text-xs text-neutral-400">Per customer</div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Avg Orders / Customer</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ reportData.retention.averageOrdersPerCustomer }}</div>
+            <div class="text-xs text-neutral-400">Lifetime</div>
+          </div>
+        </div>
+
+        <!-- Segments + Churn buckets -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-4">Loyalty Segments</h3>
+            <div class="flex flex-col gap-3">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">One-time (1 order)</span>
+                <span class="font-bold text-neutral-900">{{ reportData.retention.segments.oneTime }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">Occasional (2–4 orders)</span>
+                <span class="font-bold text-amber-600">{{ reportData.retention.segments.occasional }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">Loyal (5+ orders)</span>
+                <span class="font-bold text-emerald-600">{{ reportData.retention.segments.loyal }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-4">Churn Status</h3>
+            <div class="flex flex-col gap-3">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">Active (≤30 days)</span>
+                <span class="font-bold text-emerald-600">{{ reportData.retention.churnBuckets.active }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">At Risk (31–60 days)</span>
+                <span class="font-bold text-amber-600">{{ reportData.retention.churnBuckets.atRisk }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">Dormant (61–90 days)</span>
+                <span class="font-bold text-orange-600">{{ reportData.retention.churnBuckets.dormant }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-neutral-600">Lost (&gt;90 days)</span>
+                <span class="font-bold text-red-600">{{ reportData.retention.churnBuckets.lost }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer table -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Customers</h3>
+          <table class="w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="table-header">Customer</th>
+                <th class="table-header">Phone</th>
+                <th class="table-header">Orders</th>
+                <th class="table-header">Total Spent</th>
+                <th class="table-header">Last Order</th>
+                <th class="table-header">Days Since</th>
+                <th class="table-header">Segment</th>
+                <th class="table-header">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="c in reportData.retention.customers" :key="c.id" class="table-row">
+                <td class="table-cell">{{ c.name }}</td>
+                <td class="table-cell">{{ c.phone }}</td>
+                <td class="table-cell">{{ c.totalOrders }}</td>
+                <td class="table-cell">TZS{{ formatNumber(c.totalSpent) }}</td>
+                <td class="table-cell">{{ formatDate(c.lastOrder) }}</td>
+                <td class="table-cell">{{ c.daysSinceLastOrder }}</td>
+                <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    c.segment === 'loyal' ? 'badge-success' :
+                    c.segment === 'occasional' ? 'badge-warning' : 'badge-primary'
+                  ]">{{ c.segment.replace('_',' ') }}</span>
+                </td>
+                <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    c.bucket === 'active' ? 'badge-success' :
+                    c.bucket === 'at_risk' ? 'badge-warning' :
+                    c.bucket === 'dormant' ? 'badge-warning' : 'badge-danger'
+                  ]">{{ c.bucket.replace('_',' ') }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Financial Report -->
       <div v-if="selectedReport === 'financial'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
         <h2 class="text-2xl font-bold text-neutral-900 mb-6">Financial Report</h2>
@@ -701,6 +817,18 @@ const reportData = reactive({
     avgLifetimeValue: 0
   },
   topCustomers: [],
+  retention: {
+    totalCustomersWithOrders: 0,
+    oneTimeCustomers: 0,
+    repeatCustomers: 0,
+    repeatPurchaseRate: 0,
+    averageOrdersPerCustomer: 0,
+    averageLifetimeValue: 0,
+    totalLifetimeRevenue: 0,
+    segments: { oneTime: 0, occasional: 0, loyal: 0 },
+    churnBuckets: { active: 0, atRisk: 0, dormant: 0, lost: 0 },
+    customers: []
+  },
   financial: {
     revenue: 0,
     expenses: 0,
@@ -871,6 +999,14 @@ const fetchReports = async () => {
       lastOrder: customer.lastOrder,
       status: customer.status
     }));
+
+    // Fetch retention report (lifetime, no date filter)
+    try {
+      const retentionReport = await apiCall('/reports/retention');
+      reportData.retention = retentionReport || reportData.retention;
+    } catch (e) {
+      console.error('Failed to load retention report', e);
+    }
 
     // Fetch inventory report data (GET request)
     const inventoryReport = await apiCall('/reports/inventory');

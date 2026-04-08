@@ -369,6 +369,15 @@
                 <p class="text-sm font-medium text-neutral-600">Restock Needed</p>
                 <p class="text-2xl font-bold text-orange-600">{{ restockNeeded }}</p>
               </div>
+              <div class="text-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl">
+                <p class="text-sm font-medium text-neutral-600">In Transit</p>
+                <p class="text-2xl font-bold text-amber-600">{{ inTransitUnits.toLocaleString() }}</p>
+                <p class="text-xs text-neutral-500 mt-1">{{ inTransitSkus }} SKU{{ inTransitSkus === 1 ? '' : 's' }}</p>
+              </div>
+              <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
+                <p class="text-sm font-medium text-neutral-600">On-hand Units</p>
+                <p class="text-2xl font-bold text-indigo-600">{{ onHandUnits.toLocaleString() }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -440,6 +449,11 @@ const systemStatus = ref([
 // Sales trends data
 const salesTrends = ref([
 ])
+
+// In-transit aggregates
+const inTransitUnits = ref(0)
+const inTransitSkus = ref(0)
+const onHandUnits = ref(0)
 
 // Inventory status data
 const inventoryStatus = ref([
@@ -700,6 +714,10 @@ async function fetchInventoryStats() {
     let lowStockCount = 0
     let outOfStockCount = 0
 
+    let transitUnits = 0
+    let transitSkus = 0
+    let onHand = 0
+
     itemStocks.forEach(stock => {
       const reorderPoint = stock.reorderPoint || 10
       if (stock.quantity === 0) {
@@ -709,7 +727,17 @@ async function fetchInventoryStats() {
       } else {
         inStockCount++
       }
+      onHand += stock.quantity || 0
+      const t = stock.inTransit || 0
+      if (t > 0) {
+        transitUnits += t
+        transitSkus++
+      }
     })
+
+    inTransitUnits.value = transitUnits
+    inTransitSkus.value = transitSkus
+    onHandUnits.value = onHand
 
     const total = itemStocks.length || 1 // Avoid division by zero
 

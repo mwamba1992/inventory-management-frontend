@@ -315,6 +315,9 @@
                 <span class="text-sm font-semibold text-neutral-900">Current Stock</span>
               </th>
               <th class="p-4 text-right">
+                <span class="text-sm font-semibold text-neutral-900">In Transit</span>
+              </th>
+              <th class="p-4 text-right">
                 <span class="text-sm font-semibold text-neutral-900">Reorder Point</span>
               </th>
               <th class="p-4 text-center">
@@ -398,6 +401,24 @@
                 >
                   {{ formatNumber(stock.quantity) }}
                 </span>
+              </td>
+              <td class="p-4 text-right">
+                <div class="flex flex-col items-end gap-1">
+                  <span
+                    class="text-sm font-bold"
+                    :class="(stock.inTransit || 0) > 0 ? 'text-amber-600' : 'text-neutral-400'"
+                  >
+                    {{ formatNumber(stock.inTransit || 0) }}
+                  </span>
+                  <button
+                    v-if="(stock.inTransit || 0) > 0"
+                    @click="openReceiveModal(stock)"
+                    class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 hover:bg-amber-200 font-medium"
+                    title="Mark in-transit units as received"
+                  >
+                    Receive
+                  </button>
+                </div>
               </td>
               <td class="p-4 text-right">
                 <span class="text-sm font-medium text-neutral-600">{{ formatNumber(stock.reorderPoint || 10) }}</span>
@@ -653,6 +674,20 @@
                   class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                   placeholder="0"
                 />
+              </div>
+
+              <!-- In Transit -->
+              <div>
+                <label class="block text-sm font-semibold text-neutral-700 mb-2">In Transit</label>
+                <input
+                  v-model.number="form.inTransit"
+                  type="number"
+                  min="0"
+                  step="1"
+                  class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
+                  placeholder="0"
+                />
+                <p class="text-xs text-neutral-500 mt-1">Units ordered from supplier but not yet received</p>
               </div>
 
               <!-- Reorder Point -->
@@ -1052,6 +1087,7 @@ const form = ref({
   itemId: '',
   warehouseId: '',
   quantity: null,
+  inTransit: 0,
   reorderPoint: 10,
 })
 
@@ -1143,6 +1179,35 @@ const createStock = async (stockData) => {
     throw err
   } finally {
     submitting.value = false
+  }
+}
+
+const openReceiveModal = async (stock) => {
+  const max = stock.inTransit || 0
+  const input = window.prompt(
+    `Receive stock for "${stock.item?.name}"\nIn transit: ${max}\n\nHow many units arrived?`,
+    String(max),
+  )
+  if (input === null) return
+  const qty = parseInt(input, 10)
+  if (isNaN(qty) || qty <= 0) {
+    swalAlert.value?.showWarning('Invalid quantity', 'Please enter a positive number')
+    return
+  }
+  if (qty > max) {
+    swalAlert.value?.showWarning('Too many', `Only ${max} units are in transit`)
+    return
+  }
+  try {
+    const updated = await apiCall(`/items/item-stocks/${stock.id}/receive`, {
+      method: 'POST',
+      body: JSON.stringify({ quantity: qty }),
+    })
+    const index = itemStocks.value.findIndex((s) => s.id === stock.id)
+    if (index !== -1) itemStocks.value[index] = updated
+    swalAlert.value?.showSuccess(`Received ${qty} units into stock`)
+  } catch (err) {
+    swalAlert.value?.showError('Failed to receive stock', err.message)
   }
 }
 
@@ -1546,6 +1611,7 @@ const openAddModal = () => {
     itemId: '',
     warehouseId: '',
     quantity: null,
+    inTransit: 0,
     reorderPoint: 10,
   }
   showModal.value = true
@@ -1558,6 +1624,7 @@ const openEditModal = (stock) => {
     itemId: stock.item?.id || '',
     warehouseId: stock.warehouse?.id || '',
     quantity: stock.quantity,
+    inTransit: stock.inTransit || 0,
     reorderPoint: stock.reorderPoint || 10,
   }
   showModal.value = true
@@ -1570,6 +1637,7 @@ const closeModal = () => {
     itemId: '',
     warehouseId: '',
     quantity: null,
+    inTransit: 0,
     reorderPoint: 10,
   }
   error.value = ''
@@ -1581,6 +1649,7 @@ const saveStock = async () => {
       itemId: form.value.itemId,
       warehouseId: form.value.warehouseId,
       quantity: form.value.quantity,
+      inTransit: form.value.inTransit || 0,
       reorderPoint: form.value.reorderPoint,
     }
 
@@ -1638,6 +1707,7 @@ const duplicateStock = (stock) => {
     itemId: stock.item?.id || '',
     warehouseId: '', // Leave empty for user to select different warehouse
     quantity: stock.quantity,
+    inTransit: stock.inTransit || 0,
     reorderPoint: stock.reorderPoint || 10,
   }
   showModal.value = true
