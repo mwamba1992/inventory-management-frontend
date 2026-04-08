@@ -629,6 +629,7 @@
                 <label class="block text-sm font-semibold text-neutral-700 mb-2">Item *</label>
                 <select
                   v-model="form.itemId"
+                  @change="autoSwitchToEditIfExisting"
                   required
                   class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
@@ -648,6 +649,7 @@
                 <label class="block text-sm font-semibold text-neutral-700 mb-2">Warehouse *</label>
                 <select
                   v-model="form.warehouseId"
+                  @change="autoSwitchToEditIfExisting"
                   required
                   class="w-full border border-neutral-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
                 >
@@ -1641,6 +1643,33 @@ const closeModal = () => {
     reorderPoint: 10,
   }
   error.value = ''
+}
+
+// When user picks an item+warehouse in the Add modal, if a stock row
+// already exists, flip the modal into edit mode and pre-load it.
+const autoSwitchToEditIfExisting = () => {
+  if (isEditing.value) return
+  if (!form.value.itemId || !form.value.warehouseId) return
+  const itemId = Number(form.value.itemId)
+  const warehouseId = Number(form.value.warehouseId)
+  const existing = itemStocks.value.find(
+    (s) => s.item?.id === itemId && s.warehouse?.id === warehouseId,
+  )
+  if (existing) {
+    isEditing.value = true
+    form.value = {
+      id: existing.id,
+      itemId: existing.item?.id || '',
+      warehouseId: existing.warehouse?.id || '',
+      quantity: existing.quantity,
+      inTransit: existing.inTransit || 0,
+      reorderPoint: existing.reorderPoint || 10,
+    }
+    swalAlert.value?.showInfo(
+      'Existing stock loaded',
+      'A stock entry already exists for this item and warehouse. You are now editing it.',
+    )
+  }
 }
 
 const saveStock = async () => {
