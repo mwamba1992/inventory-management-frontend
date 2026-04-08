@@ -1653,6 +1653,22 @@ const saveStock = async () => {
       reorderPoint: form.value.reorderPoint,
     }
 
+    // If creating, check whether a row already exists for this item+warehouse.
+    // If so, transparently switch to update so users don't get a duplicate error.
+    if (!isEditing.value) {
+      const existing = itemStocks.value.find(
+        (s) =>
+          (s.item?.id === form.value.itemId || s.item?.id === Number(form.value.itemId)) &&
+          (s.warehouse?.id === form.value.warehouseId ||
+            s.warehouse?.id === Number(form.value.warehouseId)),
+      )
+      if (existing) {
+        await updateStock(existing.id, stockData)
+        closeModal()
+        return
+      }
+    }
+
     if (isEditing.value) {
       await updateStock(form.value.id, stockData)
     } else {
