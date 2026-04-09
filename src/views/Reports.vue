@@ -44,6 +44,7 @@
             <option value="inventory">Inventory Report</option>
             <option value="customers">Customer Report</option>
             <option value="retention">Customer Retention</option>
+            <option value="shelf-time">Shelf Time / Aging</option>
             <option value="financial">Financial Report</option>
             <option value="whatsapp">WhatsApp Orders</option>
             <option value="balance-sheet">Balance Sheet</option>
@@ -401,6 +402,127 @@
                   </span>
               </td>
             </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Shelf Time / Aging Report -->
+      <div v-if="selectedReport === 'shelf-time'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <h2 class="text-2xl font-bold text-neutral-900 mb-6">Shelf Time & Aging Stock</h2>
+
+        <!-- KPI cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Avg Days to First Sale</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ reportData.shelfTime.overallAvgDays }} days</div>
+            <div class="text-xs text-neutral-400">Across {{ reportData.shelfTime.totalItemsSold }} sold items</div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Median Days</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-1">{{ reportData.shelfTime.medianDays }} days</div>
+            <div class="text-xs text-neutral-400">Half sell faster, half slower</div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Fastest Sale</h3>
+            <div class="text-2xl font-bold text-emerald-600 mb-1">{{ reportData.shelfTime.fastestDays }} days</div>
+            <div class="text-xs text-neutral-400">Best performer</div>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Slowest Sale</h3>
+            <div class="text-2xl font-bold text-red-600 mb-1">{{ reportData.shelfTime.slowestDays }} days</div>
+            <div class="text-xs text-neutral-400">Worst eventually-sold</div>
+          </div>
+        </div>
+
+        <!-- By Brand -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Average Shelf Time by Brand</h3>
+          <table class="w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="table-header">Brand</th>
+                <th class="table-header">Items Sold</th>
+                <th class="table-header">Avg Days on Shelf</th>
+                <th class="table-header">Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="b in reportData.shelfTime.byBrand" :key="b.brand" class="table-row">
+                <td class="table-cell font-medium">{{ b.brand }}</td>
+                <td class="table-cell">{{ b.itemsSold }}</td>
+                <td class="table-cell">{{ b.avgDays }}</td>
+                <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    b.avgDays <= 30 ? 'badge-success' :
+                    b.avgDays <= 60 ? 'badge-warning' : 'badge-danger'
+                  ]">
+                    {{ b.avgDays <= 30 ? 'Fast' : b.avgDays <= 60 ? 'Steady' : 'Slow' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Fastest + Slowest two-column -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-4">🚀 Fastest Movers</h3>
+            <table class="w-full">
+              <tbody>
+                <tr v-for="m in reportData.shelfTime.fastestMovers" :key="m.code" class="border-b border-neutral-100">
+                  <td class="py-2 text-sm font-medium text-neutral-600">{{ m.code }}</td>
+                  <td class="py-2 text-sm text-neutral-900">{{ m.name }}</td>
+                  <td class="py-2 text-sm text-emerald-600 font-bold text-right">{{ m.daysOnShelf }}d</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-4">🐌 Slowest (eventually sold)</h3>
+            <table class="w-full">
+              <tbody>
+                <tr v-for="m in reportData.shelfTime.slowestMovers" :key="m.code" class="border-b border-neutral-100">
+                  <td class="py-2 text-sm font-medium text-neutral-600">{{ m.code }}</td>
+                  <td class="py-2 text-sm text-neutral-900">{{ m.name }}</td>
+                  <td class="py-2 text-sm text-red-600 font-bold text-right">{{ m.daysOnShelf }}d</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Currently Aging Watchlist -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold text-neutral-700 mb-2">⚠️ Currently Aging Stock (no sale yet)</h3>
+          <p class="text-sm text-neutral-500 mb-4">Items in stock that haven't sold their first unit. Sorted by oldest first.</p>
+          <table class="w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="table-header">Code</th>
+                <th class="table-header">Item</th>
+                <th class="table-header">Days on Shelf</th>
+                <th class="table-header">On Hand</th>
+                <th class="table-header">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="a in reportData.shelfTime.currentlyAging" :key="a.code" class="table-row">
+                <td class="table-cell font-medium">{{ a.code }}</td>
+                <td class="table-cell">{{ a.name }}</td>
+                <td class="table-cell">{{ a.daysSinceArrival }}</td>
+                <td class="table-cell">{{ a.onHand }}</td>
+                <td class="table-cell">
+                  <span :class="[
+                    'badge',
+                    a.status === 'fresh' ? 'badge-success' :
+                    a.status === 'normal' ? 'badge-primary' :
+                    a.status === 'aging' ? 'badge-warning' : 'badge-danger'
+                  ]">{{ a.status }}</span>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -817,6 +939,17 @@ const reportData = reactive({
     avgLifetimeValue: 0
   },
   topCustomers: [],
+  shelfTime: {
+    overallAvgDays: 0,
+    medianDays: 0,
+    fastestDays: 0,
+    slowestDays: 0,
+    totalItemsSold: 0,
+    byBrand: [],
+    fastestMovers: [],
+    slowestMovers: [],
+    currentlyAging: []
+  },
   retention: {
     totalCustomersWithOrders: 0,
     oneTimeCustomers: 0,
@@ -1006,6 +1139,14 @@ const fetchReports = async () => {
       reportData.retention = retentionReport || reportData.retention;
     } catch (e) {
       console.error('Failed to load retention report', e);
+    }
+
+    // Fetch shelf-time report (lifetime, no date filter)
+    try {
+      const shelfTimeReport = await apiCall('/reports/shelf-time');
+      reportData.shelfTime = shelfTimeReport || reportData.shelfTime;
+    } catch (e) {
+      console.error('Failed to load shelf-time report', e);
     }
 
     // Fetch inventory report data (GET request)
