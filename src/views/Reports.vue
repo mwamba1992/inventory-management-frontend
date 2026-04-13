@@ -47,6 +47,7 @@
             <option value="shelf-time">Shelf Time / Aging</option>
             <option value="financial">Financial Report</option>
             <option value="whatsapp">WhatsApp Orders</option>
+            <option value="ad-performance">Ad Performance</option>
             <option value="balance-sheet">Balance Sheet</option>
             <option value="catalogue">Product Catalogue</option>
           </select>
@@ -851,6 +852,206 @@
         </div>
       </div>
 
+      <!-- Ad Performance Report -->
+      <div v-if="selectedReport === 'ad-performance'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-neutral-900">Ad Performance</h2>
+          <button @click="syncMetaAds" :disabled="reportData.adPerformance.syncing" class="btn-primary flex items-center text-sm gap-2">
+            <svg v-if="reportData.adPerformance.syncing" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {{ reportData.adPerformance.syncing ? 'Syncing...' : 'Sync from Meta' }}
+          </button>
+        </div>
+
+        <!-- KPI Cards Row 1: Spend, Revenue, ROAS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Total Ad Spend</h3>
+            <div class="text-2xl font-bold text-red-600 mb-2">TZS{{ formatNumber(reportData.adPerformance.totalSpendTzs?.current || 0) }}</div>
+            <div class="text-xs text-neutral-400 mb-1">${{ (reportData.adPerformance.totalSpendUsd?.current || 0).toFixed(2) }} USD</div>
+            <div :class="['text-xs', (reportData.adPerformance.totalSpendTzs?.percentageChange || 0) >= 0 ? 'text-red-600' : 'text-emerald-600']">
+              {{ (reportData.adPerformance.totalSpendTzs?.percentageChange || 0) >= 0 ? '+' : '' }}{{ (reportData.adPerformance.totalSpendTzs?.percentageChange || 0).toFixed(1) }}% vs last period
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Revenue</h3>
+            <div class="text-2xl font-bold text-emerald-600 mb-2">TZS{{ formatNumber(reportData.adPerformance.revenue?.current || 0) }}</div>
+            <div :class="['text-xs', (reportData.adPerformance.revenue?.percentageChange || 0) >= 0 ? 'text-emerald-600' : 'text-red-600']">
+              {{ (reportData.adPerformance.revenue?.percentageChange || 0) >= 0 ? '+' : '' }}{{ (reportData.adPerformance.revenue?.percentageChange || 0).toFixed(1) }}% vs last period
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl border-2 border-brand-200 bg-brand-50/50">
+            <h3 class="text-sm font-medium text-brand-700 mb-3">ROAS</h3>
+            <div class="text-2xl font-bold text-brand-700 mb-2">{{ (reportData.adPerformance.roas?.current || 0).toFixed(1) }}x</div>
+            <div class="text-xs text-neutral-500">Target: 4x</div>
+          </div>
+        </div>
+
+        <!-- KPI Cards Row 2: Impressions, Clicks, CTR, Conversions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Impressions</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ formatNumber(reportData.adPerformance.totalImpressions?.current || 0) }}</div>
+            <div class="text-xs text-neutral-400">Reach: {{ formatNumber(reportData.adPerformance.totalReach?.current || 0) }}</div>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Clicks</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ formatNumber(reportData.adPerformance.totalClicks?.current || 0) }}</div>
+            <div class="text-xs text-neutral-400">CPC: ${{ (reportData.adPerformance.avgCpc?.current || 0).toFixed(3) }}</div>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">CTR</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ (reportData.adPerformance.avgCtr?.current || 0).toFixed(2) }}%</div>
+            <div class="text-xs text-neutral-400">CPM: ${{ (reportData.adPerformance.avgCpm?.current || 0).toFixed(3) }}</div>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-neutral-100 bg-white/50">
+            <h3 class="text-sm font-medium text-neutral-500 mb-3">Conversations</h3>
+            <div class="text-2xl font-bold text-neutral-900 mb-2">{{ formatNumber(reportData.adPerformance.totalConversions?.current || 0) }}</div>
+            <div class="text-xs text-neutral-400">From click-to-WhatsApp</div>
+          </div>
+        </div>
+
+        <!-- Spend & Clicks Chart -->
+        <div class="border border-neutral-100 rounded-2xl p-5 bg-white/50 mb-8">
+          <h3 class="text-base font-semibold text-neutral-700 mb-4">Daily Spend & Clicks</h3>
+          <canvas ref="adSpendChart" class="!w-full !h-[300px] max-w-full max-h-[300px] bg-neutral-50 rounded-lg block"></canvas>
+        </div>
+
+        <!-- Campaign Breakdown Table -->
+        <div>
+          <h3 class="text-lg font-semibold text-neutral-700 mb-4">Campaign Breakdown</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="table-header">Campaign</th>
+                  <th class="table-header text-right">Spend</th>
+                  <th class="table-header text-right">Impressions</th>
+                  <th class="table-header text-right">Clicks</th>
+                  <th class="table-header text-right">CTR</th>
+                  <th class="table-header text-right">CPC</th>
+                  <th class="table-header text-right">Conversations</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="campaign in reportData.adPerformance.campaignBreakdown" :key="campaign.campaignId" class="table-row">
+                  <td class="table-cell max-w-[250px] truncate" :title="campaign.campaignName">{{ campaign.campaignName }}</td>
+                  <td class="table-cell text-right">TZS{{ formatNumber(Math.round((campaign.spend || 0) * (reportData.adPerformance.usdToTzs || 2500))) }}</td>
+                  <td class="table-cell text-right">{{ formatNumber(campaign.impressions) }}</td>
+                  <td class="table-cell text-right">{{ formatNumber(campaign.clicks) }}</td>
+                  <td class="table-cell text-right">{{ campaign.ctr?.toFixed(2) }}%</td>
+                  <td class="table-cell text-right">${{ campaign.cpc?.toFixed(3) }}</td>
+                  <td class="table-cell text-right">{{ formatNumber(campaign.conversions) }}</td>
+                </tr>
+                <tr v-if="!reportData.adPerformance.campaignBreakdown?.length" class="table-row">
+                  <td colspan="7" class="table-cell text-center text-neutral-400 py-8">No ad data yet. Click "Sync from Meta" to pull your ad performance.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div v-if="reportData.adPerformance.recommendations?.summary" class="mt-8">
+          <!-- Summary Banner -->
+          <div class="bg-gradient-to-r from-brand-50 to-blue-50 border border-brand-200 rounded-2xl p-5 mb-6">
+            <h3 class="text-lg font-semibold text-brand-800 mb-2">Recommendations</h3>
+            <p class="text-sm text-brand-700">{{ reportData.adPerformance.recommendations.summary }}</p>
+          </div>
+
+          <!-- Budget Advice -->
+          <div v-if="reportData.adPerformance.recommendations.budgetAdvice" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="p-4 rounded-2xl border border-neutral-100 bg-white/50">
+              <h4 class="text-xs font-medium text-neutral-500 mb-1">Current Daily Spend</h4>
+              <div class="text-lg font-bold text-neutral-900">${{ reportData.adPerformance.recommendations.budgetAdvice.currentDailySpend?.toFixed(2) }}</div>
+            </div>
+            <div class="p-4 rounded-2xl border border-neutral-100 bg-white/50">
+              <h4 class="text-xs font-medium text-neutral-500 mb-1">Wasteful Spend (30d)</h4>
+              <div class="text-lg font-bold text-red-600">${{ reportData.adPerformance.recommendations.budgetAdvice.wastefulSpend?.toFixed(2) }}</div>
+            </div>
+            <div class="p-4 rounded-2xl border border-neutral-100 bg-white/50">
+              <h4 class="text-xs font-medium text-neutral-500 mb-1">Efficiency</h4>
+              <div class="text-sm font-semibold text-neutral-700">{{ reportData.adPerformance.recommendations.budgetAdvice.efficiency }}</div>
+            </div>
+          </div>
+
+          <!-- Campaign Actions -->
+          <div v-if="reportData.adPerformance.recommendations.campaignActions?.length" class="mb-6">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-4">Campaign Actions</h3>
+            <div class="flex flex-col gap-3">
+              <div v-for="ca in reportData.adPerformance.recommendations.campaignActions" :key="ca.campaignId"
+                class="flex items-start gap-3 p-4 rounded-xl border"
+                :class="{
+                  'border-emerald-200 bg-emerald-50/50': ca.action === 'scale',
+                  'border-neutral-200 bg-white/50': ca.action === 'keep',
+                  'border-red-200 bg-red-50/50': ca.action === 'kill'
+                }">
+                <span class="text-xs font-bold px-2 py-1 rounded-full uppercase whitespace-nowrap"
+                  :class="{
+                    'bg-emerald-100 text-emerald-800': ca.action === 'scale',
+                    'bg-neutral-100 text-neutral-600': ca.action === 'keep',
+                    'bg-red-100 text-red-800': ca.action === 'kill'
+                  }">
+                  {{ ca.action }}
+                </span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-neutral-900 text-sm truncate">{{ ca.campaignName }}</div>
+                  <div class="text-xs text-neutral-500 mt-1">{{ ca.reason }}</div>
+                </div>
+                <div class="text-right text-xs text-neutral-500 whitespace-nowrap">
+                  <div>${{ ca.spend?.toFixed(2) }} spent</div>
+                  <div>{{ ca.conversions }} conv.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products to Advertise -->
+          <div v-if="reportData.adPerformance.recommendations.productsToAdvertise?.length">
+            <h3 class="text-lg font-semibold text-neutral-700 mb-4">Products to Advertise Next</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th class="table-header">Product</th>
+                    <th class="table-header text-right">Price (TZS)</th>
+                    <th class="table-header text-right">Margin</th>
+                    <th class="table-header text-right">Stock</th>
+                    <th class="table-header text-right">Sales (90d)</th>
+                    <th class="table-header">Why</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="prod in reportData.adPerformance.recommendations.productsToAdvertise" :key="prod.itemId" class="table-row">
+                    <td class="table-cell">
+                      <div class="font-medium text-neutral-900">{{ prod.name }}</div>
+                      <div class="text-xs text-neutral-400">{{ prod.code }}</div>
+                    </td>
+                    <td class="table-cell text-right">{{ formatNumber(prod.sellingPrice) }}</td>
+                    <td class="table-cell text-right">
+                      <span :class="prod.profitMargin >= 75 ? 'text-emerald-600 font-semibold' : 'text-neutral-700'">{{ prod.profitMargin }}%</span>
+                    </td>
+                    <td class="table-cell text-right">{{ prod.stockOnHand }}</td>
+                    <td class="table-cell text-right">{{ prod.salesVelocity }}</td>
+                    <td class="table-cell text-xs text-neutral-600 max-w-[250px]">{{ prod.reason }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Product Catalogue Report -->
       <div v-if="selectedReport === 'catalogue'" class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6">
         <h2 class="text-2xl font-bold text-neutral-900 mb-6">Product Catalogue</h2>
@@ -893,8 +1094,10 @@ const swalAlert = ref(null)
 // Chart refs
 const salesChart = ref(null)
 const productsChart = ref(null)
+const adSpendChart = ref(null)
 let salesChartInstance = null
 let productsChartInstance = null
+let adSpendChartInstance = null
 
 // Reactive data
 const loading = ref(true)
@@ -983,6 +1186,28 @@ const reportData = reactive({
     cancelledOrders: 0,
     totalRevenue: 0,
     orders: []
+  },
+  adPerformance: {
+    totalSpendUsd: { current: 0, previous: 0, percentageChange: 0 },
+    totalSpendTzs: { current: 0, previous: 0, percentageChange: 0 },
+    totalImpressions: { current: 0, previous: 0, percentageChange: 0 },
+    totalClicks: { current: 0, previous: 0, percentageChange: 0 },
+    totalConversions: { current: 0, previous: 0, percentageChange: 0 },
+    totalReach: { current: 0, previous: 0, percentageChange: 0 },
+    avgCpc: { current: 0, previous: 0, percentageChange: 0 },
+    avgCtr: { current: 0, previous: 0, percentageChange: 0 },
+    avgCpm: { current: 0, previous: 0, percentageChange: 0 },
+    roas: { current: 0, previous: 0, percentageChange: 0 },
+    revenue: { current: 0, previous: 0, percentageChange: 0 },
+    dailyBreakdown: [],
+    campaignBreakdown: [],
+    syncing: false,
+    recommendations: {
+      campaignActions: [],
+      productsToAdvertise: [],
+      budgetAdvice: { currentDailySpend: 0, recommendedDailySpend: 0, topCampaignToScale: null, wastefulSpend: 0, efficiency: '' },
+      summary: ''
+    }
   }
 })
 
@@ -1213,6 +1438,17 @@ const fetchReports = async () => {
       createdAt: order.createdAt
     }));
 
+    // Fetch ad performance data + recommendations
+    try {
+      const [adData, adRecs] = await Promise.all([
+        apiCall(`/reports/ad-performance${queryParams}`),
+        apiCall('/meta-ads/recommendations'),
+      ]);
+      reportData.adPerformance = { ...reportData.adPerformance, ...adData, recommendations: adRecs };
+    } catch (e) {
+      console.error('Failed to load ad performance report', e);
+    }
+
     // Render charts after data is loaded (only for overview)
     if (selectedReport.value === 'overview') {
       // Use setTimeout to ensure DOM is fully rendered
@@ -1364,6 +1600,74 @@ const renderCharts = () => {
   }
 }
 
+const syncMetaAds = async () => {
+  try {
+    reportData.adPerformance.syncing = true
+    await apiCall('/meta-ads/sync')
+    swalAlert.value?.showSuccess('Sync Complete', 'Ad data synced from Meta')
+    await fetchReports()
+  } catch (error) {
+    swalAlert.value?.showError('Sync Failed', error.message || 'Failed to sync Meta Ads data')
+  } finally {
+    reportData.adPerformance.syncing = false
+  }
+}
+
+const renderAdSpendChart = () => {
+  if (!adSpendChart.value) return
+  if (adSpendChartInstance) {
+    adSpendChartInstance.destroy()
+    adSpendChartInstance = null
+  }
+
+  const daily = reportData.adPerformance.dailyBreakdown || []
+  if (daily.length === 0) return
+
+  adSpendChartInstance = new Chart(adSpendChart.value, {
+    type: 'line',
+    data: {
+      labels: daily.map(d => new Date(d.date).toLocaleDateString()),
+      datasets: [
+        {
+          label: 'Ad Spend (TZS)',
+          data: daily.map(d => d.spendTzs || 0),
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          fill: true,
+          tension: 0.3,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Clicks',
+          data: daily.map(d => d.clicks),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          fill: false,
+          tension: 0.3,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        y: {
+          type: 'linear',
+          position: 'left',
+          ticks: { callback: v => 'TZS ' + v.toLocaleString() }
+        },
+        y1: {
+          type: 'linear',
+          position: 'right',
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
+  })
+}
+
 const apiCall = async (url, options = {}) => {
   try {
     const method = (options.method || 'GET').toLowerCase()
@@ -1482,6 +1786,11 @@ watch(selectedReport, () => {
   if (selectedReport.value === 'overview') {
     setTimeout(() => {
       renderCharts()
+    }, 100)
+  }
+  if (selectedReport.value === 'ad-performance') {
+    setTimeout(() => {
+      renderAdSpendChart()
     }, 100)
   }
 })
