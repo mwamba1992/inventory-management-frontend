@@ -945,7 +945,7 @@
               </thead>
               <tbody>
                 <tr v-for="campaign in sortedCampaigns" :key="campaign.campaignId" class="table-row">
-                  <td class="table-cell max-w-[250px] truncate" :title="campaign.campaignName">{{ campaign.campaignName }}</td>
+                  <td class="table-cell min-w-[350px] whitespace-normal break-words text-sm leading-snug">{{ campaign.campaignName }}</td>
                   <td class="table-cell text-right">TZS{{ formatNumber(Math.round((campaign.spend || 0) * (reportData.adPerformance.usdToTzs || 2500))) }}</td>
                   <td class="table-cell text-right">{{ formatNumber(campaign.impressions) }}</td>
                   <td class="table-cell text-right">{{ formatNumber(campaign.clicks) }}</td>
