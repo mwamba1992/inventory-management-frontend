@@ -945,7 +945,10 @@
               </thead>
               <tbody>
                 <tr v-for="campaign in sortedCampaigns" :key="campaign.campaignId" class="table-row">
-                  <td class="table-cell min-w-[350px] whitespace-normal break-words text-sm leading-snug">{{ campaign.campaignName }}</td>
+                  <td class="table-cell min-w-[350px] whitespace-normal break-words text-sm leading-snug">
+                    <div class="font-medium text-neutral-900">{{ campaign.adCreativeBody || campaign.campaignName }}</div>
+                    <div v-if="campaign.adCreativeBody" class="text-xs text-neutral-400 mt-1">{{ campaign.campaignName }}</div>
+                  </td>
                   <td class="table-cell text-right">TZS{{ formatNumber(Math.round((campaign.spend || 0) * (reportData.adPerformance.usdToTzs || 2500))) }}</td>
                   <td class="table-cell text-right">{{ formatNumber(campaign.impressions) }}</td>
                   <td class="table-cell text-right">{{ formatNumber(campaign.clicks) }}</td>
