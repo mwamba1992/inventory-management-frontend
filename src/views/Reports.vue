@@ -934,17 +934,17 @@
             <table class="w-full border-collapse">
               <thead>
                 <tr>
-                  <th class="table-header">Campaign</th>
-                  <th class="table-header text-right">Spend</th>
-                  <th class="table-header text-right">Impressions</th>
-                  <th class="table-header text-right">Clicks</th>
-                  <th class="table-header text-right">CTR</th>
-                  <th class="table-header text-right">CPC</th>
-                  <th class="table-header text-right">Conversations</th>
+                  <th class="table-header cursor-pointer select-none" @click="toggleSort(campaignSort, 'campaignName')">Campaign{{ sortIcon(campaignSort, 'campaignName') }}</th>
+                  <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(campaignSort, 'spend')">Spend{{ sortIcon(campaignSort, 'spend') }}</th>
+                  <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(campaignSort, 'impressions')">Impressions{{ sortIcon(campaignSort, 'impressions') }}</th>
+                  <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(campaignSort, 'clicks')">Clicks{{ sortIcon(campaignSort, 'clicks') }}</th>
+                  <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(campaignSort, 'ctr')">CTR{{ sortIcon(campaignSort, 'ctr') }}</th>
+                  <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(campaignSort, 'cpc')">CPC{{ sortIcon(campaignSort, 'cpc') }}</th>
+                  <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(campaignSort, 'conversions')">Conversations{{ sortIcon(campaignSort, 'conversions') }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="campaign in reportData.adPerformance.campaignBreakdown" :key="campaign.campaignId" class="table-row">
+                <tr v-for="campaign in sortedCampaigns" :key="campaign.campaignId" class="table-row">
                   <td class="table-cell max-w-[250px] truncate" :title="campaign.campaignName">{{ campaign.campaignName }}</td>
                   <td class="table-cell text-right">TZS{{ formatNumber(Math.round((campaign.spend || 0) * (reportData.adPerformance.usdToTzs || 2500))) }}</td>
                   <td class="table-cell text-right">{{ formatNumber(campaign.impressions) }}</td>
@@ -1023,16 +1023,16 @@
               <table class="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th class="table-header">Product</th>
-                    <th class="table-header text-right">Price (TZS)</th>
-                    <th class="table-header text-right">Margin</th>
-                    <th class="table-header text-right">Stock</th>
-                    <th class="table-header text-right">Sales (90d)</th>
+                    <th class="table-header cursor-pointer select-none" @click="toggleSort(productSort, 'name')">Product{{ sortIcon(productSort, 'name') }}</th>
+                    <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(productSort, 'sellingPrice')">Price (TZS){{ sortIcon(productSort, 'sellingPrice') }}</th>
+                    <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(productSort, 'profitMargin')">Margin{{ sortIcon(productSort, 'profitMargin') }}</th>
+                    <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(productSort, 'stockOnHand')">Stock{{ sortIcon(productSort, 'stockOnHand') }}</th>
+                    <th class="table-header text-right cursor-pointer select-none" @click="toggleSort(productSort, 'salesVelocity')">Sales (90d){{ sortIcon(productSort, 'salesVelocity') }}</th>
                     <th class="table-header">Why</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="prod in reportData.adPerformance.recommendations.productsToAdvertise" :key="prod.itemId" class="table-row">
+                  <tr v-for="prod in sortedProducts" :key="prod.itemId" class="table-row">
                     <td class="table-cell">
                       <div class="font-medium text-neutral-900">{{ prod.name }}</div>
                       <div class="text-xs text-neutral-400">{{ prod.code }}</div>
@@ -1076,7 +1076,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch, computed } from 'vue'
 import api from '@/services/Api'
 import SwalAlert from '@/components/common/SwalAlert.vue'
 import { Chart, registerables } from 'chart.js'
@@ -1098,6 +1098,44 @@ const adSpendChart = ref(null)
 let salesChartInstance = null
 let productsChartInstance = null
 let adSpendChartInstance = null
+
+// Table sorting state
+const campaignSort = reactive({ key: 'spend', dir: 'desc' })
+const productSort = reactive({ key: 'score', dir: 'desc' })
+
+const toggleSort = (sortState, key) => {
+  if (sortState.key === key) {
+    sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortState.key = key
+    sortState.dir = 'desc'
+  }
+}
+
+const sortedCampaigns = computed(() => {
+  const rows = [...(reportData.adPerformance.campaignBreakdown || [])]
+  const { key, dir } = campaignSort
+  return rows.sort((a, b) => {
+    const av = a[key] ?? 0
+    const bv = b[key] ?? 0
+    return dir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1)
+  })
+})
+
+const sortedProducts = computed(() => {
+  const rows = [...(reportData.adPerformance.recommendations?.productsToAdvertise || [])]
+  const { key, dir } = productSort
+  return rows.sort((a, b) => {
+    const av = a[key] ?? 0
+    const bv = b[key] ?? 0
+    return dir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1)
+  })
+})
+
+const sortIcon = (sortState, key) => {
+  if (sortState.key !== key) return ' \u2195'
+  return sortState.dir === 'asc' ? ' \u2191' : ' \u2193'
+}
 
 // Reactive data
 const loading = ref(true)
