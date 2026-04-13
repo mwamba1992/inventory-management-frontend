@@ -1490,11 +1490,15 @@ const fetchReports = async () => {
       console.error('Failed to load ad performance report', e);
     }
 
-    // Render charts after data is loaded (only for overview)
+    // Render charts after data is loaded
     if (selectedReport.value === 'overview') {
-      // Use setTimeout to ensure DOM is fully rendered
       setTimeout(() => {
         renderCharts();
+      }, 100);
+    }
+    if (selectedReport.value === 'ad-performance') {
+      setTimeout(() => {
+        renderAdSpendChart();
       }, 100);
     }
   } catch (error) {
