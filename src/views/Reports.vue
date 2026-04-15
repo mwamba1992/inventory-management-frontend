@@ -59,6 +59,20 @@
             <option v-for="brand in availableBrands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
           </select>
         </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-neutral-700">Category:</label>
+          <select v-model="selectedCategory" @change="selectedSubcategory = ''" class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white">
+            <option value="">All Categories</option>
+            <option v-for="c in parentCategories" :key="c.id" :value="c.id">{{ c.description }}</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1" v-if="selectedCategory">
+          <label class="text-sm font-medium text-neutral-700">Subcategory:</label>
+          <select v-model="selectedSubcategory" class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white">
+            <option value="">All Subcategories</option>
+            <option v-for="sub in subcategoriesOf(selectedCategory)" :key="sub.id" :value="sub.id">{{ sub.description }}</option>
+          </select>
+        </div>
         <button @click="exportReport" class="btn-primary flex items-center text-sm gap-2">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
@@ -1138,23 +1152,50 @@ const brandMatches = (item) => {
   if (item.brandId && item.brandId.toString() === bid) return true
   if (item.brand?.id && item.brand.id.toString() === bid) return true
   if (item.brand && item.brand.toString() === bid) return true
-  // match by brand name if API returned string
   const brand = availableBrands.value.find(b => b.id.toString() === bid)
   if (brand) {
     const name = (item.brand?.name || item.brand || '').toString().toLowerCase()
     if (name === brand.name.toLowerCase()) return true
-    // fallback: match on item name starting with brand (case-insensitive)
     const itemName = (item.name || item.productName || '').toLowerCase()
     if (itemName.includes(brand.name.toLowerCase())) return true
   }
   return false
 }
 
+const categoryMatches = (item) => {
+  if (!selectedCategory.value) return true
+  const cid = selectedCategory.value.toString()
+  if (item.categoryId && item.categoryId.toString() === cid) return true
+  if (item.category?.id && item.category.id.toString() === cid) return true
+  // category name fallback
+  const cat = availableCategories.value.find(c => c.id.toString() === cid)
+  if (cat) {
+    const name = (item.category?.description || item.category || '').toString().toLowerCase()
+    if (name === cat.description.toLowerCase()) return true
+  }
+  return false
+}
+
+const subcategoryMatches = (item) => {
+  if (!selectedSubcategory.value) return true
+  const sid = selectedSubcategory.value.toString()
+  if (item.subcategoryId && item.subcategoryId.toString() === sid) return true
+  if (item.subcategory?.id && item.subcategory.id.toString() === sid) return true
+  const sub = availableCategories.value.find(c => c.id.toString() === sid)
+  if (sub) {
+    const name = (item.subcategory?.description || item.subcategory || '').toString().toLowerCase()
+    if (name === sub.description.toLowerCase()) return true
+  }
+  return false
+}
+
+const allFiltersMatch = (item) => brandMatches(item) && categoryMatches(item) && subcategoryMatches(item)
+
 const filteredInventoryItems = computed(() =>
-  (reportData.inventoryItems || []).filter(brandMatches)
+  (reportData.inventoryItems || []).filter(allFiltersMatch)
 )
 const filteredTopProducts = computed(() =>
-  (reportData.topProducts || []).filter(brandMatches)
+  (reportData.topProducts || []).filter(allFiltersMatch)
 )
 
 const sortedProducts = computed(() => {
@@ -1176,7 +1217,10 @@ const sortIcon = (sortState, key) => {
 const loading = ref(true)
 const selectedDateRange = ref('30')
 const selectedBrand = ref('')
+const selectedCategory = ref('')
+const selectedSubcategory = ref('')
 const availableBrands = ref([])
+const availableCategories = ref([])
 
 const loadBrands = async () => {
   try {
@@ -1185,6 +1229,28 @@ const loadBrands = async () => {
   } catch (e) {
     availableBrands.value = []
   }
+}
+
+const loadCategories = async () => {
+  try {
+    const res = await api.get('/common/type/ITEM_CATEGORY')
+    availableCategories.value = res.data || []
+  } catch (e) {
+    availableCategories.value = []
+  }
+}
+
+const parentCategories = computed(() =>
+  availableCategories.value.filter(c => !c.parentCategoryId && !c.parentCategory)
+)
+
+const subcategoriesOf = (parentId) => {
+  if (!parentId) return []
+  const pid = parentId.toString()
+  return availableCategories.value.filter(c =>
+    (c.parentCategoryId && c.parentCategoryId.toString() === pid) ||
+    (c.parentCategory && c.parentCategory.id && c.parentCategory.id.toString() === pid)
+  )
 }
 const selectedReport = ref('overview')
 const customDateFrom = ref('')
@@ -1867,6 +1933,7 @@ const goToCatalogue = () => {
 // Lifecycle
 onMounted(() => {
   loadBrands()
+  loadCategories()
   fetchReports()
 })
 
@@ -1885,8 +1952,8 @@ watch(selectedReport, () => {
   }
 })
 
-// Re-render top products chart when brand filter changes (on overview tab)
-watch(selectedBrand, () => {
+// Re-render top products chart when filters change (on overview tab)
+watch([selectedBrand, selectedCategory, selectedSubcategory], () => {
   if (selectedReport.value === 'overview') {
     setTimeout(() => renderCharts(), 50)
   }
