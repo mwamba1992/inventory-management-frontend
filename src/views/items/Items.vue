@@ -56,16 +56,34 @@
               <label class="text-sm font-medium text-neutral-700">Category:</label>
               <select
                 v-model="selectedCategory"
-                @change="currentPage = 1"
+                @change="selectedSubcategory = ''; currentPage = 1"
                 class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
               >
                 <option value="">All Categories</option>
                 <option
-                  v-for="category in availableCategories"
+                  v-for="category in parentCategories"
                   :key="category.id"
                   :value="category.id"
                 >
-                  {{ category.code }} - {{ category.description }}
+                  {{ category.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="flex items-center space-x-2" v-if="selectedCategory">
+              <label class="text-sm font-medium text-neutral-700">Subcategory:</label>
+              <select
+                v-model="selectedSubcategory"
+                @change="currentPage = 1"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
+              >
+                <option value="">All Subcategories</option>
+                <option
+                  v-for="sub in subcategoriesOf(selectedCategory)"
+                  :key="sub.id"
+                  :value="sub.id"
+                >
+                  {{ sub.description }}
                 </option>
               </select>
             </div>
@@ -108,7 +126,7 @@
 
             <button
               @click="clearFilters"
-              v-if="selectedCategory || selectedWarehouse || selectedBrand"
+              v-if="selectedCategory || selectedSubcategory || selectedWarehouse || selectedBrand"
               class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
@@ -351,12 +369,10 @@
               </td>
               <td class="p-4">
                 <div v-if="item.category">
-                  <span
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800"
-                  >
-                    {{ item.category.code }}
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brand-100 text-brand-800">
+                    {{ item.category.description }}
                   </span>
-                  <p class="text-xs text-neutral-500 mt-1">{{ item.category.description }}</p>
+                  <p v-if="item.subcategory" class="text-xs text-neutral-500 mt-1">{{ item.subcategory.description }}</p>
                 </div>
                 <span v-else class="text-xs text-neutral-400">No category</span>
               </td>
@@ -558,16 +574,34 @@
                 <label class="input-label">Category *</label>
                 <select
                   v-model="form.categoryId"
+                  @change="form.subcategoryId = ''"
                   required
                   class="input-field"
                 >
                   <option value="">Select Category</option>
                   <option
-                    v-for="category in availableCategories"
+                    v-for="category in parentCategories"
                     :key="category.id"
                     :value="category.id"
                   >
-                    {{ category.code }} - {{ category.description }}
+                    {{ category.description }}
+                  </option>
+                </select>
+              </div>
+
+              <div v-if="form.categoryId && subcategoriesOf(form.categoryId).length">
+                <label class="input-label">Subcategory</label>
+                <select
+                  v-model="form.subcategoryId"
+                  class="input-field"
+                >
+                  <option value="">Select Subcategory</option>
+                  <option
+                    v-for="sub in subcategoriesOf(form.categoryId)"
+                    :key="sub.id"
+                    :value="sub.id"
+                  >
+                    {{ sub.description }}
                   </option>
                 </select>
               </div>
@@ -1151,6 +1185,7 @@ const error = ref('')
 
 // Filter states
 const selectedCategory = ref('')
+const selectedSubcategory = ref('')
 const selectedWarehouse = ref('')
 const selectedBrand = ref('')
 
@@ -1173,6 +1208,7 @@ const form = ref({
   condition: 'new',
   desc: '',
   categoryId: '',
+  subcategoryId: '',
   brandId: '',
   supplierId: '',
   warehouseId: '',
@@ -1320,8 +1356,21 @@ const deleteItemApi = async (id) => {
 
 // Computed properties
 const hasActiveFilters = computed(() => {
-  return selectedCategory.value || selectedWarehouse.value || selectedBrand.value
+  return selectedCategory.value || selectedSubcategory.value || selectedWarehouse.value || selectedBrand.value
 })
+
+const parentCategories = computed(() =>
+  availableCategories.value.filter(c => !c.parentCategoryId && !c.parentCategory)
+)
+
+const subcategoriesOf = (parentId) => {
+  if (!parentId) return []
+  const pid = parentId.toString()
+  return availableCategories.value.filter(c =>
+    (c.parentCategoryId && c.parentCategoryId.toString() === pid) ||
+    (c.parentCategory && c.parentCategory.id && c.parentCategory.id.toString() === pid)
+  )
+}
 
 const filteredItems = computed(() => {
   let filtered = items.value.filter(item => {
@@ -1333,6 +1382,10 @@ const filteredItems = computed(() => {
     const matchesCategory = selectedCategory.value === '' ||
       (item.category && item.category.id.toString() === selectedCategory.value.toString())
 
+    const matchesSubcategory = selectedSubcategory.value === '' ||
+      (item.subcategory && item.subcategory.id && item.subcategory.id.toString() === selectedSubcategory.value.toString()) ||
+      (item.subcategoryId && item.subcategoryId.toString() === selectedSubcategory.value.toString())
+
     const matchesWarehouse = selectedWarehouse.value === '' ||
       (item.warehouse && item.warehouse.id.toString() === selectedWarehouse.value.toString())
 
@@ -1340,7 +1393,7 @@ const filteredItems = computed(() => {
       (item.brandId && item.brandId.toString() === selectedBrand.value.toString()) ||
       (item.brand && item.brand.id && item.brand.id.toString() === selectedBrand.value.toString())
 
-    return matchesSearch && matchesCategory && matchesWarehouse && matchesBrand
+    return matchesSearch && matchesCategory && matchesSubcategory && matchesWarehouse && matchesBrand
   })
 
   if (sortField.value) {
@@ -1410,6 +1463,7 @@ const getSupplierName = (supplierId) => {
 
 const clearFilters = () => {
   selectedCategory.value = ''
+  selectedSubcategory.value = ''
   selectedWarehouse.value = ''
   selectedBrand.value = ''
   currentPage.value = 1
@@ -1520,6 +1574,7 @@ const openAddModal = () => {
     condition: 'new',
     desc: '',
     categoryId: '',
+    subcategoryId: '',
     brandId: '',
     supplierId: '',
     warehouseId: '',
@@ -1536,6 +1591,7 @@ const openEditModal = (item) => {
     condition: item.condition || 'new',
     desc: item.desc || '',
     categoryId: item.category?.id || '',
+    subcategoryId: item.subcategory?.id || item.subcategoryId || '',
     brandId: item.brand?.id || '',
     supplierId: item.supplier?.id || '',
     warehouseId: item.warehouse?.id || '',
@@ -1556,6 +1612,7 @@ const closeModal = () => {
     condition: 'new',
     desc: '',
     categoryId: '',
+    subcategoryId: '',
     brandId: '',
     supplierId: '',
     warehouseId: '',
@@ -1573,6 +1630,7 @@ const saveItem = async () => {
       condition: form.value.condition || 'new',
       desc: form.value.desc.trim() || null,
       categoryId: form.value.categoryId,
+      subcategoryId: form.value.subcategoryId || null,
       brandId: form.value.brandId || null,
       supplierId: form.value.supplierId || null,
       warehouseId: form.value.warehouseId,
