@@ -52,6 +52,13 @@
             <option value="catalogue">Product Catalogue</option>
           </select>
         </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-neutral-700">Brand:</label>
+          <select v-model="selectedBrand" class="border border-neutral-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white">
+            <option value="">All Brands</option>
+            <option v-for="brand in availableBrands" :key="brand.id" :value="brand.id">{{ brand.name }}</option>
+          </select>
+        </div>
         <button @click="exportReport" class="btn-primary flex items-center text-sm gap-2">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
@@ -289,7 +296,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="item in reportData.inventoryItems" :key="item.id" class="table-row">
+            <tr v-for="item in filteredInventoryItems" :key="item.id" class="table-row">
               <td class="table-cell"><span class="font-medium text-neutral-700">{{ item.productCode }}</span></td>
               <td class="table-cell">{{ item.name }}</td>
               <td class="table-cell">{{ item.category || 'N/A' }}</td>
@@ -1125,6 +1132,31 @@ const sortedCampaigns = computed(() => {
   })
 })
 
+const brandMatches = (item) => {
+  if (!selectedBrand.value) return true
+  const bid = selectedBrand.value.toString()
+  if (item.brandId && item.brandId.toString() === bid) return true
+  if (item.brand?.id && item.brand.id.toString() === bid) return true
+  if (item.brand && item.brand.toString() === bid) return true
+  // match by brand name if API returned string
+  const brand = availableBrands.value.find(b => b.id.toString() === bid)
+  if (brand) {
+    const name = (item.brand?.name || item.brand || '').toString().toLowerCase()
+    if (name === brand.name.toLowerCase()) return true
+    // fallback: match on item name starting with brand (case-insensitive)
+    const itemName = (item.name || item.productName || '').toLowerCase()
+    if (itemName.includes(brand.name.toLowerCase())) return true
+  }
+  return false
+}
+
+const filteredInventoryItems = computed(() =>
+  (reportData.inventoryItems || []).filter(brandMatches)
+)
+const filteredTopProducts = computed(() =>
+  (reportData.topProducts || []).filter(brandMatches)
+)
+
 const sortedProducts = computed(() => {
   const rows = [...(reportData.adPerformance.recommendations?.productsToAdvertise || [])]
   const { key, dir } = productSort
@@ -1143,6 +1175,17 @@ const sortIcon = (sortState, key) => {
 // Reactive data
 const loading = ref(true)
 const selectedDateRange = ref('30')
+const selectedBrand = ref('')
+const availableBrands = ref([])
+
+const loadBrands = async () => {
+  try {
+    const res = await api.get('/brands')
+    availableBrands.value = res.data || []
+  } catch (e) {
+    availableBrands.value = []
+  }
+}
 const selectedReport = ref('overview')
 const customDateFrom = ref('')
 const customDateTo = ref('')
@@ -1581,16 +1624,17 @@ const renderCharts = () => {
   }
 
   // Render Top Products Chart
-  if (reportData.topProducts.length > 0) {
+  const topProductsData = filteredTopProducts.value
+  if (topProductsData.length > 0) {
     try {
       const ctx = productsChart.value.getContext('2d');
       productsChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: reportData.topProducts.map(item => item.name),
+          labels: topProductsData.map(item => item.name),
           datasets: [{
             label: 'Revenue (TZS)',
-            data: reportData.topProducts.map(item => item.revenue),
+            data: topProductsData.map(item => item.revenue),
             backgroundColor: [
               'rgba(59, 130, 246, 0.8)',
               'rgba(16, 185, 129, 0.8)',
@@ -1618,7 +1662,7 @@ const renderCharts = () => {
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  const product = reportData.topProducts[context.dataIndex];
+                  const product = topProductsData[context.dataIndex];
                   return [
                     'Revenue: TZS ' + context.parsed.y.toLocaleString(),
                     'Quantity: ' + product.quantity.toLocaleString()
@@ -1822,6 +1866,7 @@ const goToCatalogue = () => {
 
 // Lifecycle
 onMounted(() => {
+  loadBrands()
   fetchReports()
 })
 
@@ -1837,6 +1882,13 @@ watch(selectedReport, () => {
     setTimeout(() => {
       renderAdSpendChart()
     }, 100)
+  }
+})
+
+// Re-render top products chart when brand filter changes (on overview tab)
+watch(selectedBrand, () => {
+  if (selectedReport.value === 'overview') {
+    setTimeout(() => renderCharts(), 50)
   }
 })
 </script>
