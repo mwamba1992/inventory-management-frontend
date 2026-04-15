@@ -88,9 +88,27 @@
               </select>
             </div>
 
+            <div class="flex items-center space-x-2">
+              <label class="text-sm font-medium text-neutral-700">Brand:</label>
+              <select
+                v-model="selectedBrand"
+                @change="currentPage = 1"
+                class="border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white"
+              >
+                <option value="">All Brands</option>
+                <option
+                  v-for="brand in availableBrands"
+                  :key="brand.id"
+                  :value="brand.id"
+                >
+                  {{ brand.name }}
+                </option>
+              </select>
+            </div>
+
             <button
               @click="clearFilters"
-              v-if="selectedCategory || selectedWarehouse"
+              v-if="selectedCategory || selectedWarehouse || selectedBrand"
               class="px-3 py-2 text-sm text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-xl transition-all duration-200"
             >
               <XMarkIcon class="w-4 h-4 inline mr-1" />
@@ -1134,6 +1152,7 @@ const error = ref('')
 // Filter states
 const selectedCategory = ref('')
 const selectedWarehouse = ref('')
+const selectedBrand = ref('')
 
 // Modal states
 const showModal = ref(false)
@@ -1301,7 +1320,7 @@ const deleteItemApi = async (id) => {
 
 // Computed properties
 const hasActiveFilters = computed(() => {
-  return selectedCategory.value || selectedWarehouse.value
+  return selectedCategory.value || selectedWarehouse.value || selectedBrand.value
 })
 
 const filteredItems = computed(() => {
@@ -1317,7 +1336,11 @@ const filteredItems = computed(() => {
     const matchesWarehouse = selectedWarehouse.value === '' ||
       (item.warehouse && item.warehouse.id.toString() === selectedWarehouse.value.toString())
 
-    return matchesSearch && matchesCategory && matchesWarehouse
+    const matchesBrand = selectedBrand.value === '' ||
+      (item.brandId && item.brandId.toString() === selectedBrand.value.toString()) ||
+      (item.brand && item.brand.id && item.brand.id.toString() === selectedBrand.value.toString())
+
+    return matchesSearch && matchesCategory && matchesWarehouse && matchesBrand
   })
 
   if (sortField.value) {
@@ -1388,6 +1411,7 @@ const getSupplierName = (supplierId) => {
 const clearFilters = () => {
   selectedCategory.value = ''
   selectedWarehouse.value = ''
+  selectedBrand.value = ''
   currentPage.value = 1
 }
 
