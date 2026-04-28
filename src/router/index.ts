@@ -18,6 +18,7 @@ import ItemPrice from '@/views/items/ItemPrice.vue'
 import ItemAccount from '@/views/items/ItemAccount.vue'
 import Customer from '@/views/settings/Customer.vue'
 import Expense from '@/views/expense/Expense.vue'
+import Cash from '@/views/cash/Cash.vue'
 import Login from '@/views/Login.vue'
 import WhatsAppOrders from '@/views/WhatsAppOrders.vue'
 import BalanceSheet from '@/views/reports/BalanceSheet.vue'
@@ -115,6 +116,11 @@ const router = createRouter({
           path: '/expense',
           name: 'expense',
           component: Expense,
+        },
+        {
+          path: '/cash',
+          name: 'cash',
+          component: Cash,
         },
         {
           path: '/pos-sales',

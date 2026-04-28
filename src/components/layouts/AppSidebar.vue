@@ -93,6 +93,7 @@ const sidebarItems = [
   { icon: HomeIcon, label: 'Dashboard', key: 'dashboard', route: '/' },
   { icon: CurrencyDollarIcon, label: 'Sales', key: 'pos-sales', route: '/pos-sales' },
   { icon: CurrencyDollarIcon, label: 'Expenses', key: 'expense', route: '/expense' },
+  { icon: CurrencyDollarIcon, label: 'Cash', key: 'cash', route: '/cash' },
   { icon: UsersIcon, label: 'Customers', key: 'customers', route: '/customers' },
   {
     icon: CubeIcon,
