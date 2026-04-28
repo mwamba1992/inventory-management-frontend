@@ -72,6 +72,44 @@
         </div>
       </div>
 
+      <!-- Runway + 30-day statement summary -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20">
+          <p class="text-sm font-medium text-neutral-600">Runway (last 30d burn)</p>
+          <p
+            class="text-2xl font-bold mt-1"
+            :class="runway.weeksRemaining === null ? 'text-green-600' : 'text-orange-600'"
+          >
+            {{
+              runway.weeksRemaining === null
+                ? 'Cash flow positive'
+                : runway.weeksRemaining + ' weeks'
+            }}
+          </p>
+          <p class="text-xs text-neutral-500 mt-1">
+            Net daily: TZS {{ formatAmount(runway.netDailyChange) }}
+          </p>
+        </div>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20">
+          <p class="text-sm font-medium text-neutral-600">In (this period)</p>
+          <p class="text-2xl font-bold text-green-600 mt-1">
+            TZS {{ formatAmount(statement.totalIn) }}
+          </p>
+          <p class="text-xs text-neutral-500 mt-1">
+            {{ statement.inflows?.length || 0 }} source(s)
+          </p>
+        </div>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-soft border border-white/20">
+          <p class="text-sm font-medium text-neutral-600">Out (this period)</p>
+          <p class="text-2xl font-bold text-red-600 mt-1">
+            TZS {{ formatAmount(statement.totalOut) }}
+          </p>
+          <p class="text-xs text-neutral-500 mt-1">
+            Net: TZS {{ formatAmount(statement.net) }}
+          </p>
+        </div>
+      </div>
+
       <!-- Filters -->
       <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-soft border border-white/20 mb-4">
         <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
@@ -411,6 +449,15 @@ const movements = ref([])
 const balance = ref({ total: 0, byMethod: {} })
 const items = ref([])
 const warehouses = ref([])
+const runway = ref({
+  currentBalance: 0,
+  avgDailyOutflow: 0,
+  avgDailyInflow: 0,
+  netDailyChange: 0,
+  daysRemaining: null,
+  weeksRemaining: null,
+})
+const statement = ref({ inflows: [], outflows: [], totalIn: 0, totalOut: 0, net: 0 })
 
 const filters = reactive({
   startDate: '',
@@ -468,7 +515,26 @@ const methodLabel = (val) =>
   CASH_METHODS.find((m) => m.value === val)?.label || val
 
 const refresh = async () => {
-  await Promise.all([loadBalance(), loadMovements()])
+  await Promise.all([loadBalance(), loadMovements(), loadRunway(), loadStatement()])
+}
+
+const loadRunway = async () => {
+  try {
+    runway.value = await CashService.getRunway()
+  } catch (err) {
+    // non-critical
+  }
+}
+
+const loadStatement = async () => {
+  try {
+    statement.value = await CashService.getStatement(
+      filters.startDate || undefined,
+      filters.endDate || undefined,
+    )
+  } catch (err) {
+    // non-critical
+  }
 }
 
 const loadBalance = async () => {

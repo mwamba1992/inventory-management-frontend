@@ -76,6 +76,41 @@ const CashService = {
       throw error
     }
   },
+
+  async getStatement(startDate, endDate) {
+    try {
+      const params = {}
+      if (startDate) params.startDate = startDate
+      if (endDate) params.endDate = endDate
+      const response = await api.get('/cash/statement', { params })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching cash statement:', error)
+      throw error
+    }
+  },
+
+  async getTimeline(startDate, endDate) {
+    try {
+      const response = await api.get('/cash/timeline', {
+        params: { startDate, endDate },
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching cash timeline:', error)
+      throw error
+    }
+  },
+
+  async getRunway() {
+    try {
+      const response = await api.get('/cash/runway')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching runway:', error)
+      throw error
+    }
+  },
 }
 
 export default CashService
