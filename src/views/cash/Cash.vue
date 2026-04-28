@@ -31,6 +31,13 @@
               Refresh
             </button>
             <button
+              @click="openPurchaseModal"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              <ShoppingCartIcon class="w-4 h-4 mr-2" />
+              Record Purchase
+            </button>
+            <button
               @click="openAddModal"
               class="bg-gradient-to-r from-brand-600 to-brand-600 hover:from-brand-700 hover:to-brand-700 text-white px-4 py-2 rounded-xl flex items-center text-sm transition-all duration-200 shadow-soft hover:shadow-xl"
             >
@@ -253,16 +260,138 @@
         </div>
       </div>
     </div>
+
+    <!-- Record Purchase Modal -->
+    <div
+      v-if="showPurchaseModal"
+      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+      @click.self="closePurchaseModal"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
+        <h2 class="text-xl font-bold text-neutral-900 mb-1">Record Inventory Purchase</h2>
+        <p class="text-sm text-neutral-500 mb-4">
+          Records the inventory transaction, marks units as in-transit, and logs the cash-out — all in one action.
+        </p>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Item</label>
+            <select v-model.number="purchaseForm.itemId" class="w-full px-3 py-2 rounded-xl border border-neutral-200">
+              <option :value="null" disabled>Select item…</option>
+              <option v-for="i in items" :key="i.id" :value="i.id">
+                {{ i.code ? `${i.code} — ` : '' }}{{ i.name }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Warehouse</label>
+            <select v-model.number="purchaseForm.warehouseId" class="w-full px-3 py-2 rounded-xl border border-neutral-200">
+              <option :value="null" disabled>Select warehouse…</option>
+              <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-neutral-700 mb-1">Quantity</label>
+              <input
+                v-model.number="purchaseForm.quantity"
+                type="number"
+                min="1"
+                step="1"
+                class="w-full px-3 py-2 rounded-xl border border-neutral-200"
+                placeholder="1"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-700 mb-1">Total Cost (TZS)</label>
+              <input
+                v-model.number="purchaseForm.totalCost"
+                type="number"
+                min="1"
+                step="1"
+                class="w-full px-3 py-2 rounded-xl border border-neutral-200"
+                placeholder="290000"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Payment Method</label>
+            <select v-model="purchaseForm.method" class="w-full px-3 py-2 rounded-xl border border-neutral-200">
+              <option v-for="m in CASH_METHODS" :key="m.value" :value="m.value">{{ m.label }}</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Order Date</label>
+            <input
+              v-model="purchaseForm.orderDate"
+              type="date"
+              class="w-full px-3 py-2 rounded-xl border border-neutral-200"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Supplier (optional)</label>
+            <input
+              v-model="purchaseForm.supplierName"
+              type="text"
+              class="w-full px-3 py-2 rounded-xl border border-neutral-200"
+              placeholder="e.g. eBay UK — thephonefunshop"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Reference / Order # (optional)</label>
+            <input
+              v-model="purchaseForm.referenceNumber"
+              type="text"
+              class="w-full px-3 py-2 rounded-xl border border-neutral-200"
+              placeholder="e.g. eBay order 27-12345"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-1">Notes (optional)</label>
+            <textarea
+              v-model="purchaseForm.notes"
+              rows="2"
+              class="w-full px-3 py-2 rounded-xl border border-neutral-200"
+              placeholder="e.g. Refurb-excellent, activation lock cleared"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button
+            @click="closePurchaseModal"
+            class="px-4 py-2 rounded-xl border border-neutral-200 text-neutral-700 hover:bg-neutral-100"
+          >
+            Cancel
+          </button>
+          <button
+            @click="submitPurchase"
+            :disabled="purchaseSubmitting || !canSubmitPurchase"
+            class="px-4 py-2 rounded-xl bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50"
+          >
+            {{ purchaseSubmitting ? 'Saving…' : 'Save Purchase' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import {
   HomeIcon,
   ChevronRightIcon,
   PlusIcon,
   ArrowPathIcon,
+  ShoppingCartIcon,
 } from '@heroicons/vue/24/outline'
 import SwalAlert from '@/components/SwalAlert.vue'
 import CashService, {
@@ -270,13 +399,18 @@ import CashService, {
   CASH_SOURCES,
   CASH_METHODS,
 } from '@/services/cashService'
+import api from '@/services/Api'
 
 const swalAlert = ref(null)
 const loading = ref(false)
 const submitting = ref(false)
 const showModal = ref(false)
+const showPurchaseModal = ref(false)
+const purchaseSubmitting = ref(false)
 const movements = ref([])
 const balance = ref({ total: 0, byMethod: {} })
+const items = ref([])
+const warehouses = ref([])
 
 const filters = reactive({
   startDate: '',
@@ -294,6 +428,26 @@ const form = reactive({
   occurredAt: new Date().toISOString().split('T')[0],
   notes: '',
 })
+
+const purchaseForm = reactive({
+  itemId: null,
+  warehouseId: null,
+  quantity: 1,
+  totalCost: null,
+  method: 'mpesa',
+  orderDate: new Date().toISOString().split('T')[0],
+  supplierName: '',
+  referenceNumber: '',
+  notes: '',
+})
+
+const canSubmitPurchase = computed(
+  () =>
+    purchaseForm.itemId &&
+    purchaseForm.warehouseId &&
+    purchaseForm.quantity > 0 &&
+    purchaseForm.totalCost > 0,
+)
 
 const formatAmount = (n) => Number(n || 0).toLocaleString('en-US')
 
@@ -386,6 +540,60 @@ const submitMovement = async () => {
   }
 }
 
+const loadItemsAndWarehouses = async () => {
+  try {
+    const [itemsRes, warehousesRes] = await Promise.all([
+      api.get('/items'),
+      api.get('/warehouses'),
+    ])
+    items.value = itemsRes.data || []
+    warehouses.value = warehousesRes.data || []
+  } catch (err) {
+    console.error('Failed to load items/warehouses', err)
+  }
+}
+
+const openPurchaseModal = async () => {
+  purchaseForm.itemId = null
+  purchaseForm.warehouseId = warehouses.value[0]?.id ?? null
+  purchaseForm.quantity = 1
+  purchaseForm.totalCost = null
+  purchaseForm.method = 'mpesa'
+  purchaseForm.orderDate = new Date().toISOString().split('T')[0]
+  purchaseForm.supplierName = ''
+  purchaseForm.referenceNumber = ''
+  purchaseForm.notes = ''
+  if (items.value.length === 0 || warehouses.value.length === 0) {
+    await loadItemsAndWarehouses()
+    purchaseForm.warehouseId = warehouses.value[0]?.id ?? null
+  }
+  showPurchaseModal.value = true
+}
+
+const closePurchaseModal = () => {
+  showPurchaseModal.value = false
+}
+
+const submitPurchase = async () => {
+  if (!canSubmitPurchase.value) {
+    swalAlert.value?.error?.('Item, warehouse, quantity and total cost are required')
+    return
+  }
+  purchaseSubmitting.value = true
+  try {
+    await CashService.recordPurchase({ ...purchaseForm })
+    closePurchaseModal()
+    await refresh()
+    swalAlert.value?.success?.('Purchase recorded — stock and cash updated')
+  } catch (err) {
+    swalAlert.value?.error?.(
+      err?.response?.data?.message || 'Failed to record purchase',
+    )
+  } finally {
+    purchaseSubmitting.value = false
+  }
+}
+
 const confirmDelete = async (movement) => {
   const ok = await swalAlert.value?.confirm?.(
     `Delete this ${movement.type.toUpperCase()} movement of TZS ${formatAmount(movement.amount)}?`
@@ -402,5 +610,6 @@ const confirmDelete = async (movement) => {
 
 onMounted(() => {
   refresh()
+  loadItemsAndWarehouses()
 })
 </script>

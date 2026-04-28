@@ -66,6 +66,16 @@ const CashService = {
       throw error
     }
   },
+
+  async recordPurchase(payload) {
+    try {
+      const response = await api.post('/cash/purchases', payload)
+      return response.data
+    } catch (error) {
+      console.error('Error recording purchase:', error)
+      throw error
+    }
+  },
 }
 
 export default CashService
