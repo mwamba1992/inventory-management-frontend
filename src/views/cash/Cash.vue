@@ -431,7 +431,7 @@ import {
   ArrowPathIcon,
   ShoppingCartIcon,
 } from '@heroicons/vue/24/outline'
-import SwalAlert from '@/components/SwalAlert.vue'
+import SwalAlert from '@/components/common/SwalAlert.vue'
 import CashService, {
   CASH_TYPES,
   CASH_SOURCES,
