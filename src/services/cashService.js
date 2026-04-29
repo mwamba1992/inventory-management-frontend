@@ -111,6 +111,16 @@ const CashService = {
       throw error
     }
   },
+
+  async syncFromSalesAndExpenses(since) {
+    try {
+      const response = await api.post('/cash/sync', since ? { since } : {})
+      return response.data
+    } catch (error) {
+      console.error('Error syncing cash from sales/expenses:', error)
+      throw error
+    }
+  },
 }
 
 export default CashService

@@ -31,6 +31,14 @@
               Refresh
             </button>
             <button
+              @click="syncFromSalesAndExpenses"
+              :disabled="syncing"
+              class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+            >
+              <ArrowPathIcon class="w-4 h-4 mr-2" :class="{ 'animate-spin': syncing }" />
+              {{ syncing ? 'Syncing…' : 'Sync from Sales' }}
+            </button>
+            <button
               @click="openPurchaseModal"
               class="bg-white/80 hover:bg-white text-neutral-700 px-4 py-2 rounded-xl border border-neutral-200 hover:border-neutral-300 flex items-center text-sm transition-all duration-200 shadow-sm hover:shadow-md"
             >
@@ -445,6 +453,7 @@ const submitting = ref(false)
 const showModal = ref(false)
 const showPurchaseModal = ref(false)
 const purchaseSubmitting = ref(false)
+const syncing = ref(false)
 const movements = ref([])
 const balance = ref({ total: 0, byMethod: {} })
 const items = ref([])
@@ -638,6 +647,23 @@ const openPurchaseModal = async () => {
 
 const closePurchaseModal = () => {
   showPurchaseModal.value = false
+}
+
+const syncFromSalesAndExpenses = async () => {
+  syncing.value = true
+  try {
+    const result = await CashService.syncFromSalesAndExpenses()
+    await refresh()
+    swalAlert.value?.success?.(
+      `Synced: +${result.salesAdded} sale(s) (TZS ${formatAmount(result.totalIn)}), -${result.expensesAdded} expense(s) (TZS ${formatAmount(result.totalOut)})`,
+    )
+  } catch (err) {
+    swalAlert.value?.error?.(
+      err?.response?.data?.message || 'Failed to sync from sales/expenses',
+    )
+  } finally {
+    syncing.value = false
+  }
 }
 
 const submitPurchase = async () => {
