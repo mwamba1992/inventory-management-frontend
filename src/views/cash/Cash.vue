@@ -322,20 +322,23 @@
         <div class="space-y-3">
           <div>
             <label class="block text-sm font-medium text-neutral-700 mb-1">Item</label>
-            <select v-model.number="purchaseForm.itemId" class="w-full px-3 py-2 rounded-xl border border-neutral-200">
-              <option :value="null" disabled>Select item…</option>
-              <option v-for="i in items" :key="i.id" :value="i.id">
-                {{ i.code ? `${i.code} — ` : '' }}{{ i.name }}
-              </option>
-            </select>
+            <SearchableSelect
+              v-model="purchaseForm.itemId"
+              :items="items"
+              :format-label="(i) => (i.code ? `${i.code} — ${i.name}` : i.name)"
+              :filter-fn="(i, q) => (i.name || '').toLowerCase().includes(q) || (i.code || '').toLowerCase().includes(q)"
+              placeholder="Select item…"
+              search-placeholder="Search by code or name…"
+            />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-neutral-700 mb-1">Warehouse</label>
-            <select v-model.number="purchaseForm.warehouseId" class="w-full px-3 py-2 rounded-xl border border-neutral-200">
-              <option :value="null" disabled>Select warehouse…</option>
-              <option v-for="w in warehouses" :key="w.id" :value="w.id">{{ w.name }}</option>
-            </select>
+            <SearchableSelect
+              v-model="purchaseForm.warehouseId"
+              :items="warehouses"
+              placeholder="Select warehouse…"
+            />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -440,6 +443,7 @@ import {
   ShoppingCartIcon,
 } from '@heroicons/vue/24/outline'
 import SwalAlert from '@/components/common/SwalAlert.vue'
+import SearchableSelect from '@/components/common/SearchableSelect.vue'
 import CashService, {
   CASH_TYPES,
   CASH_SOURCES,

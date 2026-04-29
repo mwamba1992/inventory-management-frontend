@@ -63,38 +63,32 @@
           <div class="flex flex-wrap gap-3 mb-4">
             <div class="flex items-center space-x-2">
               <label class="text-sm font-medium text-neutral-700">Customer:</label>
-              <select
-                v-model="selectedCustomer"
-                @change="currentPage = 1"
-                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
-              >
-                <option value="">All Customers</option>
-                <option
-                  v-for="customer in availableCustomers"
-                  :key="customer.id"
-                  :value="customer.id"
-                >
-                  {{ customer.name }}
-                </option>
-              </select>
+              <div class="min-w-[220px]">
+                <SearchableSelect
+                  v-model="selectedCustomer"
+                  :items="customerOptions"
+                  placeholder="All Customers"
+                  search-placeholder="Search by name or phone…"
+                  :format-label="(c) => c.id === '' ? 'All Customers' : (c.phone ? `${c.name} — ${c.phone}` : c.name)"
+                  :filter-fn="(c, q) => c.id === '' || (c.name || '').toLowerCase().includes(q) || (c.phone || '').toLowerCase().includes(q)"
+                  @change="currentPage = 1"
+                />
+              </div>
             </div>
 
             <div class="flex items-center space-x-2">
               <label class="text-sm font-medium text-neutral-700">Item:</label>
-              <select
-                v-model="selectedItem"
-                @change="currentPage = 1"
-                class="border border-neutral-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[200px]"
-              >
-                <option value="">All Items</option>
-                <option
-                  v-for="item in availableItems"
-                  :key="item.id"
-                  :value="item.id"
-                >
-                  {{ item.name }}
-                </option>
-              </select>
+              <div class="min-w-[220px]">
+                <SearchableSelect
+                  v-model="selectedItem"
+                  :items="itemOptions"
+                  placeholder="All Items"
+                  search-placeholder="Search by code or name…"
+                  :format-label="(i) => i.id === '' ? 'All Items' : (i.code ? `${i.code} — ${i.name}` : i.name)"
+                  :filter-fn="(i, q) => i.id === '' || (i.name || '').toLowerCase().includes(q) || (i.code || '').toLowerCase().includes(q)"
+                  @change="currentPage = 1"
+                />
+              </div>
             </div>
 
             <div class="flex items-center space-x-2">
@@ -558,39 +552,27 @@
               <!-- Customer Selection -->
               <div>
                 <label class="block text-sm font-semibold text-neutral-700 mb-2">Customer *</label>
-                <select
+                <SearchableSelect
                   v-model="form.customerId"
-                  required
-                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
-                >
-                  <option value="">Select Customer</option>
-                  <option
-                    v-for="customer in availableCustomers"
-                    :key="customer.id"
-                    :value="customer.id"
-                  >
-                    {{ customer.name }} - {{ customer.phone }}
-                  </option>
-                </select>
+                  :items="availableCustomers"
+                  placeholder="Select Customer"
+                  search-placeholder="Search by name or phone…"
+                  :format-label="(c) => c.phone ? `${c.name} — ${c.phone}` : c.name"
+                  :filter-fn="(c, q) => (c.name || '').toLowerCase().includes(q) || (c.phone || '').toLowerCase().includes(q)"
+                />
               </div>
 
               <!-- Item Selection -->
               <div>
                 <label class="block text-sm font-semibold text-neutral-700 mb-2">Item *</label>
-                <select
+                <SearchableSelect
                   v-model="form.itemId"
-                  required
-                  class="w-full border border-neutral-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200"
-                >
-                  <option value="">Select Item</option>
-                  <option
-                    v-for="item in availableItems"
-                    :key="item.id"
-                    :value="item.id"
-                  >
-                    {{ item.name }}
-                  </option>
-                </select>
+                  :items="availableItems"
+                  placeholder="Select Item"
+                  search-placeholder="Search by code or name…"
+                  :format-label="(i) => i.code ? `${i.code} — ${i.name}` : i.name"
+                  :filter-fn="(i, q) => (i.name || '').toLowerCase().includes(q) || (i.code || '').toLowerCase().includes(q)"
+                />
               </div>
 
               <!-- Warehouse Selection -->
@@ -839,6 +821,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import SwalAlert from '@/components/common/SwalAlert.vue'
+import SearchableSelect from '@/components/common/SearchableSelect.vue'
 import api from '@/services/Api'
 
 // Create a ref to the SwalAlert component
@@ -849,6 +832,17 @@ const sales = ref([])
 const availableCustomers = ref([])
 const availableItems = ref([])
 const availableWarehouses = ref([])
+
+// Build options arrays for SearchableSelect with a leading "All" entry.
+// Using id='' so v-model selectedCustomer/Item stays string-empty when "All" is chosen.
+const customerOptions = computed(() => [
+  { id: '', name: 'All Customers' },
+  ...availableCustomers.value,
+])
+const itemOptions = computed(() => [
+  { id: '', name: 'All Items' },
+  ...availableItems.value,
+])
 const searchTerm = ref('')
 const entriesPerPage = ref(10)
 const currentPage = ref(1)
