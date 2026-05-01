@@ -211,7 +211,13 @@
                   {{ m.type === 'in' ? '+' : '−' }} TZS {{ formatAmount(m.amount) }}
                 </td>
                 <td class="px-4 py-3 text-neutral-600 max-w-xs truncate">{{ m.notes || '—' }}</td>
-                <td class="px-4 py-3 text-right">
+                <td class="px-4 py-3 text-right whitespace-nowrap">
+                  <button
+                    @click="openEditModal(m)"
+                    class="text-brand-600 hover:text-brand-800 text-xs mr-3"
+                  >
+                    Edit
+                  </button>
                   <button
                     @click="confirmDelete(m)"
                     class="text-red-600 hover:text-red-800 text-xs"
@@ -226,14 +232,16 @@
       </div>
     </div>
 
-    <!-- Add Movement Modal -->
+    <!-- Add / Edit Movement Modal -->
     <div
       v-if="showModal"
       class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
       @click.self="closeModal"
     >
       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
-        <h2 class="text-xl font-bold text-neutral-900 mb-4">Record Cash Movement</h2>
+        <h2 class="text-xl font-bold text-neutral-900 mb-4">
+          {{ editingId ? 'Edit Cash Movement' : 'Record Cash Movement' }}
+        </h2>
 
         <div class="space-y-3">
           <div>
@@ -301,7 +309,7 @@
             :disabled="submitting || !form.amount"
             class="px-4 py-2 rounded-xl bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50"
           >
-            {{ submitting ? 'Saving…' : 'Save Movement' }}
+            {{ submitting ? 'Saving…' : (editingId ? 'Update Movement' : 'Save Movement') }}
           </button>
         </div>
       </div>
@@ -458,6 +466,7 @@ const showModal = ref(false)
 const showPurchaseModal = ref(false)
 const purchaseSubmitting = ref(false)
 const syncing = ref(false)
+const editingId = ref(null)
 const movements = ref([])
 const balance = ref({ total: 0, byMethod: {} })
 const items = ref([])
@@ -586,6 +595,7 @@ const resetFilters = () => {
 }
 
 const openAddModal = () => {
+  editingId.value = null
   form.type = 'in'
   form.source = 'opening_balance'
   form.method = 'cash'
@@ -595,8 +605,22 @@ const openAddModal = () => {
   showModal.value = true
 }
 
+const openEditModal = (movement) => {
+  editingId.value = movement.id
+  form.type = movement.type
+  form.source = movement.source
+  form.method = movement.method
+  form.amount = Number(movement.amount)
+  form.occurredAt = movement.occurredAt
+    ? new Date(movement.occurredAt).toISOString().split('T')[0]
+    : new Date().toISOString().split('T')[0]
+  form.notes = movement.notes || ''
+  showModal.value = true
+}
+
 const closeModal = () => {
   showModal.value = false
+  editingId.value = null
 }
 
 const submitMovement = async () => {
@@ -606,13 +630,18 @@ const submitMovement = async () => {
   }
   submitting.value = true
   try {
-    await CashService.create({ ...form })
+    if (editingId.value) {
+      await CashService.update(editingId.value, { ...form })
+      swalAlert.value?.success?.('Movement updated')
+    } else {
+      await CashService.create({ ...form })
+      swalAlert.value?.success?.('Movement recorded')
+    }
     closeModal()
     await refresh()
-    swalAlert.value?.success?.('Movement recorded')
   } catch (err) {
     swalAlert.value?.error?.(
-      err?.response?.data?.message || 'Failed to record movement'
+      err?.response?.data?.message || 'Failed to save movement',
     )
   } finally {
     submitting.value = false
